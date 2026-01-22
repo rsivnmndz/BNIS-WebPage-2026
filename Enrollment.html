@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BNIS Enrollment | SY 2026-2027</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        .bnis-maroon { color: #800000; }
+        .bg-bnis-maroon { background-color: #800000; }
+        .bg-bnis-gold { background-color: #FFD700; }
+        .bg-bnis-green { background-color: #006400; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <nav class="bg-white shadow-md py-4 px-8 flex justify-between items-center">
+        <div class="flex items-center space-x-4">
+            <img src="BNIS_logo-removebg-preview.png" alt="BNIS Logo" class="h-12 w-12">
+            <h1 class="font-bold text-xl uppercase tracking-tight">Bucal National Integrated School</h1>
+        </div>
+        <div class="hidden md:flex space-x-6 font-semibold">
+            <a href="index.html" class="hover:text-red-800">Home</a>
+            <a href="Enrollment.html" class="bnis-maroon">Enrollment</a>
+            <a href="#" class="hover:text-red-800">Student Portal</a>
+            <a href="#" class="hover:text-red-800">News & Alerts</a>
+            <button class="bg-bnis-maroon text-white px-4 py-1 rounded-md">Our Admin</button>
+        </div>
+    </nav>
+
+    <section class="relative h-[500px] flex items-center px-12 overflow-hidden bg-cover bg-center bg-no-repeat" 
+         style="background-image: url('BNIS_bg.png');">
+        <div class="absolute inset-0 bg-black/40"></div>
+        <div class="relative z-10 text-white max-w-2xl">
+            <h2 class="text-6xl font-extrabold mb-6 leading-tight">
+                Enrollment for <br> SY 2026-2027 is Open!
+            </h2>
+            <p class="text-xl mb-6 opacity-90">Start your journey with BNIS today. Explore our programs and register now.</p>
+            <a href="#registration-form" class="bg-bnis-maroon hover:bg-red-900 px-10 py-4 rounded-full font-bold shadow-lg transition-all inline-block">
+                Register Now
+            </a>
+        </div>
+    </section>
+
+    <div class="bg-bnis-gold py-2 text-center font-bold text-black border-y border-yellow-600">
+        Enrollment Period: January 15 - March 31, 2026
+    </div>
+
+    <!-- JHS Section -->
+    <section class="py-16 px-12">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold mb-4 text-gray-800">Junior High School (JHS)</h2>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">Our Junior High School program provides a strong foundation for students in Grades 7-10, preparing them for Senior High School and beyond.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                <div class="bg-white p-6 rounded-2xl shadow-xl border-t-4 border-red-800 text-center">
+                    <div class="bg-red-800 text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
+                        7
+                    </div>
+                    <h3 class="font-bold text-xl mb-2">Grade 7</h3>
+                    <p class="text-sm text-gray-600">Foundation year focusing on core subjects and adjustment to high school life.</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl shadow-xl border-t-4 border-orange-600 text-center">
+                    <div class="bg-orange-600 text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
+                        8
+                    </div>
+                    <h3 class="font-bold text-xl mb-2">Grade 8</h3>
+                    <p class="text-sm text-gray-600">Building on fundamentals with advanced concepts in all subject areas.</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl shadow-xl border-t-4 border-yellow-600 text-center">
+                    <div class="bg-yellow-600 text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
+                        9
+                    </div>
+                    <h3 class="font-bold text-xl mb-2">Grade 9</h3>
+                    <p class="text-sm text-gray-600">Specialized tracks introduction and career exploration begins.</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl shadow-xl border-t-4 border-green-600 text-center">
+                    <div class="bg-green-600 text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
+                        10
+                    </div>
+                    <h3 class="font-bold text-xl mb-2">Grade 10</h3>
+                    <p class="text-sm text-gray-600">Preparation for Senior High School with career guidance and track selection.</p>
+                </div>
+            </div>
+
+            <div class="bg-white p-8 rounded-2xl shadow-xl">
+                <h3 class="text-2xl font-bold mb-4 text-bnis-maroon">JHS Core Subjects</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <ul class="space-y-2 text-gray-700">
+                        <li class="flex items-center"><span class="mr-2">📚</span> English</li>
+                        <li class="flex items-center"><span class="mr-2">📚</span> Mathematics</li>
+                        <li class="flex items-center"><span class="mr-2">📚</span> Science</li>
+                        <li class="flex items-center"><span class="mr-2">📚</span> Filipino</li>
+                    </ul>
+                    <ul class="space-y-2 text-gray-700">
+                        <li class="flex items-center"><span class="mr-2">📚</span> Social Studies (Araling Panlipunan)</li>
+                        <li class="flex items-center"><span class="mr-2">📚</span> Technology and Livelihood Education (TLE)</li>
+                        <li class="flex items-center"><span class="mr-2">📚</span> Music, Arts, Physical Education, and Health (MAPEH)</li>
+                        <li class="flex items-center"><span class="mr-2">📚</span> Values Education</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SHS Strands Section -->
+    <section class="py-16 px-12 bg-gray-100">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold mb-4 text-gray-800">Senior High School (SHS) Strands</h2>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">BNIS offers Academic and TVL strands such as STEM, HUMSS, ABM, ICT, and EIM (Electrical / Cookery) to prepare you for college or employment.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- STEM Strand -->
+                <div class="bg-white p-8 rounded-2xl shadow-xl border-t-4 border-blue-600">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-blue-600 text-white w-16 h-16 rounded-full flex items-center justify-center mr-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-blue-600">STEM</h3>
+                    </div>
+                    <p class="text-gray-600 mb-6">Science, Technology, Engineering, and Mathematics - Perfect for students interested in engineering, medicine, research, and technology.</p>
+                    
+                    <h4 class="font-bold text-lg mb-3 text-gray-800">Possible College Courses:</h4>
+                    <ul class="space-y-2 text-gray-700 mb-6">
+                        <li class="flex items-start"><span class="mr-2">🎓</span> Engineering (Civil, Mechanical, Electrical, Computer)</li>
+                        <li class="flex items-start"><span class="mr-2">🎓</span> Medicine and Health Sciences</li>
+                        <li class="flex items-start"><span class="mr-2">🎓</span> Information Technology & Computer Science</li>
+                        <li class="flex items-start"><span class="mr-2">🎓</span> Architecture</li>
+                        <li class="flex items-start"><span class="mr-2">🎓</span> Pharmacy</li>
+                        <li class="flex items-start"><span class="mr-2">🎓</span> Mathematics & Statistics</li>
+                        <li class="flex items-start"><span class="mr-2">🎓</span> Physics, Chemistry, Biology</li>
+                    </ul>
+
+                    <h4 class="font-bold text-lg mb-3 text-gray-800">Core Subjects:</h4>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">Pre-Calculus</span>
+                        <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">Basic Calculus</span>
+                        <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">General Biology</span>
+                        <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">General Chemistry</span>
+                        <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">General Physics</span>
+                    </div>
+                </div>
+
+                <!-- HUMSS Strand -->
+                <div class="bg-white p-8 rounded-2xl shadow-xl border-t-4 border-purple-600">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-purple-600 text-white w-16 h-16 rounded-full flex items-center justify-center mr-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-purple-600">HUMSS</h3>
+                    </div>
+                    <p class="text-gray-600 mb-6">Humanities and Social Sciences - Ideal for students interested in law, education, communication, and social sciences.</p>
+                    
+                    <h4 class="font-bold text-lg mb-3 text-gray-800">Possible College Courses:</h4>
+                    <ul class="space-y-2 text-gray-700 mb-6">
+                        <li class="flex items-start"><span class="mr-2">🎓</span> Law</li>
+                        <li class="flex items-start"><span class="mr-2">🎓</span> Education (Elementary, Secondary, Special Education)</li>
+                        <li class="flex items-start"><span class="mr-2">🎓</span> Mass Communication & Journalism</li>
+                        <li class="flex items-start"><span class="mr-2">🎓</span> Psychology</li>
+                        <li class="flex items-start"><span class="mr-2">🎓</span> Political Science</li>
+                        <li class="flex items-start"><span class="mr-2">🎓</span> Social Work</li>
+                        <li class="flex items-start"><span class="mr-2">🎓</span> Philosophy</li>
+                        <li class="flex items-start"><span class="mr-2">🎓</span> Literature & Creative Writing</li>
+                    </ul>
+
+                    <h4 class="font-bold text-lg mb-3 text-gray-800">Core Subjects:</h4>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">Creative Writing</span>
+                        <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">Disciplines & Ideas</span>
+                        <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">Philippine Politics</span>
+                        <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">World Religions</span>
+                    </div>
+                </div>
+
+                <!-- ABM Strand -->
+                <div class="bg-white p-8 rounded-2xl shadow-xl border-t-4 border-yellow-500">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-yellow-500 text-white w-16 h-16 rounded-full flex items-center justify-center mr-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h10m-9 4h8M5 6h14l1 4H4l1-4z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-yellow-600">ABM</h3>
+                    </div>
+                    <p class="text-gray-600 mb-6">Accountancy, Business and Management - For future entrepreneurs, accountants, business leaders, and hospitality professionals.</p>
+
+                    <h4 class="font-bold text-lg mb-3 text-gray-800">Possible College Courses:</h4>
+                    <ul class="space-y-2 text-gray-700 mb-6">
+                        <li class="flex items-start"><span class="mr-2">🎓</span> Accountancy</li>
+                        <li class="flex items-start"><span class="mr-2">🎓</span> Business Administration & Management</li>
+                        <li class="flex items-start"><span class="mr-2">🎓</span> Marketing Management</li>
+                        <li class="flex items-start"><span class="mr-2">🎓</span> Tourism & Hospitality Management</li>
+                        <li class="flex items-start"><span class="mr-2">🎓</span> Economics</li>
+                    </ul>
+
+                    <h4 class="font-bold text-lg mb-3 text-gray-800">Core Subjects:</h4>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm">Business Math</span>
+                        <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm">Organization & Management</span>
+                        <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm">Principles of Marketing</span>
+                    </div>
+                </div>
+
+                <!-- ICT Strand -->
+                <div class="bg-white p-8 rounded-2xl shadow-xl border-t-4 border-green-500">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-green-500 text-white w-16 h-16 rounded-full flex items-center justify-center mr-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-3-3v6m-7 5h14a2 2 0 002-2V7a2 2 0 00-2-2h-3.586a1 1 0 01-.707-.293l-1.414-1.414A2 2 0 0010.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-green-600">ICT</h3>
+                    </div>
+                    <p class="text-gray-600 mb-6">Information and Communications Technology - For students interested in programming, networking, multimedia, and IT-related jobs.</p>
+
+                    <h4 class="font-bold text-lg mb-3 text-gray-800">Possible Careers & Courses:</h4>
+                    <ul class="space-y-2 text-gray-700 mb-6">
+                        <li class="flex items-start"><span class="mr-2">💼</span> IT Support Specialist / Technician</li>
+                        <li class="flex items-start"><span class="mr-2">💼</span> Web & Graphic Designer</li>
+                        <li class="flex items-start"><span class="mr-2">🎓</span> BS Information Technology</li>
+                        <li class="flex items-start"><span class="mr-2">🎓</span> BS Computer Science</li>
+                    </ul>
+
+                    <h4 class="font-bold text-lg mb-3 text-gray-800">Core Skills:</h4>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">Computer Systems Servicing</span>
+                        <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">Programming Basics</span>
+                        <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">Multimedia Editing</span>
+                    </div>
+                </div>
+
+                <!-- EIM / Cookery Strand -->
+                <div class="bg-white p-8 rounded-2xl shadow-xl border-t-4 border-red-500">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-red-500 text-white w-16 h-16 rounded-full flex items-center justify-center mr-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m-9 8h10a2 2 0 002-2V7a2 2 0 00-2-2H9L7 7H5a2 2 0 00-2 2v7a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-red-600">EIM / Cookery</h3>
+                    </div>
+                    <p class="text-gray-600 mb-6">Electrical Installation & Maintenance and Cookery (TVL) - Hands-on training for students who want to gain technical skills for work or business.</p>
+
+                    <h4 class="font-bold text-lg mb-3 text-gray-800">Possible Careers & NC (TESDA):</h4>
+                    <ul class="space-y-2 text-gray-700 mb-6">
+                        <li class="flex items-start"><span class="mr-2">🔌</span> Electrician (EIM NC II)</li>
+                        <li class="flex items-start"><span class="mr-2">🍳</span> Cook / Kitchen Staff (Cookery NC II)</li>
+                        <li class="flex items-start"><span class="mr-2">🏠</span> Household / Building Maintenance</li>
+                    </ul>
+
+                    <h4 class="font-bold text-lg mb-3 text-gray-800">Core Skills:</h4>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm">Electrical Installation</span>
+                        <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm">Safety Procedures</span>
+                        <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm">Food Preparation</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Registration Form Section -->
+    <section id="registration-form" class="py-16 px-12 bg-white">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold mb-4 text-gray-800">Online Pre-Registration Form</h2>
+                <p class="text-lg text-gray-600">Fill out the form below to start your enrollment process for SY 2026-2027</p>
+            </div>
+
+            <div class="bg-white p-8 rounded-3xl shadow-2xl border border-gray-100">
+                <form id="enrollmentForm" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Student Name <span class="text-red-500">*</span></label>
+                            <input type="text" id="studentName" required class="w-full border-2 border-gray-300 p-3 rounded-xl focus:ring-2 focus:ring-bnis-maroon focus:border-bnis-maroon outline-none" placeholder="Enter Full Name">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">LRN (Learner Reference Number) <span class="text-red-500">*</span></label>
+                            <input type="text" id="lrn" required class="w-full border-2 border-gray-300 p-3 rounded-xl focus:ring-2 focus:ring-bnis-maroon focus:border-bnis-maroon outline-none" placeholder="12-digit LRN">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Email Address <span class="text-red-500">*</span></label>
+                        <input type="email" id="email" required class="w-full border-2 border-gray-300 p-3 rounded-xl focus:ring-2 focus:ring-bnis-maroon focus:border-bnis-maroon outline-none" placeholder="student@email.com">
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Student Type <span class="text-red-500">*</span></label>
+                            <select id="studentType" required class="w-full border-2 border-gray-300 p-3 rounded-xl focus:ring-2 focus:ring-bnis-maroon focus:border-bnis-maroon outline-none">
+                                <option value="">Select Student Type</option>
+                                <option value="New Student">New Student</option>
+                                <option value="Transferee">Transferee</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Grade Level to Enroll <span class="text-red-500">*</span></label>
+                            <select id="gradeLevel" required class="w-full border-2 border-gray-300 p-3 rounded-xl focus:ring-2 focus:ring-bnis-maroon focus:border-bnis-maroon outline-none">
+                                <option value="">Select Grade Level</option>
+                                <optgroup label="Junior High School">
+                                    <option value="Grade 7">Grade 7</option>
+                                    <option value="Grade 8">Grade 8</option>
+                                    <option value="Grade 9">Grade 9</option>
+                                    <option value="Grade 10">Grade 10</option>
+                                </optgroup>
+                                <optgroup label="Senior High School">
+                                    <option value="Grade 11-STEM">Grade 11</option>
+                                    <option value="Grade 12-STEM">Grade 12</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="strandContainer" style="display: none;">
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Strand <span class="text-red-500">*</span></label>
+                        <select id="strand" class="w-full border-2 border-gray-300 p-3 rounded-xl focus:ring-2 focus:ring-bnis-maroon focus:border-bnis-maroon outline-none">
+                            <option value="">Select Strand</option>
+                            <option value="STEM">STEM (Science, Technology, Engineering, Mathematics)</option>
+                            <option value="HUMSS">HUMSS (Humanities and Social Sciences)</option>
+                            <option value="ABM">ABM (Accountancy, Business and Management)</option>
+                            <option value="ICT">ICT (Information and Communications Technology)</option>
+                            <option value="EIM/Cookery">EIM / Cookery (TVL)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Guardian's Contact Number <span class="text-red-500">*</span></label>
+                        <input type="tel" id="contact" required class="w-full border-2 border-gray-300 p-3 rounded-xl focus:ring-2 focus:ring-bnis-maroon focus:border-bnis-maroon outline-none" placeholder="09XX-XXX-XXXX">
+                    </div>
+
+                    <button type="submit" id="submitBtn" class="w-full bg-bnis-maroon text-white py-4 rounded-xl font-bold text-lg hover:bg-red-900 transition-all shadow-lg">
+                        Submit Pre-Registration
+                    </button>
+                </form>
+                <p id="statusMsg" class="mt-4 text-center font-bold"></p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-bnis-maroon text-white p-12">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+            <div class="flex items-center space-x-4 mb-6 md:mb-0">
+                <img src="BNIS_logo-removebg-preview.png" alt="BNIS Logo" class="h-16 w-16">
+                <div>
+                    <p class="font-bold">Bucal 2</p>
+                    <p class="text-sm">Maragondon, Cavite</p>
+                </div>
+            </div>
+            <div class="text-sm mb-6 md:mb-0">
+                <p class="font-bold mb-2">Contact:</p>
+                <p>0915-109-7213 | mendoza.roiseivan.m@gmail.com</p>
+            </div>
+            <div class="flex flex-col items-end">
+                <div class="flex space-x-4 mb-4">
+                    <span class="w-8 h-8 bg-blue-600 rounded-full"></span>
+                    <span class="w-8 h-8 bg-blue-400 rounded-full"></span>
+                    <span class="w-8 h-8 bg-black rounded-full"></span>
+                </div>
+                <p class="text-[10px] opacity-70">Developed and Programmed by: Roise Ivan M. Mendoza | BNIS Alumni</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // REPLACE THESE with your actual Supabase Project details
+        // Updated with your project credentials
+const SUPABASE_URL = 'https://hpvnqcsuzuyznbiyduhc.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhwdm5xY3N1enV5em5iaXlkdWhjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkwMDk5NTQsImV4cCI6MjA4NDU4NTk1NH0.qxhGoqb71DTTsXlBo3OUZ-JhIlYVlTVm8g8H2f4iZuA';
+
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        const form = document.getElementById('enrollmentForm');
+        const statusMsg = document.getElementById('statusMsg');
+        const submitBtn = document.getElementById('submitBtn');
+        const gradeLevel = document.getElementById('gradeLevel');
+        const strandContainer = document.getElementById('strandContainer');
+        const strand = document.getElementById('strand');
+
+        // Show/hide strand field based on grade level selection
+        gradeLevel.addEventListener('change', function() {
+            const selectedGrade = this.value;
+            if (selectedGrade.includes('Grade 11') || selectedGrade.includes('Grade 12')) {
+                strandContainer.style.display = 'block';
+                strand.required = true;
+                // Auto-select strand if already in grade level value
+                if (selectedGrade.includes('STEM')) {
+                    strand.value = 'STEM';
+                } else if (selectedGrade.includes('HUMSS')) {
+                    strand.value = 'HUMSS';
+                } else if (selectedGrade.includes('ABM')) {
+                    strand.value = 'ABM';
+                } else if (selectedGrade.includes('ICT')) {
+                    strand.value = 'ICT';
+                } else if (selectedGrade.includes('EIM/Cookery')) {
+                    strand.value = 'EIM/Cookery';
+                }
+            } else {
+                strandContainer.style.display = 'none';
+                strand.required = false;
+                strand.value = '';
+            }
+        });
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // UI State Change
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Processing...";
+            statusMsg.innerText = "";
+
+            const selectedGrade = gradeLevel.value;
+            let finalStrand = '';
+            
+            // Extract strand from grade level or use strand field
+            if (selectedGrade.includes('STEM')) {
+                finalStrand = 'STEM';
+            } else if (selectedGrade.includes('HUMSS')) {
+                finalStrand = 'HUMSS';
+            } else if (selectedGrade.includes('ABM')) {
+                finalStrand = 'ABM';
+            } else if (selectedGrade.includes('ICT')) {
+                finalStrand = 'ICT';
+            } else if (selectedGrade.includes('EIM/Cookery')) {
+                finalStrand = 'EIM/Cookery';
+            } else {
+                finalStrand = strand.value || '';
+            }
+
+            const formData = {
+                student_name: document.getElementById('studentName').value,
+                lrn: document.getElementById('lrn').value,
+                email: document.getElementById('email').value,
+                student_type: document.getElementById('studentType').value,
+                grade_level: selectedGrade,
+                strand: finalStrand,
+                guardian_contact: document.getElementById('contact').value,
+            };
+
+            // Supabase Database Insertion
+            const { data, error } = await supabaseClient
+                .from('enrollment_submissions')
+                .insert([formData]);
+
+            if (error) {
+                statusMsg.style.color = "red";
+                statusMsg.innerText = "Error: " + error.message;
+                submitBtn.disabled = false;
+                submitBtn.innerText = "Submit Pre-Registration";
+            } else {
+                statusMsg.style.color = "green";
+                statusMsg.innerText = "Enrollment Submitted Successfully!";
+                form.reset();
+                strandContainer.style.display = 'none';
+                submitBtn.innerText = "Submitted ✅";
+                
+                // Scroll to status message
+                statusMsg.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        });
+    </script>
+</body>
+</html>
