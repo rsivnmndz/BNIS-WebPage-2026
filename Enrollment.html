@@ -1,12 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BNIS Enrollment | SY 2026-2027</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
+        body { font-family: 'Poppins', sans-serif; }
         .bnis-maroon { color: #800000; }
         .bg-bnis-maroon { background-color: #800000; }
         .bg-bnis-gold { background-color: #FFD700; }
@@ -15,73 +17,79 @@
 </head>
 <body class="bg-gray-50 text-gray-800">
 
-    <nav class="bg-white shadow-md py-4 px-8 flex justify-between items-center">
+    <nav class="sticky top-0 z-50 bg-white/95 backdrop-blur-md shadow-sm py-4 px-6 md:px-12 flex justify-between items-center transition-all border-b border-gray-100">
         <div class="flex items-center space-x-4">
             <img src="BNIS_logo-removebg-preview.png" alt="BNIS Logo" class="h-12 w-12">
-            <h1 class="font-bold text-xl uppercase tracking-tight">Bucal National Integrated School</h1>
+            <h1 class="font-bold text-lg md:text-xl uppercase tracking-tight text-gray-900">Bucal National Integrated School</h1>
         </div>
         <div class="hidden md:flex space-x-6 font-semibold">
-            <a href="index.html" class="hover:text-red-800">Home</a>
-            <a href="Enrollment.html" class="bnis-maroon">Enrollment</a>
-            <a href="#" class="hover:text-red-800">Student Portal</a>
-            <a href="#" class="hover:text-red-800">News & Alerts</a>
-            <button class="bg-bnis-maroon text-white px-4 py-1 rounded-md">Our Admin</button>
+            <a href="index.html" class="text-gray-600 hover:text-bnis-maroon transition-colors">Home</a>
+            <a href="Enrollment.html" class="text-bnis-maroon">Enrollment</a>
+            <a href="#" class="text-gray-600 hover:text-bnis-maroon transition-colors">Student Portal</a>
+            <a href="#" class="text-gray-600 hover:text-bnis-maroon transition-colors">News & Alerts</a>
+            <button class="bg-bnis-maroon text-white px-5 py-2 rounded-full hover:bg-red-900 transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5">Our Admin</button>
         </div>
     </nav>
 
-    <section class="relative h-[500px] flex items-center px-12 overflow-hidden bg-cover bg-center bg-no-repeat" 
+    <section class="relative h-[600px] flex items-center px-6 md:px-12 overflow-hidden bg-cover bg-center bg-no-repeat" 
          style="background-image: url('BNIS_bg.png');">
-        <div class="absolute inset-0 bg-black/40"></div>
-        <div class="relative z-10 text-white max-w-2xl">
-            <h2 class="text-6xl font-extrabold mb-6 leading-tight">
+        <div class="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent"></div>
+        <div class="relative z-10 text-white max-w-3xl pt-10">
+            <span class="bg-bnis-gold text-black px-4 py-1 rounded-full font-bold text-sm uppercase tracking-wider mb-4 inline-block shadow-lg">Official Enrollment Portal</span>
+            <h2 class="text-5xl md:text-7xl font-extrabold mb-6 leading-tight drop-shadow-lg">
                 Enrollment for <br> SY 2026-2027 is Open!
             </h2>
-            <p class="text-xl mb-6 opacity-90">Start your journey with BNIS today. Explore our programs and register now.</p>
-            <a href="#registration-form" class="bg-bnis-maroon hover:bg-red-900 px-10 py-4 rounded-full font-bold shadow-lg transition-all inline-block">
+            <p class="text-xl md:text-2xl mb-8 opacity-90 font-light max-w-2xl">Start your journey with BNIS today. Explore our programs and register now to secure your future.</p>
+            <a href="#registration-form" class="bg-bnis-maroon hover:bg-red-900 text-white px-10 py-4 rounded-full font-bold text-lg shadow-xl hover:shadow-2xl transition-all transform hover:-translate-y-1 inline-flex items-center gap-2">
                 Register Now
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
             </a>
         </div>
     </section>
 
-    <div class="bg-bnis-gold py-2 text-center font-bold text-black border-y border-yellow-600">
-        Enrollment Period: January 15 - March 31, 2026
+    <div class="bg-white border-b border-gray-200">
+        <div class="max-w-7xl mx-auto py-4 px-6 flex flex-col md:flex-row justify-center items-center gap-2 text-center">
+            <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-red-100 text-bnis-maroon"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" /></svg></span>
+            <p class="font-medium text-gray-700">Enrollment Period is currently active: <span class="font-bold text-bnis-maroon">January 15 - March 31, 2026</span></p>
+        </div>
     </div>
 
     <!-- JHS Section -->
-    <section class="py-16 px-12">
+    <section class="py-20 px-6 md:px-12 bg-green-50/50">
         <div class="max-w-7xl mx-auto">
             <div class="text-center mb-12">
-                <h2 class="text-4xl font-bold mb-4 text-gray-800">Junior High School (JHS)</h2>
+                <span class="text-[#006400] font-bold tracking-wider uppercase text-sm">Academic Programs</span>
+                <h2 class="text-4xl font-bold mb-4 text-[#006400] mt-2">Junior High School (JHS)</h2>
                 <p class="text-lg text-gray-600 max-w-3xl mx-auto">Our Junior High School program provides a strong foundation for students in Grades 7-10, preparing them for Senior High School and beyond.</p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-                <div class="bg-white p-6 rounded-2xl shadow-xl border-t-4 border-red-800 text-center">
-                    <div class="bg-red-800 text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
+                <div class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 text-center group hover:bg-red-50">
+                    <div class="bg-red-50 text-red-800 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 text-2xl font-bold group-hover:bg-red-800 group-hover:text-white transition-colors">
                         7
                     </div>
                     <h3 class="font-bold text-xl mb-2">Grade 7</h3>
                     <p class="text-sm text-gray-600">Foundation year focusing on core subjects and adjustment to high school life.</p>
                 </div>
 
-                <div class="bg-white p-6 rounded-2xl shadow-xl border-t-4 border-orange-600 text-center">
-                    <div class="bg-orange-600 text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
+                <div class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 text-center group hover:bg-orange-50">
+                    <div class="bg-orange-50 text-orange-600 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 text-2xl font-bold group-hover:bg-orange-600 group-hover:text-white transition-colors">
                         8
                     </div>
                     <h3 class="font-bold text-xl mb-2">Grade 8</h3>
                     <p class="text-sm text-gray-600">Building on fundamentals with advanced concepts in all subject areas.</p>
                 </div>
 
-                <div class="bg-white p-6 rounded-2xl shadow-xl border-t-4 border-yellow-600 text-center">
-                    <div class="bg-yellow-600 text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
+                <div class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 text-center group hover:bg-yellow-50">
+                    <div class="bg-yellow-50 text-yellow-600 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 text-2xl font-bold group-hover:bg-yellow-600 group-hover:text-white transition-colors">
                         9
                     </div>
                     <h3 class="font-bold text-xl mb-2">Grade 9</h3>
                     <p class="text-sm text-gray-600">Specialized tracks introduction and career exploration begins.</p>
                 </div>
 
-                <div class="bg-white p-6 rounded-2xl shadow-xl border-t-4 border-green-600 text-center">
-                    <div class="bg-green-600 text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
+                <div class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 text-center group hover:bg-green-50">
+                    <div class="bg-green-50 text-green-600 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 text-2xl font-bold group-hover:bg-green-600 group-hover:text-white transition-colors">
                         10
                     </div>
                     <h3 class="font-bold text-xl mb-2">Grade 10</h3>
@@ -89,8 +97,8 @@
                 </div>
             </div>
 
-            <div class="bg-white p-8 rounded-2xl shadow-xl">
-                <h3 class="text-2xl font-bold mb-4 text-bnis-maroon">JHS Core Subjects</h3>
+            <div class="bg-white p-10 rounded-3xl shadow-xl border-t-4 border-[#006400] hover:bg-green-50 transition-colors">
+                <h3 class="text-2xl font-bold mb-4 text-[#006400]">JHS Core Subjects</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <ul class="space-y-2 text-gray-700">
                         <li class="flex items-center"><span class="mr-2">📚</span> English</li>
@@ -110,18 +118,20 @@
     </section>
 
     <!-- SHS Strands Section -->
-    <section class="py-16 px-12 bg-gray-100">
+    <section class="py-20 px-6 md:px-12 bg-red-50/50">
         <div class="max-w-7xl mx-auto">
             <div class="text-center mb-12">
-                <h2 class="text-4xl font-bold mb-4 text-gray-800">Senior High School (SHS) Strands</h2>
+                <span class="text-bnis-maroon font-bold tracking-wider uppercase text-sm">Career Pathways</span>
+                <h2 class="text-4xl font-bold mb-4 text-bnis-maroon mt-2">Senior High School (SHS) Strands</h2>
                 <p class="text-lg text-gray-600 max-w-3xl mx-auto">BNIS offers Academic and TVL strands such as STEM, HUMSS, ABM, ICT, and EIM (Electrical / Cookery) to prepare you for college or employment.</p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <!-- STEM Strand -->
-                <div class="bg-white p-8 rounded-2xl shadow-xl border-t-4 border-blue-600">
+                <div class="bg-white p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 relative overflow-hidden group hover:bg-blue-50">
+                    <div class="absolute top-0 left-0 w-full h-2 bg-blue-600"></div>
                     <div class="flex items-center mb-4">
-                        <div class="bg-blue-600 text-white w-16 h-16 rounded-full flex items-center justify-center mr-4">
+                        <div class="bg-blue-100 text-blue-600 w-14 h-14 rounded-2xl flex items-center justify-center mr-4 group-hover:bg-blue-600 group-hover:text-white transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                             </svg>
@@ -152,9 +162,10 @@
                 </div>
 
                 <!-- HUMSS Strand -->
-                <div class="bg-white p-8 rounded-2xl shadow-xl border-t-4 border-purple-600">
+                <div class="bg-white p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 relative overflow-hidden group hover:bg-purple-50">
+                    <div class="absolute top-0 left-0 w-full h-2 bg-purple-600"></div>
                     <div class="flex items-center mb-4">
-                        <div class="bg-purple-600 text-white w-16 h-16 rounded-full flex items-center justify-center mr-4">
+                        <div class="bg-purple-100 text-purple-600 w-14 h-14 rounded-2xl flex items-center justify-center mr-4 group-hover:bg-purple-600 group-hover:text-white transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                             </svg>
@@ -185,9 +196,10 @@
                 </div>
 
                 <!-- ABM Strand -->
-                <div class="bg-white p-8 rounded-2xl shadow-xl border-t-4 border-yellow-500">
+                <div class="bg-white p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 relative overflow-hidden group hover:bg-yellow-50">
+                    <div class="absolute top-0 left-0 w-full h-2 bg-yellow-500"></div>
                     <div class="flex items-center mb-4">
-                        <div class="bg-yellow-500 text-white w-16 h-16 rounded-full flex items-center justify-center mr-4">
+                        <div class="bg-yellow-100 text-yellow-600 w-14 h-14 rounded-2xl flex items-center justify-center mr-4 group-hover:bg-yellow-500 group-hover:text-white transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h10m-9 4h8M5 6h14l1 4H4l1-4z" />
                             </svg>
@@ -214,9 +226,10 @@
                 </div>
 
                 <!-- ICT Strand -->
-                <div class="bg-white p-8 rounded-2xl shadow-xl border-t-4 border-green-500">
+                <div class="bg-white p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 relative overflow-hidden group hover:bg-green-50">
+                    <div class="absolute top-0 left-0 w-full h-2 bg-green-500"></div>
                     <div class="flex items-center mb-4">
-                        <div class="bg-green-500 text-white w-16 h-16 rounded-full flex items-center justify-center mr-4">
+                        <div class="bg-green-100 text-green-600 w-14 h-14 rounded-2xl flex items-center justify-center mr-4 group-hover:bg-green-500 group-hover:text-white transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-3-3v6m-7 5h14a2 2 0 002-2V7a2 2 0 00-2-2h-3.586a1 1 0 01-.707-.293l-1.414-1.414A2 2 0 0010.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                             </svg>
@@ -242,9 +255,10 @@
                 </div>
 
                 <!-- EIM / Cookery Strand -->
-                <div class="bg-white p-8 rounded-2xl shadow-xl border-t-4 border-red-500">
+                <div class="bg-white p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 relative overflow-hidden group hover:bg-red-50">
+                    <div class="absolute top-0 left-0 w-full h-2 bg-red-500"></div>
                     <div class="flex items-center mb-4">
-                        <div class="bg-red-500 text-white w-16 h-16 rounded-full flex items-center justify-center mr-4">
+                        <div class="bg-red-100 text-red-600 w-14 h-14 rounded-2xl flex items-center justify-center mr-4 group-hover:bg-red-500 group-hover:text-white transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m-9 8h10a2 2 0 002-2V7a2 2 0 00-2-2H9L7 7H5a2 2 0 00-2 2v7a2 2 0 002 2z" />
                             </svg>
@@ -272,36 +286,36 @@
     </section>
 
     <!-- Registration Form Section -->
-    <section id="registration-form" class="py-16 px-12 bg-white">
+    <section id="registration-form" class="py-20 px-6 md:px-12 bg-gray-50">
         <div class="max-w-4xl mx-auto">
             <div class="text-center mb-12">
-                <h2 class="text-4xl font-bold mb-4 text-gray-800">Online Pre-Registration Form</h2>
+                <h2 class="text-4xl font-bold mb-4 text-gray-900">Online Pre-Registration Form</h2>
                 <p class="text-lg text-gray-600">Fill out the form below to start your enrollment process for SY 2026-2027</p>
             </div>
 
-            <div class="bg-white p-8 rounded-3xl shadow-2xl border border-gray-100">
+            <div class="bg-white p-8 md:p-12 rounded-3xl shadow-2xl border border-gray-100">
                 <form id="enrollmentForm" class="space-y-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-2">Student Name <span class="text-red-500">*</span></label>
-                            <input type="text" id="studentName" required class="w-full border-2 border-gray-300 p-3 rounded-xl focus:ring-2 focus:ring-bnis-maroon focus:border-bnis-maroon outline-none" placeholder="Enter Full Name">
+                            <input type="text" id="studentName" required class="w-full bg-gray-50 border border-gray-300 p-4 rounded-xl focus:bg-white focus:ring-2 focus:ring-bnis-maroon focus:border-bnis-maroon outline-none transition-all" placeholder="Enter Full Name">
                         </div>
 
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-2">LRN (Learner Reference Number) <span class="text-red-500">*</span></label>
-                            <input type="text" id="lrn" required class="w-full border-2 border-gray-300 p-3 rounded-xl focus:ring-2 focus:ring-bnis-maroon focus:border-bnis-maroon outline-none" placeholder="12-digit LRN">
+                            <input type="text" id="lrn" required class="w-full bg-gray-50 border border-gray-300 p-4 rounded-xl focus:bg-white focus:ring-2 focus:ring-bnis-maroon focus:border-bnis-maroon outline-none transition-all" placeholder="12-digit LRN">
                         </div>
                     </div>
 
                     <div>
                         <label class="block text-sm font-bold text-gray-700 mb-2">Email Address <span class="text-red-500">*</span></label>
-                        <input type="email" id="email" required class="w-full border-2 border-gray-300 p-3 rounded-xl focus:ring-2 focus:ring-bnis-maroon focus:border-bnis-maroon outline-none" placeholder="student@email.com">
+                        <input type="email" id="email" required class="w-full bg-gray-50 border border-gray-300 p-4 rounded-xl focus:bg-white focus:ring-2 focus:ring-bnis-maroon focus:border-bnis-maroon outline-none transition-all" placeholder="student@email.com">
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-2">Student Type <span class="text-red-500">*</span></label>
-                            <select id="studentType" required class="w-full border-2 border-gray-300 p-3 rounded-xl focus:ring-2 focus:ring-bnis-maroon focus:border-bnis-maroon outline-none">
+                            <select id="studentType" required class="w-full bg-gray-50 border border-gray-300 p-4 rounded-xl focus:bg-white focus:ring-2 focus:ring-bnis-maroon focus:border-bnis-maroon outline-none transition-all">
                                 <option value="">Select Student Type</option>
                                 <option value="New Student">New Student</option>
                                 <option value="Transferee">Transferee</option>
@@ -310,7 +324,7 @@
 
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-2">Grade Level to Enroll <span class="text-red-500">*</span></label>
-                            <select id="gradeLevel" required class="w-full border-2 border-gray-300 p-3 rounded-xl focus:ring-2 focus:ring-bnis-maroon focus:border-bnis-maroon outline-none">
+                            <select id="gradeLevel" required class="w-full bg-gray-50 border border-gray-300 p-4 rounded-xl focus:bg-white focus:ring-2 focus:ring-bnis-maroon focus:border-bnis-maroon outline-none transition-all">
                                 <option value="">Select Grade Level</option>
                                 <optgroup label="Junior High School">
                                     <option value="Grade 7">Grade 7</option>
@@ -328,7 +342,7 @@
 
                     <div id="strandContainer" style="display: none;">
                         <label class="block text-sm font-bold text-gray-700 mb-2">Strand <span class="text-red-500">*</span></label>
-                        <select id="strand" class="w-full border-2 border-gray-300 p-3 rounded-xl focus:ring-2 focus:ring-bnis-maroon focus:border-bnis-maroon outline-none">
+                        <select id="strand" class="w-full bg-gray-50 border border-gray-300 p-4 rounded-xl focus:bg-white focus:ring-2 focus:ring-bnis-maroon focus:border-bnis-maroon outline-none transition-all">
                             <option value="">Select Strand</option>
                             <option value="STEM">STEM (Science, Technology, Engineering, Mathematics)</option>
                             <option value="HUMSS">HUMSS (Humanities and Social Sciences)</option>
@@ -340,25 +354,25 @@
 
                     <div>
                         <label class="block text-sm font-bold text-gray-700 mb-2">Guardian's Contact Number <span class="text-red-500">*</span></label>
-                        <input type="tel" id="contact" required class="w-full border-2 border-gray-300 p-3 rounded-xl focus:ring-2 focus:ring-bnis-maroon focus:border-bnis-maroon outline-none" placeholder="09XX-XXX-XXXX">
+                        <input type="tel" id="contact" required class="w-full bg-gray-50 border border-gray-300 p-4 rounded-xl focus:bg-white focus:ring-2 focus:ring-bnis-maroon focus:border-bnis-maroon outline-none transition-all" placeholder="09XX-XXX-XXXX">
                     </div>
 
                     <div>
                         <label class="block text-sm font-bold text-gray-700 mb-2">Good Moral Certificate <span class="text-red-500">*</span></label>
-                        <input type="file" id="goodMoralImage" accept="image/*" required class="w-full border-2 border-gray-300 p-3 rounded-xl focus:ring-2 focus:ring-bnis-maroon focus:border-bnis-maroon outline-none">
+                        <input type="file" id="goodMoralImage" accept="image/*" required class="w-full bg-gray-50 border border-gray-300 p-3 rounded-xl focus:bg-white focus:ring-2 focus:ring-bnis-maroon focus:border-bnis-maroon outline-none transition-all file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-bnis-maroon hover:file:bg-red-100">
                     </div>
 
                     <div>
                         <label class="block text-sm font-bold text-gray-700 mb-2">PSA Birth Certificate <span class="text-red-500">*</span></label>
-                        <input type="file" id="psaImage" accept="image/*" required class="w-full border-2 border-gray-300 p-3 rounded-xl focus:ring-2 focus:ring-bnis-maroon focus:border-bnis-maroon outline-none">
+                        <input type="file" id="psaImage" accept="image/*" required class="w-full bg-gray-50 border border-gray-300 p-3 rounded-xl focus:bg-white focus:ring-2 focus:ring-bnis-maroon focus:border-bnis-maroon outline-none transition-all file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-bnis-maroon hover:file:bg-red-100">
                     </div>
 
                     <div>
                         <label class="block text-sm font-bold text-gray-700 mb-2">Previous Report Card <span class="text-red-500">*</span></label>
-                        <input type="file" id="reportCardImage" accept="image/*" required class="w-full border-2 border-gray-300 p-3 rounded-xl focus:ring-2 focus:ring-bnis-maroon focus:border-bnis-maroon outline-none">
+                        <input type="file" id="reportCardImage" accept="image/*" required class="w-full bg-gray-50 border border-gray-300 p-3 rounded-xl focus:bg-white focus:ring-2 focus:ring-bnis-maroon focus:border-bnis-maroon outline-none transition-all file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-bnis-maroon hover:file:bg-red-100">
                     </div>
 
-                    <button type="submit" id="submitBtn" class="w-full bg-bnis-maroon text-white py-4 rounded-xl font-bold text-lg hover:bg-red-900 transition-all shadow-lg">
+                    <button type="submit" id="submitBtn" class="w-full bg-bnis-maroon text-white py-4 rounded-xl font-bold text-lg hover:bg-red-900 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1">
                         Submit Pre-Registration
                     </button>
                 </form>
