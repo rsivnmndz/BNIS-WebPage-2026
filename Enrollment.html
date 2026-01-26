@@ -29,7 +29,28 @@
             <a href="#" class="text-gray-600 hover:text-bnis-maroon transition-colors">News & Alerts</a>
             <button class="bg-bnis-maroon text-white px-5 py-2 rounded-full hover:bg-red-900 transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5">Our Admin</button>
         </div>
+
+        <!-- Mobile Menu Button -->
+        <button id="mobileMenuBtn" class="md:hidden text-gray-800 focus:outline-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+        </button>
     </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobileMenu" class="fixed inset-0 z-[60] bg-white transform translate-x-full transition-transform duration-300 ease-in-out md:hidden flex flex-col justify-center items-center space-y-8">
+        <button id="closeMenuBtn" class="absolute top-6 right-6 text-gray-800 focus:outline-none">
+             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+        <a href="index.html" class="text-2xl font-bold text-gray-600 hover:text-bnis-maroon">Home</a>
+        <a href="Enrollment.html" class="text-2xl font-bold text-bnis-maroon">Enrollment</a>
+        <a href="#" class="text-2xl font-bold text-gray-600 hover:text-bnis-maroon">Student Portal</a>
+        <a href="#" class="text-2xl font-bold text-gray-600 hover:text-bnis-maroon">News & Alerts</a>
+        <button class="bg-bnis-maroon text-white px-8 py-3 rounded-full text-xl font-bold shadow-lg">Our Admin</button>
+    </div>
 
     <section class="relative h-[600px] flex items-center px-6 md:px-12 overflow-hidden bg-cover bg-center bg-no-repeat" 
          style="background-image: url('BNIS_bg.png');">
@@ -426,6 +447,19 @@
         const goodMoralImage = document.getElementById('goodMoralImage');
         const psaImage = document.getElementById('psaImage');
         const reportCardImage = document.getElementById('reportCardImage');
+
+        // --- Mobile Menu Logic ---
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const closeMenuBtn = document.getElementById('closeMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.remove('translate-x-full');
+        });
+
+        closeMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.add('translate-x-full');
+        });
 
         // Show/hide strand field based on grade level selection
         gradeLevel.addEventListener('change', function() {
