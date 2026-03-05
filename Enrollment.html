@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BNIS Enrollment | SY 2026-2027</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <title>BNIS SHS Enrollment | SY 2026-2027</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -244,12 +243,12 @@
     </div>
 </section>
 
-<!-- JHS GRADES -->
+<!-- JHS GRADES (Info Only) -->
 <section class="section grade-section" style="background:var(--white)">
     <div class="container">
         <div class="section-header-left">
             <span class="section-eyebrow green">Grades 7–10</span>
-            <h2 class="section-title">Junior High School</h2>
+            <h2 class="section-title">Junior High School (Information Only)</h2>
         </div>
         <div class="grade-grid">
             <div class="grade-card g7">
@@ -386,7 +385,7 @@
             <h2 style="font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;color:var(--gray-900)">Pre-Registration Form</h2>
         </div>
         <div class="form-card">
-            <form id="enrollmentForm" class="form-fields">
+            <form id="enrollmentForm" class="form-fields" method="POST" action="submit_enrollment.php" enctype="multipart/form-data">
                 <!-- Step 1 -->
                 <div class="form-section-block">
                     <div class="form-step">
@@ -396,17 +395,17 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label class="form-label" for="studentName">Student Name *</label>
-                            <input type="text" id="studentName" required class="form-input" placeholder="Full Name">
+                            <input type="text" id="studentName" name="student_name" required class="form-input" placeholder="Full Name">
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="lrn">LRN *</label>
-                            <input type="text" id="lrn" required class="form-input" placeholder="12-digit LRN">
+                            <input type="text" id="lrn" name="lrn" required class="form-input" placeholder="12-digit LRN">
                         </div>
                     </div>
                     <div class="form-row single">
                         <div class="form-group">
                             <label class="form-label" for="email">Email Address *</label>
-                            <input type="email" id="email" required class="form-input" placeholder="email@example.com">
+                            <input type="email" id="email" name="email" required class="form-input" placeholder="email@example.com">
                         </div>
                     </div>
                 </div>
@@ -420,22 +419,16 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label class="form-label" for="studentType">Student Type *</label>
-                            <select id="studentType" required class="form-input form-select">
+                            <select id="studentType" name="student_type" required class="form-input form-select">
                                 <option value="">Select...</option>
                                 <option value="New Student">New Student</option>
                                 <option value="Transferee">Transferee</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label class="form-label" for="gradeLevel">Grade Level *</label>
-                            <select id="gradeLevel" required class="form-input form-select">
+                            <label class="form-label" for="gradeLevel">Grade Level (SHS Only) *</label>
+                            <select id="gradeLevel" name="grade_level" required class="form-input form-select">
                                 <option value="">Select...</option>
-                                <optgroup label="Junior High School">
-                                    <option value="Grade 7">Grade 7</option>
-                                    <option value="Grade 8">Grade 8</option>
-                                    <option value="Grade 9">Grade 9</option>
-                                    <option value="Grade 10">Grade 10</option>
-                                </optgroup>
                                 <optgroup label="Senior High School">
                                     <option value="Grade 11">Grade 11</option>
                                     <option value="Grade 12">Grade 12</option>
@@ -446,7 +439,7 @@
                     <div id="strandContainer" class="form-row single hidden">
                         <div class="form-group">
                             <label class="form-label" for="strand">Strand *</label>
-                            <select id="strand" class="form-input form-select">
+                            <select id="strand" name="strand" class="form-input form-select">
                                 <option value="">Select Strand</option>
                                 <option value="STEM">STEM</option>
                                 <option value="HUMSS">HUMSS</option>
@@ -467,21 +460,21 @@
                     <div class="form-row single" style="margin-bottom:1rem">
                         <div class="form-group">
                             <label class="form-label" for="contact">Guardian Contact *</label>
-                            <input type="tel" id="contact" required class="form-input" placeholder="09XX-XXX-XXXX">
+                            <input type="tel" id="contact" name="guardian_contact" required class="form-input" placeholder="09XX-XXX-XXXX">
                         </div>
                     </div>
                     <div class="form-row-3">
                         <div class="form-group">
                             <label class="form-file-label">Good Moral Cert.</label>
-                            <input type="file" id="goodMoralImage" accept="image/*" required class="form-file red">
+                            <input type="file" id="goodMoralImage" name="good_moral" accept="image/*" required class="form-file red">
                         </div>
                         <div class="form-group">
                             <label class="form-file-label">PSA Birth Cert.</label>
-                            <input type="file" id="psaImage" accept="image/*" required class="form-file yellow">
+                            <input type="file" id="psaImage" name="psa_birth" accept="image/*" required class="form-file yellow">
                         </div>
                         <div class="form-group">
                             <label class="form-file-label">Report Card</label>
-                            <input type="file" id="reportCardImage" accept="image/*" required class="form-file green">
+                            <input type="file" id="reportCardImage" name="report_card" accept="image/*" required class="form-file green">
                         </div>
                     </div>
                 </div>
@@ -495,98 +488,28 @@
 
 <footer class="footer">
     <p>Bucal National Integrated School | Maragondon, Cavite</p>
-    <p>Developed by Roise Ivan M. Mendoza</p>
+    <p>Developed and Programmed by: Roise Ivan M. Mendoza | BNIS Alumni</p>
 </footer>
 
 <script>
-    const SUPABASE_URL = 'https://hpvnqcsuzuyznbiyduhc.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhwdm5xY3N1enV5em5iaXlkdWhjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkwMDk5NTQsImV4cCI6MjA4NDU4NTk1NH0.qxhGoqb71DTTsXlBo3OUZ-JhIlYVlTVm8g8H2f4iZuA';
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-    const form = document.getElementById('enrollmentForm');
-    const statusMsg = document.getElementById('statusMsg');
-    const submitBtn = document.getElementById('submitBtn');
     const gradeLevel = document.getElementById('gradeLevel');
     const strandContainer = document.getElementById('strandContainer');
     const strand = document.getElementById('strand');
-    const goodMoralImage = document.getElementById('goodMoralImage');
-    const psaImage = document.getElementById('psaImage');
-    const reportCardImage = document.getElementById('reportCardImage');
-
     const mobileMenuBtn = document.getElementById('mobileMenuBtn');
     const closeMenuBtn = document.getElementById('closeMenuBtn');
     const mobileMenu = document.getElementById('mobileMenu');
+
     mobileMenuBtn.addEventListener('click', () => mobileMenu.classList.add('open'));
     closeMenuBtn.addEventListener('click', () => mobileMenu.classList.remove('open'));
 
     gradeLevel.addEventListener('change', function() {
-        if (this.value.includes('Grade 11') || this.value.includes('Grade 12')) {
+        if (this.value === 'Grade 11' || this.value === 'Grade 12') {
             strandContainer.classList.remove('hidden');
             strand.required = true;
         } else {
             strandContainer.classList.add('hidden');
             strand.required = false;
             strand.value = '';
-        }
-    });
-
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        submitBtn.disabled = true;
-        submitBtn.innerText = "Processing...";
-        statusMsg.innerText = "";
-
-        const rawName = document.getElementById('studentName').value;
-        const folderName = rawName.replace(/[^a-zA-Z0-9 ]/g, "").trim().replace(/\s+/g, "_");
-
-        const uploadFile = async (fileInput) => {
-            const file = fileInput.files[0];
-            if (!file) return null;
-            const filePath = `${folderName}/${Date.now()}_${file.name.replace(/\s/g, '_')}`;
-            const { error } = await supabaseClient.storage.from('enrollment-requirements').upload(filePath, file);
-            if (error) throw error;
-            const { data } = supabaseClient.storage.from('enrollment-requirements').getPublicUrl(filePath);
-            return data.publicUrl;
-        };
-
-        let goodMoralUrl, psaUrl, reportCardUrl;
-        try {
-            goodMoralUrl = await uploadFile(goodMoralImage);
-            psaUrl = await uploadFile(psaImage);
-            reportCardUrl = await uploadFile(reportCardImage);
-        } catch (uploadError) {
-            statusMsg.style.color = "red";
-            statusMsg.innerText = "Upload Error: " + uploadError.message;
-            submitBtn.disabled = false;
-            submitBtn.innerText = "Submit Application";
-            return;
-        }
-
-        const formData = {
-            student_name: document.getElementById('studentName').value,
-            lrn: document.getElementById('lrn').value,
-            email: document.getElementById('email').value,
-            student_type: document.getElementById('studentType').value,
-            grade_level: gradeLevel.value,
-            strand: strand.value || '',
-            guardian_contact: document.getElementById('contact').value,
-            good_moral_url: goodMoralUrl,
-            psa_url: psaUrl,
-            report_card_url: reportCardUrl,
-        };
-
-        const { data, error } = await supabaseClient.from('enrollment_submissions').insert([formData]);
-
-        if (error) {
-            statusMsg.style.color = "red";
-            statusMsg.innerText = "Error: " + error.message;
-            submitBtn.disabled = false;
-            submitBtn.innerText = "Submit Application";
-        } else {
-            statusMsg.style.color = "green";
-            statusMsg.innerText = "Enrollment Submitted Successfully!";
-            form.reset();
-            submitBtn.innerText = "Submitted ✅";
         }
     });
 </script>
