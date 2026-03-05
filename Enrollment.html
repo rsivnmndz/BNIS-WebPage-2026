@@ -1,351 +1,435 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BNIS Enrollment | SY 2026-2027</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Poppins', sans-serif; }
-        .bnis-maroon { color: #800000; }
-        .bg-bnis-maroon { background-color: #800000; }
-        .bg-bnis-gold { background-color: #FFD700; }
-        .bg-bnis-green { background-color: #006400; }
+        :root {
+            --maroon: #800000;
+            --maroon-dark: #5a0000;
+            --gold-bright: #f0c040;
+            --cream: #FFFDF5;
+            --white: #ffffff;
+            --gray-900: #111827;
+            --gray-800: #1f2937;
+            --gray-600: #4b5563;
+            --gray-500: #6b7280;
+            --gray-400: #9ca3af;
+            --gray-200: #e5e7eb;
+            --gray-100: #f3f4f6;
+            --gray-50: #f9fafb;
+            --green-dark: #006400;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.10);
+            --shadow-lg: 0 10px 40px rgba(0,0,0,0.13);
+            --shadow-maroon: 0 8px 32px rgba(128,0,0,0.22);
+            --radius-sm: 8px; --radius-md: 16px; --radius-lg: 24px; --radius-full: 9999px;
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'DM Sans', sans-serif; background: var(--gray-50); color: var(--gray-800); line-height: 1.6; }
+        h1,h2,h3,h4 { font-family: 'Playfair Display', serif; line-height: 1.2; }
+        a { text-decoration: none; color: inherit; }
+        img { display: block; max-width: 100%; }
+
+        /* NAVBAR */
+        .navbar { position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,0.97); backdrop-filter: blur(12px); border-bottom: 4px solid var(--maroon); padding: 1rem 3rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+        .nav-brand { display: flex; align-items: center; gap: 0.75rem; }
+        .nav-brand img { height: 48px; width: 48px; object-fit: contain; }
+        .nav-brand-name { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; text-transform: uppercase; letter-spacing: -0.02em; color: var(--maroon); line-height: 1; }
+        .nav-brand-sub { font-size: 0.62rem; font-weight: 500; color: var(--gray-500); letter-spacing: 0.2em; text-transform: uppercase; }
+        .nav-links { display: flex; align-items: center; gap: 2.5rem; font-size: 0.875rem; font-weight: 600; }
+        .nav-links a { color: var(--gray-500); transition: color 0.2s; }
+        .nav-links a:hover { color: var(--maroon); }
+        .nav-links a.active { color: var(--maroon); border-bottom: 2px solid var(--maroon); padding-bottom: 2px; }
+        .nav-btn { background: var(--maroon) !important; color: var(--white) !important; padding: 0.5rem 1.4rem; border-radius: var(--radius-full); transition: background 0.2s, transform 0.2s, box-shadow 0.2s !important; box-shadow: var(--shadow-sm); }
+        .nav-btn:hover { background: var(--maroon-dark) !important; transform: translateY(-1px); box-shadow: var(--shadow-md); }
+        .hamburger { display: none; background: none; border: none; cursor: pointer; color: var(--maroon); }
+        .mobile-menu { display: none; position: fixed; inset: 0; z-index: 60; background: var(--white); flex-direction: column; justify-content: center; align-items: center; gap: 2.5rem; transform: translateX(100%); transition: transform 0.3s ease; }
+        .mobile-menu.open { transform: translateX(0); }
+        .mobile-menu-close { position: absolute; top: 1.5rem; right: 1.5rem; background: none; border: none; cursor: pointer; color: var(--gray-800); }
+        .mobile-menu a { font-size: 1.75rem; font-family: 'Playfair Display', serif; color: var(--maroon); font-weight: 700; }
+        .mobile-menu a.secondary { font-size: 1.4rem; font-family: 'DM Sans', sans-serif; color: var(--gray-600); font-weight: 400; }
+
+        /* HERO */
+        .page-hero { padding: 6rem 1.5rem; text-align: center; color: var(--white); position: relative; overflow: hidden; }
+        .page-hero-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+        .page-hero-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.72); }
+        .page-hero-content { position: relative; z-index: 1; }
+        .hero-badge { background: var(--gold-bright); color: var(--maroon); padding: 0.25rem 1rem; border-radius: var(--radius-full); font-weight: 700; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.12em; display: inline-block; margin-bottom: 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.2); animation: pulseOpacity 2.5s ease-in-out infinite; }
+        @keyframes pulseOpacity { 0%,100%{opacity:1} 50%{opacity:0.55} }
+        .page-hero h2 { font-size: clamp(2.5rem,6vw,4.5rem); font-weight: 800; margin-bottom: 1.5rem; }
+        .page-hero h2 .accent { font-style: italic; color: var(--gold-bright); }
+        .page-hero p { font-size: 1.15rem; color: #fecaca; max-width: 36rem; margin: 0 auto 2.5rem; font-weight: 300; }
+        .status-pill { display: inline-flex; align-items: center; gap: 0.75rem; font-size: 0.875rem; background: rgba(255,255,255,0.1); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.2); padding: 0.75rem 2rem; border-radius: var(--radius-full); }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #4ade80; animation: pulseOpacity 1.5s infinite; }
+        .status-label { color: var(--white); font-weight: 500; }
+        .status-label strong { color: #fde68a; }
+
+        /* SECTIONS */
+        .section { padding: 5rem 1.5rem; }
+        .container { max-width: 80rem; margin: 0 auto; }
+        .section-eyebrow { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 0.5rem; display: block; }
+        .section-eyebrow.green { color: var(--green-dark); }
+        .section-eyebrow.maroon { color: var(--maroon); }
+        .section-title { font-size: clamp(1.8rem,3vw,2.5rem); font-weight: 700; color: var(--gray-900); }
+        .section-header-left { border-left: 4px solid var(--green-dark); padding-left: 1.25rem; margin-bottom: 3rem; }
+        .section-header-left.maroon-border { border-color: var(--maroon); }
+
+        /* GRADE CARDS */
+        .grade-section { position: relative; }
+        .grade-section::after { content: ''; position: absolute; top: 0; right: 0; width: 24rem; height: 24rem; background: #f0fdf4; border-radius: 50%; opacity: 0.5; filter: blur(48px); pointer-events: none; z-index: 0; }
+        .grade-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1.5rem; position: relative; z-index: 1; }
+        .grade-card { border: 1px solid var(--gray-200); padding: 2rem; border-radius: var(--radius-lg); transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s, background 0.3s; }
+        .grade-card:hover { transform: translateY(-4px); box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); background: var(--white); }
+        .grade-card.g7 { background: #fff1f2; } .grade-card.g7:hover { border-color: #ef4444; }
+        .grade-card.g8 { background: #fff7ed; } .grade-card.g8:hover { border-color: #f97316; }
+        .grade-card.g9 { background: #fefce8; } .grade-card.g9:hover { border-color: #eab308; }
+        .grade-card.g10 { background: #f0fdf4; } .grade-card.g10:hover { border-color: #22c55e; }
+        .grade-number { font-family: 'Playfair Display', serif; font-size: 2.5rem; font-weight: 800; display: block; margin-bottom: 1rem; transition: color 0.3s; }
+        .grade-card.g7 .grade-number { color: #fca5a5; } .grade-card.g7:hover .grade-number { color: #dc2626; }
+        .grade-card.g8 .grade-number { color: #fdba74; } .grade-card.g8:hover .grade-number { color: #ea580c; }
+        .grade-card.g9 .grade-number { color: #fde047; } .grade-card.g9:hover .grade-number { color: #ca8a04; }
+        .grade-card.g10 .grade-number { color: #86efac; } .grade-card.g10:hover .grade-number { color: #16a34a; }
+        .grade-card h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--gray-900); }
+        .grade-card p { font-size: 0.8rem; color: var(--gray-600); margin-bottom: 1rem; line-height: 1.6; }
+        .grade-list { list-style: disc; padding-left: 1.25rem; }
+        .grade-list li { font-size: 0.75rem; color: var(--gray-500); margin-bottom: 0.25rem; }
+
+        /* STRAND CARDS */
+        .strand-section { background: var(--white); position: relative; overflow: hidden; }
+        .strand-section::before { content: ''; position: absolute; bottom: 0; left: 0; width: 24rem; height: 24rem; background: #fffbeb; border-radius: 50%; opacity: 0.5; filter: blur(48px); pointer-events: none; }
+        .strand-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 2rem; position: relative; z-index: 1; }
+        .strand-card { padding: 2rem; border-radius: var(--radius-lg); border: 1px solid; transition: box-shadow 0.3s, transform 0.3s; }
+        .strand-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+        .strand-card.stem { background: rgba(239,246,255,0.7); border-color: #bfdbfe; }
+        .strand-card.stem:hover { border-color: #93c5fd; }
+        .strand-card.humss { background: rgba(250,245,255,0.7); border-color: #e9d5ff; }
+        .strand-card.humss:hover { border-color: #c4b5fd; }
+        .strand-card.abm { background: rgba(255,251,235,0.7); border-color: #fde68a; }
+        .strand-card.abm:hover { border-color: #fcd34d; }
+        .strand-card.ict { background: rgba(240,253,244,0.7); border-color: #bbf7d0; }
+        .strand-card.ict:hover { border-color: #86efac; }
+        .strand-card.eim { background: rgba(255,241,242,0.7); border-color: #fecdd3; }
+        .strand-card.eim:hover { border-color: #fda4af; }
+        .strand-icon { width: 3rem; height: 3rem; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; transition: background 0.2s, color 0.2s; }
+        .strand-icon svg { width: 1.5rem; height: 1.5rem; }
+        .stem .strand-icon { background: #dbeafe; color: #2563eb; } .stem:hover .strand-icon { background: #2563eb; color: var(--white); }
+        .humss .strand-icon { background: #ede9fe; color: #7c3aed; } .humss:hover .strand-icon { background: #7c3aed; color: var(--white); }
+        .abm .strand-icon { background: #fef3c7; color: #d97706; } .abm:hover .strand-icon { background: #d97706; color: var(--white); }
+        .strand-card h3 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.25rem; color: var(--gray-900); }
+        .strand-sub { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 1rem; }
+        .stem .strand-sub { color: #2563eb; } .humss .strand-sub { color: #7c3aed; } .abm .strand-sub { color: #d97706; }
+        .ict .strand-sub { color: var(--green-dark); } .eim .strand-sub { color: #dc2626; }
+        .strand-card p { font-size: 0.875rem; color: var(--gray-600); margin-bottom: 1.5rem; line-height: 1.7; }
+        .strand-divider { border: none; border-top: 1px solid; margin-bottom: 1rem; }
+        .stem .strand-divider { border-color: #bfdbfe; } .humss .strand-divider { border-color: #e9d5ff; } .abm .strand-divider { border-color: #fde68a; }
+        .ict .strand-divider { border-color: #bbf7d0; } .eim .strand-divider { border-color: #fecdd3; }
+        .strand-tags-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gray-500); margin-bottom: 0.5rem; }
+        .strand-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+        .strand-tag { background: var(--white); padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.75rem; border: 1px solid; }
+        .stem .strand-tag { color: #2563eb; border-color: #bfdbfe; } .humss .strand-tag { color: #7c3aed; border-color: #e9d5ff; } .abm .strand-tag { color: #d97706; border-color: #fde68a; }
+        .ict .strand-tag { color: var(--green-dark); border-color: #bbf7d0; } .eim .strand-tag { color: #dc2626; border-color: #fecdd3; }
+
+        /* FORM */
+        .form-section { position: relative; padding: 5rem 1.5rem; }
+        .form-section::before { content: ''; position: absolute; inset: 0; background-image: url('https://www.transparenttextures.com/patterns/cubes.png'); opacity: 0.04; }
+        .form-wrap { max-width: 56rem; margin: 0 auto; }
+        .form-header { text-align: center; margin-bottom: 3rem; }
+        .form-card { background: var(--white); border-top: 8px solid var(--maroon); border-radius: var(--radius-lg); box-shadow: 0 20px 60px rgba(0,0,0,0.12); padding: 3rem; position: relative; z-index: 1; }
+        .form-step { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--gray-100); }
+        .step-num { width: 2rem; height: 2rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.875rem; flex-shrink: 0; }
+        .step-num.red { background: #fee2e2; color: var(--maroon); }
+        .step-num.yellow { background: #fef3c7; color: #92400e; }
+        .step-num.green { background: #d1fae5; color: #065f46; }
+        .form-step h4 { font-size: 1.05rem; font-weight: 700; color: var(--gray-900); }
+        .form-fields { display: flex; flex-direction: column; gap: 2rem; }
+        .form-section-block { display: flex; flex-direction: column; gap: 0; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+        .form-row-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; }
+        .form-row.single { grid-template-columns: 1fr; }
+        .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+        .form-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gray-500); }
+        .form-input { background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: var(--radius-sm); padding: 0.75rem 1rem; font-family: 'DM Sans', sans-serif; font-size: 0.9375rem; color: var(--gray-800); outline: none; transition: border-color 0.2s, box-shadow 0.2s; width: 100%; }
+        .form-input:focus { border-color: var(--maroon); box-shadow: 0 0 0 3px rgba(128,0,0,0.1); }
+        .form-input::placeholder { color: var(--gray-400); }
+        .form-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%236b7280' viewBox='0 0 24 24'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.75rem center; padding-right: 2.5rem; }
+        .form-file-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gray-500); margin-bottom: 0.4rem; display: block; }
+        .form-file { width: 100%; font-size: 0.8rem; color: var(--gray-500); }
+        .form-file::-webkit-file-upload-button, .form-file::file-selector-button { margin-right: 0.75rem; padding: 0.4rem 0.9rem; border-radius: var(--radius-full); border: none; font-size: 0.8rem; cursor: pointer; transition: background 0.2s; }
+        .form-file.red::-webkit-file-upload-button, .form-file.red::file-selector-button { background: #fff1f2; color: var(--maroon); }
+        .form-file.red::-webkit-file-upload-button:hover, .form-file.red::file-selector-button:hover { background: #fecdd3; }
+        .form-file.yellow::-webkit-file-upload-button, .form-file.yellow::file-selector-button { background: #fef3c7; color: #92400e; }
+        .form-file.yellow::-webkit-file-upload-button:hover, .form-file.yellow::file-selector-button:hover { background: #fde68a; }
+        .form-file.green::-webkit-file-upload-button, .form-file.green::file-selector-button { background: #d1fae5; color: #065f46; }
+        .form-file.green::-webkit-file-upload-button:hover, .form-file.green::file-selector-button:hover { background: #a7f3d0; }
+        .hidden { display: none !important; }
+        .submit-btn { width: 100%; background: var(--maroon); color: var(--white); padding: 1.1rem 2rem; border-radius: var(--radius-md); font-family: 'DM Sans', sans-serif; font-size: 0.875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; border: none; cursor: pointer; box-shadow: var(--shadow-maroon); transition: background 0.2s, transform 0.2s, box-shadow 0.2s; margin-top: 0.5rem; }
+        .submit-btn:hover { background: var(--maroon-dark); transform: translateY(-1px); box-shadow: 0 16px 48px rgba(128,0,0,0.28); }
+        .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        #statusMsg { margin-top: 1rem; text-align: center; font-size: 0.875rem; font-weight: 500; min-height: 1.5rem; }
+
+        /* FOOTER */
+        .footer { background: #111111; color: var(--white); padding: 3rem 1.5rem; text-align: center; border-top: 8px solid var(--maroon); }
+        .footer p { font-size: 0.875rem; font-weight: 300; margin-bottom: 0.4rem; }
+        .footer p:last-child { opacity: 0.4; }
+
+        /* RESPONSIVE */
+        @media (max-width: 1024px) {
+            .navbar { padding: 1rem 1.5rem; }
+            .grade-grid { grid-template-columns: repeat(2,1fr); }
+            .strand-grid { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 768px) {
+            .navbar { padding: 1rem 1.25rem; }
+            .nav-links { display: none; }
+            .hamburger { display: block; }
+            .mobile-menu { display: flex; }
+            .grade-grid { grid-template-columns: 1fr 1fr; }
+            .strand-grid { grid-template-columns: 1fr; }
+            .form-row { grid-template-columns: 1fr; }
+            .form-row-3 { grid-template-columns: 1fr; }
+            .form-card { padding: 1.5rem; }
+        }
+        @media (max-width: 480px) {
+            .grade-grid { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800">
+<body>
 
-    <nav class="sticky top-0 z-50 bg-white/95 backdrop-blur-md shadow-sm py-4 px-6 md:px-12 flex justify-between items-center transition-all border-b border-gray-100">
-        <div class="flex items-center space-x-4">
-            <img src="BNIS_logo-removebg-preview.png" alt="BNIS Logo" class="h-12 w-12">
-            <h1 class="font-bold text-lg md:text-xl uppercase tracking-tight text-gray-900">Bucal National Integrated School</h1>
-        </div>
-        <div class="hidden md:flex items-center space-x-6 font-semibold">
-            <a href="index.html" class="text-gray-600 hover:text-bnis-maroon transition-colors">Home</a>
-            <a href="Enrollment.html" class="text-bnis-maroon">Enrollment</a>
-            <a href="#" class="text-gray-600 hover:text-bnis-maroon transition-colors">News & Alerts</a>
-            <a href="Admin.html" class="bg-bnis-maroon text-white px-5 py-2 rounded-full hover:bg-red-900 transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5">Our Admin</a>
-        </div>
-
-        <!-- Mobile Menu Button -->
-        <button id="mobileMenuBtn" class="md:hidden text-gray-800 focus:outline-none">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-        </button>
-    </nav>
-
-    <!-- Mobile Menu Overlay -->
-    <div id="mobileMenu" class="fixed inset-0 z-[60] bg-white transform translate-x-full transition-transform duration-300 ease-in-out md:hidden flex flex-col justify-center items-center space-y-8">
-        <button id="closeMenuBtn" class="absolute top-6 right-6 text-gray-800 focus:outline-none">
-             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-        </button>
-        <a href="index.html" class="text-2xl font-bold text-gray-600 hover:text-bnis-maroon">Home</a>
-        <a href="Enrollment.html" class="text-2xl font-bold text-bnis-maroon">Enrollment</a>
-        <a href="#" class="text-2xl font-bold text-gray-600 hover:text-bnis-maroon">Student Portal</a>
-        <a href="#" class="text-2xl font-bold text-gray-600 hover:text-bnis-maroon">News & Alerts</a>
-        <a href="Admin.html" class="bg-bnis-maroon text-white px-8 py-3 rounded-full text-xl font-bold shadow-lg">Our Admin</a>
-    </div>
-
-    <section class="relative h-[600px] flex items-center px-6 md:px-12 overflow-hidden bg-cover bg-center bg-no-repeat" 
-         style="background-image: url('BNIS_bg.png');">
-        <div class="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent"></div>
-        <div class="relative z-10 text-white max-w-3xl pt-10">
-            <span class="bg-bnis-gold text-black px-4 py-1 rounded-full font-bold text-sm uppercase tracking-wider mb-4 inline-block shadow-lg">Official Enrollment Portal</span>
-            <h2 class="text-5xl md:text-7xl font-extrabold mb-6 leading-tight drop-shadow-lg">
-                Enrollment for <br> SY 2026-2027 is Open!
-            </h2>
-            <p class="text-xl md:text-2xl mb-8 opacity-90 font-light max-w-2xl">Start your journey with BNIS today. Explore our programs and register now to secure your future.</p>
-            <a href="#registration-form" class="bg-bnis-maroon hover:bg-red-900 text-white px-10 py-4 rounded-full font-bold text-lg shadow-xl hover:shadow-2xl transition-all transform hover:-translate-y-1 inline-flex items-center gap-2">
-                Register Now
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
-            </a>
-        </div>
-    </section>
-
-    <div class="bg-white border-b border-gray-200">
-        <div class="max-w-7xl mx-auto py-4 px-6 flex flex-col md:flex-row justify-center items-center gap-2 text-center">
-            <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-red-100 text-bnis-maroon"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" /></svg></span>
-            <p class="font-medium text-gray-700">Enrollment Period is currently active: <span class="font-bold text-bnis-maroon">January 15 - March 31, 2026</span></p>
+<nav class="navbar">
+    <div class="nav-brand">
+        <img src="BNIS_logo-removebg-preview.png" alt="BNIS Logo">
+        <div>
+            <div class="nav-brand-name">Bucal National</div>
+            <div class="nav-brand-sub">Integrated School</div>
         </div>
     </div>
+    <div class="nav-links">
+        <a href="index.html" class="active">Home</a>
+        <a href="Enrollment.html">Enrollment</a>
+        <a href="#">News &amp; Alerts</a>
+        <a href="Admin.html" class="nav-btn">Our Admin</a>
+    </div>
+    <button class="hamburger" id="mobileMenuBtn" aria-label="Open menu">
+        <svg style="width:2rem;height:2rem" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+    </button>
+</nav>
 
-    <!-- JHS Section -->
-    <section class="py-20 px-6 md:px-12 bg-green-50/50">
-        <div class="max-w-7xl mx-auto">
-            <div class="text-center mb-12">
-                <span class="text-[#006400] font-bold tracking-wider uppercase text-sm">Academic Programs</span>
-                <h2 class="text-4xl font-bold mb-4 text-[#006400] mt-2">Junior High School (JHS)</h2>
-                <p class="text-lg text-gray-600 max-w-3xl mx-auto">Our Junior High School program provides a strong foundation for students in Grades 7-10, preparing them for Senior High School and beyond.</p>
+<div class="mobile-menu" id="mobileMenu">
+    <button class="mobile-menu-close" id="closeMenuBtn" aria-label="Close menu">
+        <svg style="width:2rem;height:2rem" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+    </button>
+    <a href="index.html">Home</a>
+    <a href="Enrollment.html" class="secondary">Enrollment</a>
+    <a href="Admin.html" class="secondary">Our Admin</a>
+</div>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+    <img class="page-hero-bg" src="BNIS_bg.png" alt="BNIS Background">
+    <div class="page-hero-overlay"></div>
+    <div class="page-hero-content">
+        <span class="hero-badge">Official Enrollment</span>
+        <h2>Enrollment <span class="accent">2026-2027</span></h2>
+        <p>Start your journey with BNIS today. Secure your future with excellence.</p>
+        <div class="status-pill">
+            <span class="status-dot"></span>
+            <span class="status-label">Status: <strong>Open (Jan 15 – Mar 31)</strong></span>
+        </div>
+    </div>
+</section>
+
+<!-- JHS GRADES -->
+<section class="section grade-section" style="background:var(--white)">
+    <div class="container">
+        <div class="section-header-left">
+            <span class="section-eyebrow green">Grades 7–10</span>
+            <h2 class="section-title">Junior High School</h2>
+        </div>
+        <div class="grade-grid">
+            <div class="grade-card g7">
+                <span class="grade-number">07</span>
+                <h3>Grade 7</h3>
+                <p>Foundation year focusing on core subjects and adjustment to high school life.</p>
+                <ul class="grade-list">
+                    <li>Core Subjects (Math, Sci, Eng)</li>
+                    <li>Intro to TLE</li>
+                    <li>Values Education</li>
+                </ul>
             </div>
+            <div class="grade-card g8">
+                <span class="grade-number">08</span>
+                <h3>Grade 8</h3>
+                <p>Building on fundamentals with advanced concepts in Algebra and Biology.</p>
+                <ul class="grade-list">
+                    <li>Intermediate Algebra</li>
+                    <li>Asian History</li>
+                    <li>Exploratory TLE</li>
+                </ul>
+            </div>
+            <div class="grade-card g9">
+                <span class="grade-number">09</span>
+                <h3>Grade 9</h3>
+                <p>Specialized tracks introduction, Economics, and career exploration.</p>
+                <ul class="grade-list">
+                    <li>Specialized TLE</li>
+                    <li>Trigonometry</li>
+                    <li>Chemistry</li>
+                </ul>
+            </div>
+            <div class="grade-card g10">
+                <span class="grade-number">10</span>
+                <h3>Grade 10</h3>
+                <p>Preparation for Senior High School track selection and research defense.</p>
+                <ul class="grade-list">
+                    <li>Research Capstone</li>
+                    <li>Physics</li>
+                    <li>Career Guidance</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-                <div class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 text-center group hover:bg-red-50">
-                    <div class="bg-red-50 text-red-800 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 text-2xl font-bold group-hover:bg-red-800 group-hover:text-white transition-colors">
-                        7
-                    </div>
-                    <h3 class="font-bold text-xl mb-2">Grade 7</h3>
-                    <p class="text-sm text-gray-600">Foundation year focusing on core subjects and adjustment to high school life.</p>
+<!-- SHS STRANDS -->
+<section class="section strand-section">
+    <div class="container">
+        <div class="section-header-left maroon-border">
+            <span class="section-eyebrow maroon">Career Pathways</span>
+            <h2 class="section-title">Senior High School</h2>
+        </div>
+        <div class="strand-grid">
+            <div class="strand-card stem">
+                <div class="strand-icon">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
                 </div>
-
-                <div class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 text-center group hover:bg-orange-50">
-                    <div class="bg-orange-50 text-orange-600 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 text-2xl font-bold group-hover:bg-orange-600 group-hover:text-white transition-colors">
-                        8
-                    </div>
-                    <h3 class="font-bold text-xl mb-2">Grade 8</h3>
-                    <p class="text-sm text-gray-600">Building on fundamentals with advanced concepts in all subject areas.</p>
-                </div>
-
-                <div class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 text-center group hover:bg-yellow-50">
-                    <div class="bg-yellow-50 text-yellow-600 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 text-2xl font-bold group-hover:bg-yellow-600 group-hover:text-white transition-colors">
-                        9
-                    </div>
-                    <h3 class="font-bold text-xl mb-2">Grade 9</h3>
-                    <p class="text-sm text-gray-600">Specialized tracks introduction and career exploration begins.</p>
-                </div>
-
-                <div class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 text-center group hover:bg-green-50">
-                    <div class="bg-green-50 text-green-600 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 text-2xl font-bold group-hover:bg-green-600 group-hover:text-white transition-colors">
-                        10
-                    </div>
-                    <h3 class="font-bold text-xl mb-2">Grade 10</h3>
-                    <p class="text-sm text-gray-600">Preparation for Senior High School with career guidance and track selection.</p>
+                <h3>STEM</h3>
+                <p class="strand-sub">Science &amp; Technology</p>
+                <p>Perfect for students interested in engineering, medicine, research, and technology. Focuses on advanced mathematics and sciences.</p>
+                <hr class="strand-divider">
+                <div class="strand-tags-label">Key Subjects:</div>
+                <div class="strand-tags">
+                    <span class="strand-tag">Calculus</span>
+                    <span class="strand-tag">Physics</span>
+                    <span class="strand-tag">Chemistry</span>
+                    <span class="strand-tag">Biology</span>
                 </div>
             </div>
-
-            <div class="bg-white p-10 rounded-3xl shadow-xl border-t-4 border-[#006400] hover:bg-green-50 transition-colors">
-                <h3 class="text-2xl font-bold mb-4 text-[#006400]">JHS Core Subjects</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <ul class="space-y-2 text-gray-700">
-                        <li class="flex items-center"><span class="mr-2">📚</span> English</li>
-                        <li class="flex items-center"><span class="mr-2">📚</span> Mathematics</li>
-                        <li class="flex items-center"><span class="mr-2">📚</span> Science</li>
-                        <li class="flex items-center"><span class="mr-2">📚</span> Filipino</li>
-                    </ul>
-                    <ul class="space-y-2 text-gray-700">
-                        <li class="flex items-center"><span class="mr-2">📚</span> Social Studies (Araling Panlipunan)</li>
-                        <li class="flex items-center"><span class="mr-2">📚</span> Technology and Livelihood Education (TLE)</li>
-                        <li class="flex items-center"><span class="mr-2">📚</span> Music, Arts, Physical Education, and Health (MAPEH)</li>
-                        <li class="flex items-center"><span class="mr-2">📚</span> Values Education (Edukasyon sa Pagpapakatao)</li>
-                    </ul>
+            <div class="strand-card humss">
+                <div class="strand-icon">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                </div>
+                <h3>HUMSS</h3>
+                <p class="strand-sub">Humanities</p>
+                <p>Ideal for students interested in law, education, communication, and social sciences. Develops critical thinking and writing skills.</p>
+                <hr class="strand-divider">
+                <div class="strand-tags-label">Key Subjects:</div>
+                <div class="strand-tags">
+                    <span class="strand-tag">Creative Writing</span>
+                    <span class="strand-tag">Politics</span>
+                    <span class="strand-tag">Social Science</span>
+                </div>
+            </div>
+            <div class="strand-card abm">
+                <div class="strand-icon">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                </div>
+                <h3>ABM</h3>
+                <p class="strand-sub">Business &amp; Mgmt</p>
+                <p>For future entrepreneurs, accountants, and business leaders. Focuses on financial management and corporate operations.</p>
+                <hr class="strand-divider">
+                <div class="strand-tags-label">Key Subjects:</div>
+                <div class="strand-tags">
+                    <span class="strand-tag">Accounting</span>
+                    <span class="strand-tag">Marketing</span>
+                    <span class="strand-tag">Economics</span>
+                </div>
+            </div>
+            <div class="strand-card ict">
+                <h3>ICT</h3>
+                <p class="strand-sub">Technology (TVL)</p>
+                <p>Focus on programming, animation, and computer systems servicing. Prepares students for tech certifications.</p>
+                <hr class="strand-divider">
+                <div class="strand-tags-label">Key Skills:</div>
+                <div class="strand-tags">
+                    <span class="strand-tag">Programming</span>
+                    <span class="strand-tag">Animation</span>
+                    <span class="strand-tag">CSS</span>
+                </div>
+            </div>
+            <div class="strand-card eim">
+                <h3>EIM / Cookery</h3>
+                <p class="strand-sub">Livelihood (TVL)</p>
+                <p>Hands-on training in electrical maintenance or culinary arts. Direct path to NCII assessments.</p>
+                <hr class="strand-divider">
+                <div class="strand-tags-label">Key Skills:</div>
+                <div class="strand-tags">
+                    <span class="strand-tag">Electrical</span>
+                    <span class="strand-tag">Culinary</span>
+                    <span class="strand-tag">Safety</span>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- SHS Strands Section -->
-    <section class="py-20 px-6 md:px-12 bg-red-50/50">
-        <div class="max-w-7xl mx-auto">
-            <div class="text-center mb-12">
-                <span class="text-bnis-maroon font-bold tracking-wider uppercase text-sm">Career Pathways</span>
-                <h2 class="text-4xl font-bold mb-4 text-bnis-maroon mt-2">Senior High School (SHS) Strands</h2>
-                <p class="text-lg text-gray-600 max-w-3xl mx-auto">BNIS offers Academic and TVL strands such as STEM, HUMSS, ABM, ICT, and EIM (Electrical / Cookery) to prepare you for college or employment.</p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- STEM Strand -->
-                <div class="bg-white p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 relative overflow-hidden group hover:bg-blue-50">
-                    <div class="absolute top-0 left-0 w-full h-2 bg-blue-600"></div>
-                    <div class="flex items-center mb-4">
-                        <div class="bg-blue-100 text-blue-600 w-14 h-14 rounded-2xl flex items-center justify-center mr-4 group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                            </svg>
-                        </div>
-                        <h3 class="text-2xl font-bold text-blue-600">STEM</h3>
-                    </div>
-                    <p class="text-gray-600 mb-6">Science, Technology, Engineering, and Mathematics - Perfect for students interested in engineering, medicine, research, and technology.</p>
-                    
-                    <h4 class="font-bold text-lg mb-3 text-gray-800">Possible College Courses:</h4>
-                    <ul class="space-y-2 text-gray-700 mb-6">
-                        <li class="flex items-start"><span class="mr-2">🎓</span> Engineering (Civil, Mechanical, Electrical, Computer)</li>
-                        <li class="flex items-start"><span class="mr-2">🎓</span> Medicine and Health Sciences</li>
-                        <li class="flex items-start"><span class="mr-2">🎓</span> Information Technology & Computer Science</li>
-                        <li class="flex items-start"><span class="mr-2">🎓</span> Architecture</li>
-                        <li class="flex items-start"><span class="mr-2">🎓</span> Pharmacy</li>
-                        <li class="flex items-start"><span class="mr-2">🎓</span> Mathematics & Statistics</li>
-                        <li class="flex items-start"><span class="mr-2">🎓</span> Physics, Chemistry, Biology</li>
-                    </ul>
-
-                    <h4 class="font-bold text-lg mb-3 text-gray-800">Core Subjects:</h4>
-                    <div class="flex flex-wrap gap-2">
-                        <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">Pre-Calculus</span>
-                        <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">Basic Calculus</span>
-                        <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">General Biology</span>
-                        <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">General Chemistry</span>
-                        <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">General Physics</span>
-                    </div>
-                </div>
-
-                <!-- HUMSS Strand -->
-                <div class="bg-white p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 relative overflow-hidden group hover:bg-purple-50">
-                    <div class="absolute top-0 left-0 w-full h-2 bg-purple-600"></div>
-                    <div class="flex items-center mb-4">
-                        <div class="bg-purple-100 text-purple-600 w-14 h-14 rounded-2xl flex items-center justify-center mr-4 group-hover:bg-purple-600 group-hover:text-white transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                            </svg>
-                        </div>
-                        <h3 class="text-2xl font-bold text-purple-600">HUMSS</h3>
-                    </div>
-                    <p class="text-gray-600 mb-6">Humanities and Social Sciences - Ideal for students interested in law, education, communication, and social sciences.</p>
-                    
-                    <h4 class="font-bold text-lg mb-3 text-gray-800">Possible College Courses:</h4>
-                    <ul class="space-y-2 text-gray-700 mb-6">
-                        <li class="flex items-start"><span class="mr-2">🎓</span> Law</li>
-                        <li class="flex items-start"><span class="mr-2">🎓</span> Education (Elementary, Secondary, Special Education)</li>
-                        <li class="flex items-start"><span class="mr-2">🎓</span> Mass Communication & Journalism</li>
-                        <li class="flex items-start"><span class="mr-2">🎓</span> Psychology</li>
-                        <li class="flex items-start"><span class="mr-2">🎓</span> Political Science</li>
-                        <li class="flex items-start"><span class="mr-2">🎓</span> Social Work</li>
-                        <li class="flex items-start"><span class="mr-2">🎓</span> Philosophy</li>
-                        <li class="flex items-start"><span class="mr-2">🎓</span> Literature & Creative Writing</li>
-                    </ul>
-
-                    <h4 class="font-bold text-lg mb-3 text-gray-800">Core Subjects:</h4>
-                    <div class="flex flex-wrap gap-2">
-                        <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">Creative Writing</span>
-                        <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">Disciplines & Ideas</span>
-                        <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">Philippine Politics</span>
-                        <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">World Religions</span>
-                    </div>
-                </div>
-
-                <!-- ABM Strand -->
-                <div class="bg-white p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 relative overflow-hidden group hover:bg-yellow-50">
-                    <div class="absolute top-0 left-0 w-full h-2 bg-yellow-500"></div>
-                    <div class="flex items-center mb-4">
-                        <div class="bg-yellow-100 text-yellow-600 w-14 h-14 rounded-2xl flex items-center justify-center mr-4 group-hover:bg-yellow-500 group-hover:text-white transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h10m-9 4h8M5 6h14l1 4H4l1-4z" />
-                            </svg>
-                        </div>
-                        <h3 class="text-2xl font-bold text-yellow-600">ABM</h3>
-                    </div>
-                    <p class="text-gray-600 mb-6">Accountancy, Business and Management - For future entrepreneurs, accountants, business leaders, and hospitality professionals.</p>
-
-                    <h4 class="font-bold text-lg mb-3 text-gray-800">Possible College Courses:</h4>
-                    <ul class="space-y-2 text-gray-700 mb-6">
-                        <li class="flex items-start"><span class="mr-2">🎓</span> Accountancy</li>
-                        <li class="flex items-start"><span class="mr-2">🎓</span> Business Administration & Management</li>
-                        <li class="flex items-start"><span class="mr-2">🎓</span> Marketing Management</li>
-                        <li class="flex items-start"><span class="mr-2">🎓</span> Tourism & Hospitality Management</li>
-                        <li class="flex items-start"><span class="mr-2">🎓</span> Economics</li>
-                    </ul>
-
-                    <h4 class="font-bold text-lg mb-3 text-gray-800">Core Subjects:</h4>
-                    <div class="flex flex-wrap gap-2">
-                        <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm">Business Math</span>
-                        <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm">Organization & Management</span>
-                        <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm">Principles of Marketing</span>
-                    </div>
-                </div>
-
-                <!-- ICT Strand -->
-                <div class="bg-white p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 relative overflow-hidden group hover:bg-green-50">
-                    <div class="absolute top-0 left-0 w-full h-2 bg-green-500"></div>
-                    <div class="flex items-center mb-4">
-                        <div class="bg-green-100 text-green-600 w-14 h-14 rounded-2xl flex items-center justify-center mr-4 group-hover:bg-green-500 group-hover:text-white transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-3-3v6m-7 5h14a2 2 0 002-2V7a2 2 0 00-2-2h-3.586a1 1 0 01-.707-.293l-1.414-1.414A2 2 0 0010.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                            </svg>
-                        </div>
-                        <h3 class="text-2xl font-bold text-green-600">ICT</h3>
-                    </div>
-                    <p class="text-gray-600 mb-6">Information and Communications Technology - For students interested in programming, networking, multimedia, and IT-related jobs.</p>
-
-                    <h4 class="font-bold text-lg mb-3 text-gray-800">Possible Careers & Courses:</h4>
-                    <ul class="space-y-2 text-gray-700 mb-6">
-                        <li class="flex items-start"><span class="mr-2">💼</span> IT Support Specialist / Technician</li>
-                        <li class="flex items-start"><span class="mr-2">💼</span> Web & Graphic Designer</li>
-                        <li class="flex items-start"><span class="mr-2">🎓</span> BS Information Technology</li>
-                        <li class="flex items-start"><span class="mr-2">🎓</span> BS Computer Science</li>
-                    </ul>
-
-                    <h4 class="font-bold text-lg mb-3 text-gray-800">Core Skills:</h4>
-                    <div class="flex flex-wrap gap-2">
-                        <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">Computer Systems Servicing</span>
-                        <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">Programming Basics</span>
-                        <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">Multimedia Editing</span>
-                    </div>
-                </div>
-
-                <!-- EIM / Cookery Strand -->
-                <div class="bg-white p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 relative overflow-hidden group hover:bg-red-50">
-                    <div class="absolute top-0 left-0 w-full h-2 bg-red-500"></div>
-                    <div class="flex items-center mb-4">
-                        <div class="bg-red-100 text-red-600 w-14 h-14 rounded-2xl flex items-center justify-center mr-4 group-hover:bg-red-500 group-hover:text-white transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m-9 8h10a2 2 0 002-2V7a2 2 0 00-2-2H9L7 7H5a2 2 0 00-2 2v7a2 2 0 002 2z" />
-                            </svg>
-                        </div>
-                        <h3 class="text-2xl font-bold text-red-600">EIM / Cookery</h3>
-                    </div>
-                    <p class="text-gray-600 mb-6">Electrical Installation & Maintenance and Cookery (TVL) - Hands-on training for students who want to gain technical skills for work or business.</p>
-
-                    <h4 class="font-bold text-lg mb-3 text-gray-800">Possible Careers & NC (TESDA):</h4>
-                    <ul class="space-y-2 text-gray-700 mb-6">
-                        <li class="flex items-start"><span class="mr-2">🔌</span> Electrician (EIM NC II)</li>
-                        <li class="flex items-start"><span class="mr-2">🍳</span> Cook / Kitchen Staff (Cookery NC II)</li>
-                        <li class="flex items-start"><span class="mr-2">🏠</span> Household / Building Maintenance</li>
-                    </ul>
-
-                    <h4 class="font-bold text-lg mb-3 text-gray-800">Core Skills:</h4>
-                    <div class="flex flex-wrap gap-2">
-                        <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm">Electrical Installation</span>
-                        <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm">Safety Procedures</span>
-                        <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm">Food Preparation</span>
-                    </div>
-                </div>
-            </div>
+<!-- REGISTRATION FORM -->
+<section id="registration-form" class="form-section" style="background:var(--gray-50)">
+    <div class="form-wrap">
+        <div class="form-header">
+            <span class="section-eyebrow maroon" style="text-align:center;display:block;margin-bottom:0.4rem">Application</span>
+            <h2 style="font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;color:var(--gray-900)">Pre-Registration Form</h2>
         </div>
-    </section>
-
-    <!-- Registration Form Section -->
-    <section id="registration-form" class="py-20 px-6 md:px-12 bg-gray-50">
-        <div class="max-w-4xl mx-auto">
-            <div class="text-center mb-12">
-                <h2 class="text-4xl font-bold mb-4 text-gray-900">Online Pre-Registration Form</h2>
-                <p class="text-lg text-gray-600">Fill out the form below to start your enrollment process for SY 2026-2027</p>
-            </div>
-
-            <div class="bg-white p-8 md:p-12 rounded-3xl shadow-2xl border border-gray-100">
-                <form id="enrollmentForm" class="space-y-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-2">Student Name <span class="text-red-500">*</span></label>
-                            <input type="text" id="studentName" required class="w-full bg-gray-50 border border-gray-300 p-4 rounded-xl focus:bg-white focus:ring-2 focus:ring-bnis-maroon focus:border-bnis-maroon outline-none transition-all" placeholder="Enter Full Name">
+        <div class="form-card">
+            <form id="enrollmentForm" class="form-fields">
+                <!-- Step 1 -->
+                <div class="form-section-block">
+                    <div class="form-step">
+                        <span class="step-num red">1</span>
+                        <h4>Student Information</h4>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="studentName">Student Name *</label>
+                            <input type="text" id="studentName" required class="form-input" placeholder="Full Name">
                         </div>
-
-                        <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-2">LRN (Learner Reference Number) <span class="text-red-500">*</span></label>
-                            <input type="text" id="lrn" required class="w-full bg-gray-50 border border-gray-300 p-4 rounded-xl focus:bg-white focus:ring-2 focus:ring-bnis-maroon focus:border-bnis-maroon outline-none transition-all" placeholder="12-digit LRN">
+                        <div class="form-group">
+                            <label class="form-label" for="lrn">LRN *</label>
+                            <input type="text" id="lrn" required class="form-input" placeholder="12-digit LRN">
                         </div>
                     </div>
-
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Email Address <span class="text-red-500">*</span></label>
-                        <input type="email" id="email" required class="w-full bg-gray-50 border border-gray-300 p-4 rounded-xl focus:bg-white focus:ring-2 focus:ring-bnis-maroon focus:border-bnis-maroon outline-none transition-all" placeholder="student@email.com">
+                    <div class="form-row single">
+                        <div class="form-group">
+                            <label class="form-label" for="email">Email Address *</label>
+                            <input type="email" id="email" required class="form-input" placeholder="email@example.com">
+                        </div>
                     </div>
+                </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-2">Student Type <span class="text-red-500">*</span></label>
-                            <select id="studentType" required class="w-full bg-gray-50 border border-gray-300 p-4 rounded-xl focus:bg-white focus:ring-2 focus:ring-bnis-maroon focus:border-bnis-maroon outline-none transition-all">
-                                <option value="">Select Student Type</option>
+                <!-- Step 2 -->
+                <div class="form-section-block">
+                    <div class="form-step">
+                        <span class="step-num yellow">2</span>
+                        <h4>Academic Details</h4>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="studentType">Student Type *</label>
+                            <select id="studentType" required class="form-input form-select">
+                                <option value="">Select...</option>
                                 <option value="New Student">New Student</option>
                                 <option value="Transferee">Transferee</option>
                             </select>
                         </div>
-
-                        <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-2">Grade Level to Enroll <span class="text-red-500">*</span></label>
-                            <select id="gradeLevel" required class="w-full bg-gray-50 border border-gray-300 p-4 rounded-xl focus:bg-white focus:ring-2 focus:ring-bnis-maroon focus:border-bnis-maroon outline-none transition-all">
-                                <option value="">Select Grade Level</option>
+                        <div class="form-group">
+                            <label class="form-label" for="gradeLevel">Grade Level *</label>
+                            <select id="gradeLevel" required class="form-input form-select">
+                                <option value="">Select...</option>
                                 <optgroup label="Junior High School">
                                     <option value="Grade 7">Grade 7</option>
                                     <option value="Grade 8">Grade 8</option>
@@ -359,229 +443,152 @@
                             </select>
                         </div>
                     </div>
-
-                    <div id="strandContainer" style="display: none;">
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Strand <span class="text-red-500">*</span></label>
-                        <select id="strand" class="w-full bg-gray-50 border border-gray-300 p-4 rounded-xl focus:bg-white focus:ring-2 focus:ring-bnis-maroon focus:border-bnis-maroon outline-none transition-all">
-                            <option value="">Select Strand</option>
-                            <option value="STEM">STEM (Science, Technology, Engineering, Mathematics)</option>
-                            <option value="HUMSS">HUMSS (Humanities and Social Sciences)</option>
-                            <option value="ABM">ABM (Accountancy, Business and Management)</option>
-                            <option value="ICT">ICT (Information and Communications Technology)</option>
-                            <option value="EIM/Cookery">EIM / Cookery (TVL)</option>
-                        </select>
+                    <div id="strandContainer" class="form-row single hidden">
+                        <div class="form-group">
+                            <label class="form-label" for="strand">Strand *</label>
+                            <select id="strand" class="form-input form-select">
+                                <option value="">Select Strand</option>
+                                <option value="STEM">STEM</option>
+                                <option value="HUMSS">HUMSS</option>
+                                <option value="ABM">ABM</option>
+                                <option value="ICT">ICT</option>
+                                <option value="EIM/Cookery">EIM / Cookery</option>
+                            </select>
+                        </div>
                     </div>
-
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Guardian's Contact Number <span class="text-red-500">*</span></label>
-                        <input type="tel" id="contact" required class="w-full bg-gray-50 border border-gray-300 p-4 rounded-xl focus:bg-white focus:ring-2 focus:ring-bnis-maroon focus:border-bnis-maroon outline-none transition-all" placeholder="09XX-XXX-XXXX">
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Good Moral Certificate <span class="text-red-500">*</span></label>
-                        <input type="file" id="goodMoralImage" accept="image/*" required class="w-full bg-gray-50 border border-gray-300 p-3 rounded-xl focus:bg-white focus:ring-2 focus:ring-bnis-maroon focus:border-bnis-maroon outline-none transition-all file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-bnis-maroon hover:file:bg-red-100">
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">PSA Birth Certificate <span class="text-red-500">*</span></label>
-                        <input type="file" id="psaImage" accept="image/*" required class="w-full bg-gray-50 border border-gray-300 p-3 rounded-xl focus:bg-white focus:ring-2 focus:ring-bnis-maroon focus:border-bnis-maroon outline-none transition-all file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-bnis-maroon hover:file:bg-red-100">
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Previous Report Card <span class="text-red-500">*</span></label>
-                        <input type="file" id="reportCardImage" accept="image/*" required class="w-full bg-gray-50 border border-gray-300 p-3 rounded-xl focus:bg-white focus:ring-2 focus:ring-bnis-maroon focus:border-bnis-maroon outline-none transition-all file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-bnis-maroon hover:file:bg-red-100">
-                    </div>
-
-                    <button type="submit" id="submitBtn" class="w-full bg-bnis-maroon text-white py-4 rounded-xl font-bold text-lg hover:bg-red-900 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1">
-                        Submit Pre-Registration
-                    </button>
-                </form>
-                <p id="statusMsg" class="mt-4 text-center font-bold"></p>
-            </div>
-        </div>
-    </section>
-
-    <footer class="bg-bnis-maroon text-white p-12">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
-            <div class="flex items-center space-x-4 mb-6 md:mb-0">
-                <img src="BNIS_logo-removebg-preview.png" alt="BNIS Logo" class="h-16 w-16">
-                <div>
-                    <p class="font-bold">Bucal 2</p>
-                    <p class="text-sm">Maragondon, Cavite</p>
                 </div>
-            </div>
-            <div class="text-sm mb-6 md:mb-0">
-                <p class="font-bold mb-2">Contact:</p>
-                <p>0915-109-7213 | mendoza.roiseivan.m@gmail.com</p>
-            </div>
-            <div class="flex flex-col items-end">
-                <div class="flex space-x-4 mb-4">
-                    <a href="https://www.facebook.com/ivnmendoza.20/" target="_blank" rel="noopener noreferrer" class="text-white hover:text-gray-300 transition-colors" aria-label="Facebook">
-                        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clip-rule="evenodd" /></svg>
-                    </a>
-                    <a href="https://www.instagram.com/ivnmendoza_/" target="_blank" rel="noopener noreferrer" class="text-white hover:text-gray-300 transition-colors" aria-label="Instagram">
-                        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.451 2.535c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z" clip-rule="evenodd" /></svg>
-                    </a>
-                    <a href="https://www.linkedin.com/in/roise-ivan-mendoza/" target="_blank" rel="noopener noreferrer" class="text-white hover:text-gray-300 transition-colors" aria-label="LinkedIn">
-                        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" clip-rule="evenodd" /></svg>
-                    </a>
+
+                <!-- Step 3 -->
+                <div class="form-section-block">
+                    <div class="form-step">
+                        <span class="step-num green">3</span>
+                        <h4>Requirements</h4>
+                    </div>
+                    <div class="form-row single" style="margin-bottom:1rem">
+                        <div class="form-group">
+                            <label class="form-label" for="contact">Guardian Contact *</label>
+                            <input type="tel" id="contact" required class="form-input" placeholder="09XX-XXX-XXXX">
+                        </div>
+                    </div>
+                    <div class="form-row-3">
+                        <div class="form-group">
+                            <label class="form-file-label">Good Moral Cert.</label>
+                            <input type="file" id="goodMoralImage" accept="image/*" required class="form-file red">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-file-label">PSA Birth Cert.</label>
+                            <input type="file" id="psaImage" accept="image/*" required class="form-file yellow">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-file-label">Report Card</label>
+                            <input type="file" id="reportCardImage" accept="image/*" required class="form-file green">
+                        </div>
+                    </div>
                 </div>
-                <p class="text-[13px] opacity-70">Developed and Programmed by: Roise Ivan M. Mendoza | BNIS Alumni</p>
-            </div>
+
+                <button type="submit" id="submitBtn" class="submit-btn">Submit Application</button>
+            </form>
+            <p id="statusMsg"></p>
         </div>
-    </footer>
+    </div>
+</section>
 
-    <script>
-        const SUPABASE_URL = 'https://hpvnqcsuzuyznbiyduhc.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhwdm5xY3N1enV5em5iaXlkdWhjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkwMDk5NTQsImV4cCI6MjA4NDU4NTk1NH0.qxhGoqb71DTTsXlBo3OUZ-JhIlYVlTVm8g8H2f4iZuA';
+<footer class="footer">
+    <p>Bucal National Integrated School | Maragondon, Cavite</p>
+    <p>Developed by Roise Ivan M. Mendoza</p>
+</footer>
 
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+<script>
+    const SUPABASE_URL = 'https://hpvnqcsuzuyznbiyduhc.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhwdm5xY3N1enV5em5iaXlkdWhjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkwMDk5NTQsImV4cCI6MjA4NDU4NTk1NH0.qxhGoqb71DTTsXlBo3OUZ-JhIlYVlTVm8g8H2f4iZuA';
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        const form = document.getElementById('enrollmentForm');
-        const statusMsg = document.getElementById('statusMsg');
-        const submitBtn = document.getElementById('submitBtn');
-        const gradeLevel = document.getElementById('gradeLevel');
-        const strandContainer = document.getElementById('strandContainer');
-        const strand = document.getElementById('strand');
-        const goodMoralImage = document.getElementById('goodMoralImage');
-        const psaImage = document.getElementById('psaImage');
-        const reportCardImage = document.getElementById('reportCardImage');
+    const form = document.getElementById('enrollmentForm');
+    const statusMsg = document.getElementById('statusMsg');
+    const submitBtn = document.getElementById('submitBtn');
+    const gradeLevel = document.getElementById('gradeLevel');
+    const strandContainer = document.getElementById('strandContainer');
+    const strand = document.getElementById('strand');
+    const goodMoralImage = document.getElementById('goodMoralImage');
+    const psaImage = document.getElementById('psaImage');
+    const reportCardImage = document.getElementById('reportCardImage');
 
-        // --- Mobile Menu Logic ---
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const closeMenuBtn = document.getElementById('closeMenuBtn');
-        const mobileMenu = document.getElementById('mobileMenu');
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const closeMenuBtn = document.getElementById('closeMenuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    mobileMenuBtn.addEventListener('click', () => mobileMenu.classList.add('open'));
+    closeMenuBtn.addEventListener('click', () => mobileMenu.classList.remove('open'));
 
-        mobileMenuBtn.addEventListener('click', () => {
-            mobileMenu.classList.remove('translate-x-full');
-        });
+    gradeLevel.addEventListener('change', function() {
+        if (this.value.includes('Grade 11') || this.value.includes('Grade 12')) {
+            strandContainer.classList.remove('hidden');
+            strand.required = true;
+        } else {
+            strandContainer.classList.add('hidden');
+            strand.required = false;
+            strand.value = '';
+        }
+    });
 
-        closeMenuBtn.addEventListener('click', () => {
-            mobileMenu.classList.add('translate-x-full');
-        });
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        submitBtn.disabled = true;
+        submitBtn.innerText = "Processing...";
+        statusMsg.innerText = "";
 
-        // Show/hide strand field based on grade level selection
-        gradeLevel.addEventListener('change', function() {
-            const selectedGrade = this.value;
-            if (selectedGrade.includes('Grade 11') || selectedGrade.includes('Grade 12')) {
-                strandContainer.style.display = 'block';
-                strand.required = true;
-                // Auto-select strand if already in grade level value
-                if (selectedGrade.includes('STEM')) {
-                    strand.value = 'STEM';
-                } else if (selectedGrade.includes('HUMSS')) {
-                    strand.value = 'HUMSS';
-                } else if (selectedGrade.includes('ABM')) {
-                    strand.value = 'ABM';
-                } else if (selectedGrade.includes('ICT')) {
-                    strand.value = 'ICT';
-                } else if (selectedGrade.includes('EIM/Cookery')) {
-                    strand.value = 'EIM/Cookery';
-                }
-            } else {
-                strandContainer.style.display = 'none';
-                strand.required = false;
-                strand.value = '';
-            }
-        });
+        const rawName = document.getElementById('studentName').value;
+        const folderName = rawName.replace(/[^a-zA-Z0-9 ]/g, "").trim().replace(/\s+/g, "_");
 
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            // UI State Change
-            submitBtn.disabled = true;
-            submitBtn.innerText = "Processing...";
-            statusMsg.innerText = "";
+        const uploadFile = async (fileInput) => {
+            const file = fileInput.files[0];
+            if (!file) return null;
+            const filePath = `${folderName}/${Date.now()}_${file.name.replace(/\s/g, '_')}`;
+            const { error } = await supabaseClient.storage.from('enrollment-requirements').upload(filePath, file);
+            if (error) throw error;
+            const { data } = supabaseClient.storage.from('enrollment-requirements').getPublicUrl(filePath);
+            return data.publicUrl;
+        };
 
-            const rawName = document.getElementById('studentName').value;
-            // Sanitize name for folder: remove special chars, replace spaces with underscores
-            const folderName = rawName.replace(/[^a-zA-Z0-9 ]/g, "").trim().replace(/\s+/g, "_");
+        let goodMoralUrl, psaUrl, reportCardUrl;
+        try {
+            goodMoralUrl = await uploadFile(goodMoralImage);
+            psaUrl = await uploadFile(psaImage);
+            reportCardUrl = await uploadFile(reportCardImage);
+        } catch (uploadError) {
+            statusMsg.style.color = "red";
+            statusMsg.innerText = "Upload Error: " + uploadError.message;
+            submitBtn.disabled = false;
+            submitBtn.innerText = "Submit Application";
+            return;
+        }
 
-            // Helper function for uploads
-            const uploadFile = async (fileInput) => {
-                const file = fileInput.files[0];
-                if (!file) return null;
-                
-                const filePath = `${folderName}/${Date.now()}_${file.name.replace(/\s/g, '_')}`;
-                const { error } = await supabaseClient.storage
-                    .from('enrollment-requirements')
-                    .upload(filePath, file);
+        const formData = {
+            student_name: document.getElementById('studentName').value,
+            lrn: document.getElementById('lrn').value,
+            email: document.getElementById('email').value,
+            student_type: document.getElementById('studentType').value,
+            grade_level: gradeLevel.value,
+            strand: strand.value || '',
+            guardian_contact: document.getElementById('contact').value,
+            good_moral_url: goodMoralUrl,
+            psa_url: psaUrl,
+            report_card_url: reportCardUrl,
+        };
 
-                if (error) throw error;
+        const { data, error } = await supabaseClient.from('enrollment_submissions').insert([formData]);
 
-                const { data } = supabaseClient.storage
-                    .from('enrollment-requirements')
-                    .getPublicUrl(filePath);
-                
-                return data.publicUrl;
-            };
-
-            let goodMoralUrl, psaUrl, reportCardUrl;
-
-            try {
-                goodMoralUrl = await uploadFile(goodMoralImage);
-                psaUrl = await uploadFile(psaImage);
-                reportCardUrl = await uploadFile(reportCardImage);
-            } catch (uploadError) {
-                statusMsg.style.color = "red";
-                statusMsg.innerText = "Upload Error: " + uploadError.message;
-                submitBtn.disabled = false;
-                submitBtn.innerText = "Submit Pre-Registration";
-                return;
-            }
-
-            const selectedGrade = gradeLevel.value;
-            let finalStrand = '';
-            
-            // Extract strand from grade level or use strand field
-            if (selectedGrade.includes('STEM')) {
-                finalStrand = 'STEM';
-            } else if (selectedGrade.includes('HUMSS')) {
-                finalStrand = 'HUMSS';
-            } else if (selectedGrade.includes('ABM')) {
-                finalStrand = 'ABM';
-            } else if (selectedGrade.includes('ICT')) {
-                finalStrand = 'ICT';
-            } else if (selectedGrade.includes('EIM/Cookery')) {
-                finalStrand = 'EIM/Cookery';
-            } else {
-                finalStrand = strand.value || '';
-            }
-
-            const formData = {
-                student_name: document.getElementById('studentName').value,
-                lrn: document.getElementById('lrn').value,
-                email: document.getElementById('email').value,
-                student_type: document.getElementById('studentType').value,
-                grade_level: selectedGrade,
-                strand: finalStrand,
-                guardian_contact: document.getElementById('contact').value,
-                good_moral_url: goodMoralUrl,
-                psa_url: psaUrl,
-                report_card_url: reportCardUrl,
-            };
-
-            // Supabase Database Insertion
-            const { data, error } = await supabaseClient
-                .from('enrollment_submissions')
-                .insert([formData]);
-
-            if (error) {
-                statusMsg.style.color = "red";
-                statusMsg.innerText = "Error: " + error.message;
-                submitBtn.disabled = false;
-                submitBtn.innerText = "Submit Pre-Registration";
-            } else {
-                statusMsg.style.color = "green";
-                statusMsg.innerText = "Enrollment Submitted Successfully!";
-                form.reset();
-                strandContainer.style.display = 'none';
-                submitBtn.innerText = "Submitted ✅";
-                
-                // Scroll to status message
-                statusMsg.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }
-        });
-    </script>
+        if (error) {
+            statusMsg.style.color = "red";
+            statusMsg.innerText = "Error: " + error.message;
+            submitBtn.disabled = false;
+            submitBtn.innerText = "Submit Application";
+        } else {
+            statusMsg.style.color = "green";
+            statusMsg.innerText = "Enrollment Submitted Successfully!";
+            form.reset();
+            submitBtn.innerText = "Submitted ✅";
+        }
+    });
+</script>
 </body>
 </html>
