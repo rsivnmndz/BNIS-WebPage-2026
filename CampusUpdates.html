@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Updates | Bucal National Integrated School</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --maroon: #800000;
+            --maroon-dark: #5a0000;
+            --gold: #f0c040;
+            --amber: #d97706;
+            --cream: #FFFDF5;
+            --white: #ffffff;
+            --gray-900: #111827;
+            --gray-800: #1f2937;
+            --gray-700: #374151;
+            --gray-600: #4b5563;
+            --gray-500: #6b7280;
+            --gray-400: #9ca3af;
+            --gray-200: #e5e7eb;
+            --gray-100: #f3f4f6;
+            --gray-50: #f9fafb;
+            --green-dark: #006400;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.10);
+            --shadow-lg: 0 10px 40px rgba(0,0,0,0.14);
+            --shadow-xl: 0 20px 60px rgba(0,0,0,0.18);
+            --shadow-maroon: 0 8px 32px rgba(128,0,0,0.25);
+            --radius-sm: 8px; --radius-md: 16px; --radius-lg: 24px; --radius-xl: 32px; --radius-full: 9999px;
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'DM Sans', sans-serif; background: var(--white); color: var(--gray-800); line-height: 1.6; overflow-x: hidden; }
+        h1,h2,h3,h4 { font-family: 'Playfair Display', serif; line-height: 1.25; }
+        a { text-decoration: none; color: inherit; }
+        img { display: block; max-width: 100%; }
+
+        /* NAVBAR */
+        .navbar { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.98); backdrop-filter: blur(16px); border-bottom: 3px solid var(--maroon); padding: 0.85rem 3rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 20px rgba(128,0,0,0.08); }
+        .nav-brand { display: flex; align-items: center; gap: 0.85rem; }
+        .nav-brand img { height: 46px; width: 46px; object-fit: contain; border-radius: 50%; }
+        .nav-brand-name { font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.02em; color: var(--maroon); line-height: 1.1; }
+        .nav-brand-sub { font-size: 0.6rem; font-weight: 500; color: var(--gray-500); letter-spacing: 0.22em; text-transform: uppercase; }
+        .nav-links { display: flex; align-items: center; gap: 2rem; font-size: 0.85rem; font-weight: 600; }
+        .nav-links a { color: var(--gray-600); transition: color 0.2s; position: relative; padding-bottom: 2px; }
+        .nav-links a::after { content: ''; position: absolute; bottom: -2px; left: 0; width: 0; height: 2px; background: var(--maroon); transition: width 0.25s; border-radius: 2px; }
+        .nav-links a:hover { color: var(--maroon); }
+        .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+        .nav-links a.active { color: var(--maroon); }
+        .nav-btn { background: var(--maroon) !important; color: var(--white) !important; padding: 0.5rem 1.4rem !important; border-radius: var(--radius-full) !important; transition: all 0.2s !important; }
+        .nav-btn::after { display: none !important; }
+        .nav-btn:hover { background: var(--maroon-dark) !important; transform: translateY(-1px); box-shadow: var(--shadow-maroon) !important; }
+        .hamburger { display: none; background: none; border: none; cursor: pointer; color: var(--maroon); padding: 0.25rem; }
+        .mobile-menu { display: none; position: fixed; inset: 0; z-index: 200; background: var(--white); flex-direction: column; justify-content: center; align-items: center; gap: 2rem; transform: translateX(100%); transition: transform 0.35s cubic-bezier(0.4,0,0.2,1); }
+        .mobile-menu.open { transform: translateX(0); }
+        .mobile-menu-close { position: absolute; top: 1.5rem; right: 1.5rem; background: none; border: none; cursor: pointer; color: var(--gray-800); }
+        .mobile-menu a { font-size: 1.6rem; font-family: 'Playfair Display', serif; color: var(--maroon); font-weight: 700; }
+        .mobile-menu a.secondary { font-size: 1.2rem; font-family: 'DM Sans', sans-serif; color: var(--gray-600); font-weight: 500; }
+
+        /* PAGE HERO */
+        .page-hero { background: linear-gradient(135deg, var(--maroon) 0%, #6b0000 100%); color: var(--white); padding: 5rem 3rem 4rem; position: relative; overflow: hidden; }
+        .page-hero::before { content: ''; position: absolute; inset: 0; opacity: 0.05; background-image: url('https://www.transparenttextures.com/patterns/cubes.png'); }
+        .page-hero::after { content: ''; position: absolute; right: -8rem; bottom: -8rem; width: 28rem; height: 28rem; background: radial-gradient(circle, rgba(240,192,64,0.18) 0%, transparent 70%); border-radius: 50%; }
+        .page-hero-inner { max-width: 80rem; margin: 0 auto; position: relative; z-index: 1; }
+        .page-hero-eyebrow { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.28em; text-transform: uppercase; color: var(--gold); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+        .page-hero-eyebrow::before { content: ''; display: inline-block; width: 2rem; height: 2px; background: var(--gold); }
+        .page-hero h1 { font-size: clamp(2.2rem, 4vw, 3.5rem); font-weight: 800; margin-bottom: 1rem; }
+        .page-hero p { font-size: 1rem; opacity: 0.82; max-width: 42rem; line-height: 1.75; }
+
+        /* CONTENT */
+        .page-content { max-width: 80rem; margin: 0 auto; padding: 4rem 3rem; }
+
+        /* ALERT BANNER */
+        .alert-banner { background: #fffbeb; border: 1.5px solid #fcd34d; border-radius: var(--radius-lg); padding: 1.2rem 1.5rem; display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 3rem; }
+        .alert-icon { width: 2.5rem; height: 2.5rem; background: #fef3c7; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--amber); }
+        .alert-icon svg { width: 1.2rem; height: 1.2rem; }
+        .alert-text strong { font-weight: 700; color: var(--gray-900); font-size: 0.9rem; }
+        .alert-text p { color: var(--gray-600); font-size: 0.85rem; margin-top: 0.2rem; }
+
+        /* LAYOUT */
+        .updates-layout { display: grid; grid-template-columns: 1fr 320px; gap: 3rem; align-items: start; }
+        .sidebar { position: sticky; top: 5rem; }
+
+        /* SECTION HEADER */
+        .section-eyebrow { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.28em; text-transform: uppercase; color: var(--maroon); margin-bottom: 0.4rem; display: block; }
+        .section-title { font-size: clamp(1.4rem, 2.5vw, 2rem); font-weight: 800; color: var(--gray-900); }
+
+        /* TIMELINE */
+        .timeline-section { margin-bottom: 4rem; }
+        .timeline-header { margin-bottom: 2rem; }
+        .timeline { position: relative; padding-left: 2rem; }
+        .timeline::before { content: ''; position: absolute; left: 0.4rem; top: 0; bottom: 0; width: 2px; background: var(--gray-200); border-radius: 2px; }
+        .timeline-item { position: relative; padding-bottom: 2.5rem; }
+        .timeline-item:last-child { padding-bottom: 0; }
+        .timeline-dot { position: absolute; left: -1.75rem; top: 0.35rem; width: 1rem; height: 1rem; border-radius: 50%; border: 2.5px solid var(--white); box-shadow: 0 0 0 2px var(--gray-300); background: var(--gray-300); transition: all 0.2s; }
+        .timeline-dot.red { background: var(--maroon); box-shadow: 0 0 0 2px var(--maroon); }
+        .timeline-dot.amber { background: var(--amber); box-shadow: 0 0 0 2px var(--amber); }
+        .timeline-dot.green { background: var(--green-dark); box-shadow: 0 0 0 2px var(--green-dark); }
+        .timeline-dot.blue { background: #1d4ed8; box-shadow: 0 0 0 2px #1d4ed8; }
+        .timeline-card { background: var(--white); border-radius: var(--radius-lg); border: 1.5px solid var(--gray-200); padding: 1.5rem; transition: all 0.3s; cursor: pointer; }
+        .timeline-card:hover { border-color: var(--maroon); box-shadow: var(--shadow-md); transform: translateX(3px); }
+        .timeline-date { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; color: var(--maroon); margin-bottom: 0.4rem; }
+        .timeline-card h3 { font-size: 1rem; font-weight: 700; color: var(--gray-900); margin-bottom: 0.5rem; line-height: 1.35; }
+        .timeline-card p { font-size: 0.85rem; color: var(--gray-500); line-height: 1.7; margin-bottom: 0.75rem; }
+        .update-tag { display: inline-block; font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; padding: 0.2rem 0.6rem; border-radius: var(--radius-full); }
+        .update-tag.infrastructure { background: #fee2e2; color: var(--maroon); }
+        .update-tag.event { background: #fef3c7; color: #92400e; }
+        .update-tag.academic { background: #dbeafe; color: #1e40af; }
+        .update-tag.policy { background: #ede9fe; color: #5b21b6; }
+        .update-tag.health { background: #d1fae5; color: #065f46; }
+
+        /* CALENDAR */
+        .calendar-card { background: var(--white); border-radius: var(--radius-xl); border: 1.5px solid var(--gray-200); overflow: hidden; margin-bottom: 3.5rem; }
+        .calendar-header { background: var(--maroon); color: var(--white); padding: 1.5rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .calendar-header h2 { font-size: 1.2rem; font-weight: 700; }
+        .calendar-nav { display: flex; gap: 0.5rem; }
+        .cal-nav-btn { background: rgba(255,255,255,0.15); border: none; color: var(--white); width: 2rem; height: 2rem; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; font-family: 'DM Sans', sans-serif; }
+        .cal-nav-btn:hover { background: rgba(255,255,255,0.3); }
+        .calendar-grid-header { display: grid; grid-template-columns: repeat(7,1fr); background: var(--gray-50); border-bottom: 1px solid var(--gray-200); }
+        .cal-day-name { text-align: center; padding: 0.6rem; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gray-500); }
+        .calendar-body { display: grid; grid-template-columns: repeat(7,1fr); padding: 0.75rem; gap: 3px; }
+        .cal-day { min-height: 3.5rem; border-radius: var(--radius-sm); padding: 0.4rem; display: flex; flex-direction: column; position: relative; transition: background 0.2s; cursor: default; }
+        .cal-day:not(.empty):hover { background: var(--gray-100); }
+        .cal-day.has-event { cursor: pointer; }
+        .cal-day.today { background: #fff1f1; border: 1.5px solid var(--maroon); }
+        .cal-day.today .day-num { color: var(--maroon); font-weight: 800; }
+        .day-num { font-size: 0.82rem; font-weight: 600; color: var(--gray-700); line-height: 1; margin-bottom: 0.25rem; }
+        .cal-day.empty .day-num { color: var(--gray-300); }
+        .cal-event-dot { width: 100%; background: var(--maroon); border-radius: 3px; padding: 0.1rem 0.3rem; font-size: 0.55rem; font-weight: 600; color: var(--white); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px; }
+        .cal-event-dot.gold { background: var(--amber); }
+        .cal-event-dot.blue { background: #1d4ed8; }
+        .cal-event-dot.green { background: var(--green-dark); }
+
+        /* UPCOMING EVENTS */
+        .upcoming-list { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 3.5rem; }
+        .event-row { display: flex; align-items: center; gap: 1.25rem; background: var(--white); border: 1.5px solid var(--gray-200); border-radius: var(--radius-lg); padding: 1.2rem 1.5rem; transition: all 0.3s; cursor: pointer; }
+        .event-row:hover { border-color: var(--maroon); box-shadow: var(--shadow-md); transform: translateX(3px); }
+        .event-date-box { min-width: 3.5rem; text-align: center; background: var(--maroon); color: var(--white); border-radius: var(--radius-sm); padding: 0.6rem 0.4rem; }
+        .event-date-box .month { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.85; }
+        .event-date-box .day { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 800; line-height: 1; }
+        .event-date-box.gold { background: var(--amber); }
+        .event-date-box.green { background: var(--green-dark); }
+        .event-date-box.blue { background: #1d4ed8; }
+        .event-info { flex: 1; min-width: 0; }
+        .event-info h3 { font-size: 0.95rem; font-weight: 700; color: var(--gray-900); margin-bottom: 0.2rem; line-height: 1.3; }
+        .event-info p { font-size: 0.8rem; color: var(--gray-500); }
+        .event-time { font-size: 0.75rem; font-weight: 600; color: var(--gray-400); white-space: nowrap; display: flex; align-items: center; gap: 0.3rem; }
+        .event-time svg { width: 0.85rem; height: 0.85rem; }
+
+        /* SIDEBAR */
+        .sidebar-card { background: var(--white); border-radius: var(--radius-lg); border: 1.5px solid var(--gray-200); overflow: hidden; margin-bottom: 1.5rem; }
+        .sidebar-header { background: var(--maroon); color: var(--white); padding: 1rem 1.4rem; }
+        .sidebar-header h3 { font-size: 0.95rem; font-weight: 700; }
+        .sidebar-body { padding: 1.2rem; }
+        .notice-item { padding: 0.85rem 0; border-bottom: 1px solid var(--gray-200); }
+        .notice-item:last-child { border-bottom: none; padding-bottom: 0; }
+        .notice-item .type { font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; padding: 0.15rem 0.5rem; border-radius: 4px; display: inline-block; margin-bottom: 0.3rem; }
+        .notice-item .type.urgent { background: #fee2e2; color: var(--maroon); }
+        .notice-item .type.info { background: #dbeafe; color: #1e40af; }
+        .notice-item .type.reminder { background: #fef3c7; color: #92400e; }
+        .notice-item p { font-size: 0.82rem; color: var(--gray-700); line-height: 1.6; margin-bottom: 0.25rem; }
+        .notice-item .date { font-size: 0.68rem; color: var(--gray-400); }
+
+        /* MODAL */
+        .modal { position: fixed; inset: 0; z-index: 500; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; padding: 2rem; opacity: 0; pointer-events: none; transition: opacity 0.3s; backdrop-filter: blur(6px); }
+        .modal.open { opacity: 1; pointer-events: all; }
+        .modal-inner { max-width: 600px; width: 100%; background: var(--white); border-radius: var(--radius-xl); overflow: hidden; max-height: 90vh; overflow-y: auto; transform: scale(0.93) translateY(16px); transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1); }
+        .modal.open .modal-inner { transform: scale(1) translateY(0); }
+        .modal-header { background: var(--maroon); color: var(--white); padding: 1.5rem 2rem; position: relative; }
+        .modal-header h2 { font-size: 1.2rem; font-weight: 700; padding-right: 2.5rem; line-height: 1.3; }
+        .modal-header .modal-date { font-size: 0.75rem; opacity: 0.75; margin-top: 0.4rem; }
+        .modal-body { padding: 1.75rem 2rem; }
+        .modal-body p { color: var(--gray-600); font-size: 0.9rem; line-height: 1.85; margin-bottom: 1rem; }
+        .modal-close { position: absolute; top: 1rem; right: 1rem; background: rgba(255,255,255,0.2); color: #fff; border: none; width: 2.25rem; height: 2.25rem; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+        .modal-close:hover { background: rgba(255,255,255,0.35); }
+        .modal-close svg { width: 1.1rem; height: 1.1rem; }
+
+        /* FOOTER */
+        .footer { background: #0f0f0f; color: var(--white); padding: 4rem 3rem 2rem; border-top: 6px solid var(--maroon); }
+        .footer-inner { max-width: 80rem; margin: 0 auto; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 2rem; margin-bottom: 2.5rem; }
+        .footer-logo-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
+        .footer-logo-wrap { background: var(--white); padding: 0.4rem; border-radius: 50%; }
+        .footer-logo-wrap img { height: 3rem; width: 3rem; object-fit: contain; }
+        .footer-logo-name { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 700; }
+        .footer-logo-loc { font-size: 0.68rem; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.22em; }
+        .footer-bottom { max-width: 80rem; margin: 0 auto; padding-top: 1.5rem; border-top: 1px solid #222; display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--gray-500); flex-wrap: wrap; gap: 0.5rem; }
+
+        @media (max-width: 1024px) {
+            .navbar { padding: 0.85rem 1.5rem; }
+            .updates-layout { grid-template-columns: 1fr; }
+            .sidebar { position: static; }
+            .page-content { padding: 3rem 1.5rem; }
+        }
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .hamburger { display: block; }
+            .mobile-menu { display: flex; }
+            .page-hero { padding: 3rem 1.5rem; }
+            .footer { padding: 3rem 1.25rem 1.5rem; }
+            .footer-inner { flex-direction: column; }
+            .calendar-body { gap: 1px; }
+            .cal-day { min-height: 2.5rem; padding: 0.25rem; }
+            .cal-event-dot { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-brand">
+        <img src="BNIS_logo-removebg-preview.png" alt="BNIS Logo">
+        <div>
+            <div class="nav-brand-name">Bucal National</div>
+            <div class="nav-brand-sub">Integrated School</div>
+        </div>
+    </div>
+    <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="Enrollment.html">Enrollment</a>
+        <a href="SchoolNews.html">School News</a>
+        <a href="CampusUpdates.html" class="active">Campus Updates</a>
+        <a href="Admin.html" class="nav-btn">Our Admin</a>
+    </div>
+    <button class="hamburger" id="mobileMenuBtn" aria-label="Open menu">
+        <svg style="width:2rem;height:2rem" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+    </button>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+    <button class="mobile-menu-close" id="closeMenuBtn"><svg style="width:2rem;height:2rem" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+    <a href="index.html">Home</a>
+    <a href="Enrollment.html" class="secondary">Enrollment</a>
+    <a href="SchoolNews.html" class="secondary">School News</a>
+    <a href="CampusUpdates.html" class="secondary">Campus Updates</a>
+    <a href="Admin.html" class="secondary">Our Admin</a>
+</div>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+    <div class="page-hero-inner">
+        <div class="page-hero-eyebrow">Official Notices</div>
+        <h1>Campus Updates</h1>
+        <p>Schedules, infrastructure projects, official notices, and everything happening on the BNIS campus — all in one place.</p>
+    </div>
+</section>
+
+<div class="page-content">
+
+    <!-- ALERT -->
+    <div class="alert-banner">
+        <div class="alert-icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+        </div>
+        <div class="alert-text">
+            <strong>Current Notice — March 11, 2026</strong>
+            <p>Card-giving ceremony is scheduled for <strong>March 20, 2026 (Friday)</strong> at 8:00 AM in the school gymnasium. All parents and guardians are required to attend in person to receive report cards.</p>
+        </div>
+    </div>
+
+    <div class="updates-layout">
+        <div>
+
+            <!-- CALENDAR -->
+            <div style="margin-bottom:1.5rem;">
+                <span class="section-eyebrow">Schedule</span>
+                <h2 class="section-title">March 2026 Calendar</h2>
+            </div>
+            <div class="calendar-card" style="margin-bottom:3.5rem;">
+                <div class="calendar-header">
+                    <h2>March 2026</h2>
+                    <div style="font-size:0.8rem;opacity:0.75;">School Year 2025–2026 · 3rd Quarter</div>
+                </div>
+                <div class="calendar-grid-header">
+                    <div class="cal-day-name">Sun</div>
+                    <div class="cal-day-name">Mon</div>
+                    <div class="cal-day-name">Tue</div>
+                    <div class="cal-day-name">Wed</div>
+                    <div class="cal-day-name">Thu</div>
+                    <div class="cal-day-name">Fri</div>
+                    <div class="cal-day-name">Sat</div>
+                </div>
+                <div class="calendar-body" id="calendarBody">
+                    <!-- Injected by JS -->
+                </div>
+            </div>
+
+            <!-- UPCOMING EVENTS -->
+            <div style="margin-bottom:1.5rem;">
+                <span class="section-eyebrow">What's Coming</span>
+                <h2 class="section-title">Upcoming Events</h2>
+            </div>
+            <div class="upcoming-list" style="margin-bottom:3.5rem;">
+                <div class="event-row" onclick="openModal('nat')">
+                    <div class="event-date-box blue">
+                        <div class="month">Mar</div>
+                        <div class="day">15</div>
+                    </div>
+                    <div class="event-info">
+                        <h3>NAT Review Classes Begin (Grade 6 & Grade 10)</h3>
+                        <p>Intensive review sessions every Saturday and Sunday, facilitated by subject teachers.</p>
+                    </div>
+                    <div class="event-time"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>7:30 AM</div>
+                </div>
+                <div class="event-row" onclick="openModal('card')">
+                    <div class="event-date-box">
+                        <div class="month">Mar</div>
+                        <div class="day">20</div>
+                    </div>
+                    <div class="event-info">
+                        <h3>Card-Giving Ceremony — 3rd Quarter</h3>
+                        <p>Parents and guardians must be present to claim report cards from class advisers.</p>
+                    </div>
+                    <div class="event-time"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>8:00 AM</div>
+                </div>
+                <div class="event-row" onclick="openModal('summer')">
+                    <div class="event-date-box gold">
+                        <div class="month">Apr</div>
+                        <div class="day">1</div>
+                    </div>
+                    <div class="event-info">
+                        <h3>Enrollment Opens for SY 2026–2027 (Continuing Students)</h3>
+                        <p>Grade 7 to Grade 11 continuing students may enroll starting April 1 at the Registrar's Office.</p>
+                    </div>
+                    <div class="event-time"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>8:00 AM</div>
+                </div>
+                <div class="event-row" onclick="openModal('graduation')">
+                    <div class="event-date-box green">
+                        <div class="month">Apr</div>
+                        <div class="day">18</div>
+                    </div>
+                    <div class="event-info">
+                        <h3>Graduation Ceremony — Grade 6 & Grade 12</h3>
+                        <p>Commencement exercises for graduating students of both Junior and Senior High School levels.</p>
+                    </div>
+                    <div class="event-time"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>9:00 AM</div>
+                </div>
+                <div class="event-row" onclick="openModal('nat2')">
+                    <div class="event-date-box blue">
+                        <div class="month">Apr</div>
+                        <div class="day">22</div>
+                    </div>
+                    <div class="event-info">
+                        <h3>National Achievement Test (NAT)</h3>
+                        <p>Annual standardized assessment for Grade 6 and Grade 10 students across the division.</p>
+                    </div>
+                    <div class="event-time"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>7:00 AM</div>
+                </div>
+            </div>
+
+            <!-- TIMELINE UPDATES -->
+            <div style="margin-bottom:1.5rem;">
+                <span class="section-eyebrow">Facility & Administration</span>
+                <h2 class="section-title">Campus Updates Log</h2>
+            </div>
+            <div class="timeline" id="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-dot red"></div>
+                    <div class="timeline-card" onclick="openModal('library')">
+                        <div class="timeline-date">March 8, 2026</div>
+                        <span class="update-tag infrastructure">Infrastructure</span>
+                        <h3 style="margin-top:0.5rem;">New School Library Wing Now Open</h3>
+                        <p>The newly constructed library annex, funded through the DPWH allocation, is now fully operational. It holds 3,000 new books and 20 computer stations with internet access.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot amber"></div>
+                    <div class="timeline-card" onclick="openModal('canteen')">
+                        <div class="timeline-date">February 25, 2026</div>
+                        <span class="update-tag event">Facility</span>
+                        <h3 style="margin-top:0.5rem;">School Canteen Renovation Completed</h3>
+                        <p>The main school canteen has been fully renovated to comply with DepEd Nutritional Food Standards. New stalls are now operational with healthier food options for students.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot blue"></div>
+                    <div class="timeline-card" onclick="openModal('wifi')">
+                        <div class="timeline-date">February 10, 2026</div>
+                        <span class="update-tag academic">Technology</span>
+                        <h3 style="margin-top:0.5rem;">Campus-Wide Wi-Fi Installation Underway</h3>
+                        <p>Free Wi-Fi access points have been installed in 12 classrooms and the library. Installation in remaining areas of the campus is expected to be completed by March 30.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot green"></div>
+                    <div class="timeline-card" onclick="openModal('garden')">
+                        <div class="timeline-date">January 22, 2026</div>
+                        <span class="update-tag health">Environment</span>
+                        <h3 style="margin-top:0.5rem;">School Garden Program Expanded</h3>
+                        <p>As part of the DepEd School-Based Feeding Program, BNIS has expanded its vegetable garden to five additional plots. All Grade 8 and Grade 9 TLE students will participate in weekly garden maintenance.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot amber"></div>
+                    <div class="timeline-card" onclick="openModal('policy')">
+                        <div class="timeline-date">January 15, 2026</div>
+                        <span class="update-tag policy">Policy</span>
+                        <h3 style="margin-top:0.5rem;">Updated School Uniform Policy Effective Q3</h3>
+                        <p>Beginning the 3rd Quarter, students are reminded to follow the updated BNIS uniform policy. PE uniforms must only be worn on designated PE days. Complete uniform checklist is available at the Guidance Office.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="sidebar-card">
+                <div class="sidebar-header"><h3>📌 Notices & Reminders</h3></div>
+                <div class="sidebar-body">
+                    <div class="notice-item">
+                        <span class="type urgent">Urgent</span>
+                        <p>BEIS data submission deadline is <strong>March 15</strong>. All advisers must update class lists by March 12.</p>
+                        <div class="date">Posted: Mar 10, 2026</div>
+                    </div>
+                    <div class="notice-item">
+                        <span class="type reminder">Reminder</span>
+                        <p>Clearance forms for graduating students are available at the Registrar's Office starting March 17.</p>
+                        <div class="date">Posted: Mar 8, 2026</div>
+                    </div>
+                    <div class="notice-item">
+                        <span class="type info">Info</span>
+                        <p>New school ID renewal schedule posted at the main gate bulletin board.</p>
+                        <div class="date">Posted: Feb 28, 2026</div>
+                    </div>
+                    <div class="notice-item">
+                        <span class="type reminder">Reminder</span>
+                        <p>The school gate closes at 7:30 AM. Latecomers must proceed to the Guard House for a slip.</p>
+                        <div class="date">Posted: Feb 10, 2026</div>
+                    </div>
+                    <div class="notice-item">
+                        <span class="type urgent">Urgent</span>
+                        <p>All SHS students must complete the TESDA assessment registration before March 20.</p>
+                        <div class="date">Posted: Mar 5, 2026</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-card">
+                <div class="sidebar-header"><h3>🏫 School Hours</h3></div>
+                <div class="sidebar-body">
+                    <div style="display:flex;flex-direction:column;gap:0.6rem;">
+                        <div style="display:flex;justify-content:space-between;font-size:0.82rem;">
+                            <span style="color:var(--gray-600);">Gate Opens</span>
+                            <span style="font-weight:700;color:var(--gray-900);">6:00 AM</span>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;font-size:0.82rem;">
+                            <span style="color:var(--gray-600);">Classes Start</span>
+                            <span style="font-weight:700;color:var(--gray-900);">7:30 AM</span>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;font-size:0.82rem;">
+                            <span style="color:var(--gray-600);">Lunch Break</span>
+                            <span style="font-weight:700;color:var(--gray-900);">12:00 – 1:00 PM</span>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;font-size:0.82rem;">
+                            <span style="color:var(--gray-600);">Dismissal (JHS)</span>
+                            <span style="font-weight:700;color:var(--gray-900);">5:00 PM</span>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;font-size:0.82rem;">
+                            <span style="color:var(--gray-600);">Dismissal (SHS)</span>
+                            <span style="font-weight:700;color:var(--gray-900);">5:00 PM</span>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;font-size:0.82rem;">
+                            <span style="color:var(--gray-600);">School Days</span>
+                            <span style="font-weight:700;color:var(--gray-900);">Mon – Fri</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-card">
+                <div class="sidebar-header"><h3>📞 Contact</h3></div>
+                <div class="sidebar-body">
+                    <div style="display:flex;flex-direction:column;gap:0.75rem;font-size:0.82rem;color:var(--gray-600);">
+                        <div><strong style="color:var(--gray-900);display:block;margin-bottom:0.15rem;">Principal's Office</strong>0915-109-7213</div>
+                        <div><strong style="color:var(--gray-900);display:block;margin-bottom:0.15rem;">Registrar</strong>bnis.registrar@example.ph</div>
+                        <div><strong style="color:var(--gray-900);display:block;margin-bottom:0.15rem;">Guidance Office</strong>bnis.guidance@example.ph</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+</div>
+
+<!-- EVENT MODAL -->
+<div class="modal" id="modal">
+    <div class="modal-inner">
+        <div class="modal-header">
+            <button class="modal-close" id="modalClose"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+            <h2 id="modalTitle"></h2>
+            <div class="modal-date" id="modalDate"></div>
+        </div>
+        <div class="modal-body" id="modalBody"></div>
+    </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+    <div class="footer-inner">
+        <div>
+            <div class="footer-logo-row">
+                <div class="footer-logo-wrap"><img src="BNIS_logo-removebg-preview.png" alt="BNIS Logo"></div>
+                <div>
+                    <div class="footer-logo-name">Bucal 2</div>
+                    <div class="footer-logo-loc">Maragondon, Cavite</div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <p style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.2em;color:var(--gray-500);margin-bottom:0.75rem;font-weight:600;">Navigation</p>
+            <div style="display:flex;flex-direction:column;gap:0.5rem;">
+                <a href="index.html" style="color:var(--gray-400);font-size:0.85rem;">Home</a>
+                <a href="Enrollment.html" style="color:var(--gray-400);font-size:0.85rem;">Enrollment</a>
+                <a href="SchoolNews.html" style="color:var(--gray-400);font-size:0.85rem;">School News</a>
+                <a href="CampusUpdates.html" style="color:var(--gold);font-size:0.85rem;">Campus Updates</a>
+                <a href="Admin.html" style="color:var(--gray-400);font-size:0.85rem;">Our Admin</a>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>Developed by: Roise Ivan M. Mendoza | BNIS Alumni</p>
+        <p>&copy; 2026 Bucal National Integrated School</p>
+    </div>
+</footer>
+
+<script>
+// Mobile menu
+document.getElementById('mobileMenuBtn').addEventListener('click', () => document.getElementById('mobileMenu').classList.add('open'));
+document.getElementById('closeMenuBtn').addEventListener('click', () => document.getElementById('mobileMenu').classList.remove('open'));
+
+// Build calendar for March 2026 (starts on Sunday = day 0)
+const calData = {
+    4:  { label: 'Faculty Dev.', color: '' },
+    11: { label: 'Today', color: 'red' },
+    15: { label: 'NAT Review', color: 'blue' },
+    17: { label: "St. Patrick's", color: '' },
+    20: { label: 'Card Giving', color: 'red' },
+    25: { label: 'DepEd Event', color: 'gold' },
+    31: { label: 'Q3 Ends', color: 'green' }
+};
+const startDay = 0; // March 1, 2026 is a Sunday
+const daysInMonth = 31;
+const calBody = document.getElementById('calendarBody');
+let html = '';
+for (let i = 0; i < startDay; i++) html += '<div class="cal-day empty"><span class="day-num"></span></div>';
+for (let d = 1; d <= daysInMonth; d++) {
+    const ev = calData[d];
+    const isToday = d === 11;
+    html += `<div class="cal-day${isToday ? ' today' : ''}${ev ? ' has-event' : ''}">
+        <span class="day-num">${d}</span>
+        ${ev ? `<div class="cal-event-dot${ev.color ? ' '+ev.color : ''}">${ev.label}</div>` : ''}
+    </div>`;
+}
+calBody.innerHTML = html;
+
+// Modal data
+const modalData = {
+    nat: { title: 'NAT Review Classes Begin', date: 'Starting March 15, 2026 (Every Saturday & Sunday)', body: '<p>The National Achievement Test (NAT) Review program for Grade 6 and Grade 10 students officially begins on March 15, 2026. Sessions will be held every Saturday and Sunday from 7:30 AM to 12:00 PM in the school library and assigned classrooms.</p><p>All subject teachers have been assigned their respective review schedules. Students are expected to bring their reviewers and necessary materials. Attendance is mandatory. Parents are encouraged to support their children during this critical period.</p>' },
+    card: { title: 'Card-Giving Ceremony — 3rd Quarter', date: 'March 20, 2026 (Friday) at 8:00 AM', body: '<p>The 3rd Quarter Card-Giving Ceremony will be held on March 20, 2026 at 8:00 AM in the school gymnasium. Parents and guardians are required to attend in person to claim their child\'s report card from the class adviser.</p><p>Students whose parents/guardians fail to appear will have their cards withheld until a proper representative claims it with an authorization letter. Concerns regarding grades should be addressed to the subject teacher on the same day.</p>' },
+    summer: { title: 'Enrollment Opens for SY 2026–2027', date: 'April 1, 2026', body: '<p>Enrollment for School Year 2026–2027 will open on April 1, 2026 for continuing students from Grade 7 to Grade 11. New students and incoming Grade 7 enrollees will have a separate enrollment period beginning April 15.</p><p>Required documents: original report card, 2x2 ID photos (2 copies), birth certificate (photocopy), and completed enrollment form available at the Registrar\'s Office. No fees required for public school enrollment.</p>' },
+    graduation: { title: 'Graduation Ceremony — Grade 6 & Grade 12', date: 'April 18, 2026 at 9:00 AM', body: '<p>The commencement exercises for BNIS graduating students of Grade 6 and Grade 12 will be held on April 18, 2026, starting at 9:00 AM at the school grounds (covered court and gymnasium). Each graduating student will be allocated two (2) seats for their family.</p><p>Graduates must attend the final rehearsal on April 16. Academic gowns will be distributed on April 17. Graduates with unsettled accounts must clear these before April 14 to avoid issues with their clearance.</p>' },
+    nat2: { title: 'National Achievement Test (NAT)', date: 'April 22, 2026', body: '<p>The annual National Achievement Test (NAT) for Grade 6 and Grade 10 students will be administered on April 22, 2026 across the Division of Cavite. Testing will begin at 7:00 AM sharp. Students must bring: school ID, sharpened pencils (#2), and their test permit issued by the Registrar.</p><p>Test venues and seat plans will be posted at the main bulletin board by April 19. Students are encouraged to review all four core subject areas: Filipino, English, Mathematics, and Science.</p>' },
+    library: { title: 'New School Library Wing Now Open', date: 'March 8, 2026', body: '<p>The new BNIS Library Annex, funded through a PHP 2.4M DPWH School Facilities Improvement Grant, is now fully operational as of March 8, 2026. The facility is located adjacent to the main library building and features 3,000 new reference books and novels, 20 computer stations with internet access, a study lounge area, and a dedicated reading section for elementary students.</p><p>Operating hours: Monday to Friday, 7:00 AM to 5:00 PM. Students are encouraged to present their school ID when borrowing materials. Book borrowing is limited to 3 titles per student at a time, with a 1-week borrowing period.</p>' },
+    canteen: { title: 'School Canteen Renovation Completed', date: 'February 25, 2026', body: '<p>The BNIS school canteen has been fully renovated following DepEd\'s updated Nutritional Food Standards for school-based food services. The renovation was completed by February 25 and all stalls are now operational.</p><p>Key changes include a new ventilation system, expanded seating area, upgraded food preparation stations, and four additional vendor stalls offering healthier food alternatives. Unhealthy food items such as sugary drinks and processed snacks have been phased out in compliance with DepEd Order No. 13.</p>' },
+    wifi: { title: 'Campus-Wide Wi-Fi Installation Underway', date: 'February 10, 2026', body: '<p>BNIS is currently in the process of installing a campus-wide Wi-Fi network as part of the DepEd Digitalization Program. As of February 10, internet access points have been successfully installed in 12 classrooms (Rooms 101–112) and the school library.</p><p>Installation in the remaining classrooms, the gymnasium, and faculty room is expected to be completed by March 30, 2026. The network will be available exclusively for educational use. Students may connect using their school email credentials, which will be distributed by their respective advisers.</p>' },
+    garden: { title: 'School Garden Program Expanded', date: 'January 22, 2026', body: '<p>Under the DepEd School-Based Feeding and Gulayan sa Paaralan programs, BNIS has expanded its vegetable garden with five additional plots, bringing the total to eight plots. Vegetables being cultivated include pechay, kangkong, sitaw, ampalaya, and malunggay.</p><p>All Grade 8 and Grade 9 TLE students will participate in weekly garden maintenance activities as part of their Agriculture curriculum. The harvested produce will be used in the school feeding program for identified undernourished students.</p>' },
+    policy: { title: 'Updated School Uniform Policy — Q3 Onwards', date: 'January 15, 2026', body: '<p>Beginning the 3rd Quarter (January 2026), all BNIS students are required to strictly follow the updated School Uniform Policy issued by the Principal\'s Office. The key updates include: PE uniforms may only be worn on officially designated PE days per grade level schedule; complete uniform must be worn during all academic days; violators will be referred to the Guidance Office.</p><p>The complete uniform checklist (including proper hair standards for both male and female students) is available at the Guidance Office. Parents with concerns may schedule a meeting with the class adviser or school counselor.</p>' },
+};
+
+const modal = document.getElementById('modal');
+function openModal(key) {
+    const d = modalData[key];
+    if (!d) return;
+    document.getElementById('modalTitle').textContent = d.title;
+    document.getElementById('modalDate').textContent = d.date;
+    document.getElementById('modalBody').innerHTML = d.body;
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+document.getElementById('modalClose').addEventListener('click', () => { modal.classList.remove('open'); document.body.style.overflow = ''; });
+modal.addEventListener('click', (e) => { if (e.target === modal) { modal.classList.remove('open'); document.body.style.overflow = ''; } });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { modal.classList.remove('open'); document.body.style.overflow = ''; } });
+</script>
+</body>
+</html>
