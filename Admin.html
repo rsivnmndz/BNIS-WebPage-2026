@@ -12,7 +12,460 @@ $syId = intParam('sy', 0);
 if ($syId === 0) {
     $row  = $pdo->query("SELECT id FROM school_years WHERE is_active=1 LIMIT 1")->fetch();
     $syId = $row ? (int)$row['id'] : 1;
-}
+}<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bucal National Integrated School | Administration</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --maroon: #800000;
+            --maroon-dark: #5a0000;
+            --gold-bright: #f0c040;
+            --cream: #FFFDF5;
+            --white: #ffffff;
+            --gray-900: #111827;
+            --gray-800: #1f2937;
+            --gray-600: #4b5563;
+            --gray-500: #6b7280;
+            --gray-400: #9ca3af;
+            --gray-200: #e5e7eb;
+            --gray-100: #f3f4f6;
+            --gray-50: #f9fafb;
+            --green-dark: #006400;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.10);
+            --shadow-lg: 0 10px 40px rgba(0,0,0,0.13);
+            --shadow-maroon: 0 8px 32px rgba(128,0,0,0.22);
+            --radius-sm: 8px; --radius-md: 16px; --radius-lg: 24px; --radius-full: 9999px;
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'DM Sans', sans-serif; background: var(--white); color: var(--gray-800); line-height: 1.6; }
+        h1,h2,h3,h4 { font-family: 'Playfair Display', serif; line-height: 1.2; }
+        a { text-decoration: none; color: inherit; }
+        img { display: block; max-width: 100%; }
+
+        /* NAVBAR */
+        .navbar { position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,0.97); backdrop-filter: blur(12px); border-bottom: 4px solid var(--maroon); padding: 1rem 3rem; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-sm); }
+        .nav-brand { display: flex; align-items: center; gap: 0.75rem; }
+        .nav-brand img { height: 48px; width: 48px; object-fit: contain; }
+        .nav-brand-name { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; text-transform: uppercase; letter-spacing: -0.02em; color: var(--maroon); line-height: 1; }
+        .nav-brand-sub { font-size: 0.62rem; font-weight: 500; color: var(--gray-500); letter-spacing: 0.2em; text-transform: uppercase; }
+        .nav-links { display: flex; align-items: center; gap: 2.5rem; font-size: 0.875rem; font-weight: 600; }
+        .nav-links a { color: var(--gray-500); transition: color 0.2s; }
+        .nav-links a:hover { color: var(--maroon); }
+        .nav-links a.active { color: var(--maroon); border-bottom: 2px solid var(--maroon); padding-bottom: 2px; }
+        .nav-btn { background: var(--maroon) !important; color: var(--white) !important; padding: 0.5rem 1.4rem; border-radius: var(--radius-full); transition: background 0.2s, transform 0.2s !important; box-shadow: var(--shadow-sm); }
+        .nav-btn:hover { background: var(--maroon-dark) !important; transform: translateY(-1px); }
+        .hamburger { display: none; background: none; border: none; cursor: pointer; color: var(--maroon); }
+        .mobile-menu { display: none; position: fixed; inset: 0; z-index: 60; background: var(--white); flex-direction: column; justify-content: center; align-items: center; gap: 2.5rem; transform: translateX(100%); transition: transform 0.3s ease; }
+        .mobile-menu.open { transform: translateX(0); }
+        .mobile-menu-close { position: absolute; top: 1.5rem; right: 1.5rem; background: none; border: none; cursor: pointer; color: var(--gray-800); }
+        .mobile-menu a { font-size: 1.75rem; font-family: 'Playfair Display', serif; color: var(--maroon); font-weight: 700; }
+        .mobile-menu a.secondary { font-size: 1.4rem; font-family: 'DM Sans', sans-serif; color: var(--gray-600); font-weight: 400; }
+        .mobile-menu a.login-btn { font-size: 1.2rem; background: var(--maroon); color: white; padding: 0.75rem 2rem; border-radius: 50px; margin-top: 1rem; }
+
+        /* PAGE HERO */
+        .page-hero { padding: 6rem 1.5rem; text-align: center; color: var(--white); position: relative; overflow: hidden; }
+        .page-hero-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+        .page-hero-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.72); }
+        .page-hero-content { position: relative; z-index: 1; }
+        .hero-badge { background: var(--gold-bright); color: var(--maroon); padding: 0.25rem 1rem; border-radius: var(--radius-full); font-weight: 700; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.12em; display: inline-block; margin-bottom: 1.5rem; animation: pulseOpacity 2.5s ease-in-out infinite; }
+        @keyframes pulseOpacity { 0%,100%{opacity:1} 50%{opacity:0.55} }
+        .page-hero h1 { font-size: clamp(2.5rem,5vw,4rem); font-weight: 800; margin-bottom: 1.5rem; }
+        .page-hero p { font-size: 1.15rem; color: #fecaca; max-width: 36rem; margin: 0 auto; font-weight: 300; }
+
+        /* SECTIONS / LAYOUT */
+        .section { padding: 5rem 1.5rem; }
+        .container { max-width: 80rem; margin: 0 auto; }
+
+        /* PRINCIPAL */
+        .principal-section { position: relative; background: var(--white); }
+        .principal-inner { display: flex; align-items: center; gap: 5rem; flex-wrap: wrap; }
+        .principal-img-wrap { flex: 0 0 38%; max-width: 38%; position: relative; }
+        .principal-img-wrap::before { content: ''; position: absolute; top: 1rem; left: 1rem; width: 100%; height: 100%; border: 2px solid var(--maroon); border-radius: var(--radius-lg); z-index: 0; }
+        .principal-img-glow1 { position: absolute; top: -3rem; left: -3rem; width: 8rem; height: 8rem; background: #fef3c7; border-radius: 50%; opacity: 0.6; filter: blur(32px); }
+        .principal-img-glow2 { position: absolute; bottom: -3rem; right: -3rem; width: 8rem; height: 8rem; background: #fee2e2; border-radius: 50%; opacity: 0.6; filter: blur(32px); }
+        .principal-img { width: 100%; position: relative; z-index: 1; border-radius: var(--radius-md); box-shadow: 0 20px 60px rgba(0,0,0,0.18); filter: grayscale(1); transition: filter 0.7s; }
+        .principal-img:hover { filter: grayscale(0); }
+        .principal-text { flex: 1; min-width: 300px; }
+        .quote-icon { color: var(--maroon); width: 2.5rem; height: 2.5rem; margin-bottom: 1.5rem; }
+        .principal-title { font-size: clamp(1.8rem,3vw,2.4rem); font-weight: 700; color: var(--gray-900); margin-bottom: 1.5rem; }
+        .principal-divider { width: 5rem; height: 4px; background: var(--gold-bright); border-radius: var(--radius-full); margin-bottom: 2rem; }
+        .principal-quote { font-size: 1.1rem; color: var(--gray-600); line-height: 1.8; font-weight: 300; margin-bottom: 2rem; }
+        .principal-card { background: #fff1f2; padding: 1.5rem; border-radius: var(--radius-md); border-left: 4px solid var(--maroon); }
+        .principal-card h4 { font-size: 1.25rem; font-weight: 700; color: var(--gray-900); }
+        .principal-card .role { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; color: var(--maroon); margin-top: 0.25rem; }
+        .principal-card .email { font-size: 0.875rem; color: var(--gray-500); display: flex; align-items: center; gap: 0.5rem; margin-top: 1rem; }
+        .principal-card .email svg { width: 1rem; height: 1rem; flex-shrink: 0; }
+
+        /* KEY ADMINS */
+        .key-admin-section { background: var(--cream); }
+        .section-header-flex { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 3rem; }
+        .section-eyebrow { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.25em; text-transform: uppercase; color: var(--maroon); margin-bottom: 0.4rem; display: block; }
+        .section-title { font-size: clamp(1.6rem,3vw,2rem); font-weight: 700; color: var(--gray-900); }
+        .admin-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 2rem; }
+        .admin-card { background: var(--white); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm); transition: box-shadow 0.3s, transform 0.3s; border-top: 4px solid; }
+        .admin-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+        .admin-card.maroon-border { border-color: var(--maroon); }
+        .admin-card.green-border { border-color: var(--green-dark); }
+        .admin-card.blue-border { border-color: #2563eb; }
+        .admin-card-img { height: 16rem; overflow: hidden; position: relative; background: var(--gray-200); }
+        .admin-card-img-overlay { position: absolute; inset: 0; opacity: 0; transition: opacity 0.3s; z-index: 1; }
+        .maroon-border .admin-card-img-overlay { background: var(--maroon); }
+        .green-border .admin-card-img-overlay { background: var(--green-dark); }
+        .blue-border .admin-card-img-overlay { background: #1d4ed8; }
+        .admin-card:hover .admin-card-img-overlay { opacity: 0.1; }
+        .admin-card-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+        .admin-card:hover .admin-card-img img { transform: scale(1.05); }
+        .admin-card-body { padding: 2rem; }
+        .admin-role-badge { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; display: inline-block; padding: 0.2rem 0.6rem; border-radius: 4px; margin-bottom: 0.75rem; }
+        .maroon-border .admin-role-badge { color: var(--maroon); background: #fff1f2; }
+        .green-border .admin-role-badge { color: var(--green-dark); background: #f0fdf4; }
+        .blue-border .admin-role-badge { color: #2563eb; background: #eff6ff; }
+        .admin-card h3 { font-size: 1.15rem; font-weight: 700; color: var(--gray-900); margin-bottom: 0.75rem; }
+        .admin-card p { font-size: 0.875rem; color: var(--gray-500); font-weight: 300; }
+
+        /* DEPT HEADS */
+        .dept-section { background: var(--white); }
+        .dept-header { text-align: center; margin-bottom: 4rem; }
+        .section-divider { width: 5rem; height: 4px; background: var(--gold-bright); border-radius: var(--radius-full); margin: 1rem auto 0; }
+        .dept-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; }
+        .dept-card { background: var(--white); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--gray-100); border-top: 4px solid; box-shadow: var(--shadow-sm); transition: box-shadow 0.3s, transform 0.3s; }
+        .dept-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-4px); }
+        .dept-card.yellow-t { border-top-color: #eab308; }
+        .dept-card.maroon-t { border-top-color: var(--maroon); }
+        .dept-card.red-t { border-top-color: #ef4444; }
+        .dept-card.blue-t { border-top-color: #3b82f6; }
+        .dept-card.purple-t { border-top-color: #8b5cf6; }
+        .dept-card.orange-t { border-top-color: #f97316; }
+        .dept-card.green-t { border-top-color: var(--green-dark); }
+        .dept-card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; }
+        .dept-icon { width: 2.5rem; height: 2.5rem; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; transition: background 0.2s, color 0.2s; }
+        .dept-icon svg { width: 1.25rem; height: 1.25rem; }
+        .yellow-t .dept-icon { background: #fef3c7; color: #ca8a04; } .yellow-t:hover .dept-icon { background: #ca8a04; color: var(--white); }
+        .maroon-t .dept-icon { background: #fff1f2; color: var(--maroon); } .maroon-t:hover .dept-icon { background: var(--maroon); color: var(--white); }
+        .red-t .dept-icon { background: #fee2e2; color: #dc2626; } .red-t:hover .dept-icon { background: #dc2626; color: var(--white); }
+        .blue-t .dept-icon { background: #eff6ff; color: #2563eb; } .blue-t:hover .dept-icon { background: #2563eb; color: var(--white); }
+        .purple-t .dept-icon { background: #f5f3ff; color: #7c3aed; } .purple-t:hover .dept-icon { background: #7c3aed; color: var(--white); }
+        .orange-t .dept-icon { background: #fff7ed; color: #ea580c; } .orange-t:hover .dept-icon { background: #ea580c; color: var(--white); }
+        .green-t .dept-icon { background: #f0fdf4; color: var(--green-dark); } .green-t:hover .dept-icon { background: var(--green-dark); color: var(--white); }
+        .dept-card img { width: 5rem; height: 5rem; border-radius: 50%; object-fit: cover; border: 2px solid var(--white); box-shadow: var(--shadow-sm); }
+        .dept-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; }
+        .yellow-t .dept-label { color: #ca8a04; }
+        .maroon-t .dept-label { color: var(--maroon); }
+        .red-t .dept-label { color: #dc2626; }
+        .blue-t .dept-label { color: #2563eb; }
+        .purple-t .dept-label { color: #7c3aed; }
+        .orange-t .dept-label { color: #ea580c; }
+        .green-t .dept-label { color: var(--green-dark); }
+        .dept-card h4 { font-size: 1.05rem; font-weight: 700; margin-top: 0.4rem; color: var(--gray-900); }
+        .dept-card .dept-email { font-size: 0.75rem; color: var(--gray-400); margin-top: 0.4rem; }
+
+        /* DEVELOPER */
+        .dev-section { background: var(--gray-50); border-top: 1px solid var(--gray-200); padding: 5rem 1.5rem; }
+        .dev-inner { max-width: 48rem; margin: 0 auto; text-align: center; }
+        .dev-eyebrow { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.25em; text-transform: uppercase; color: var(--maroon); margin-bottom: 1.5rem; display: block; }
+        .dev-avatar { display: inline-block; padding: 4px; background: var(--white); border-radius: 50%; box-shadow: var(--shadow-lg); margin-bottom: 1.5rem; }
+        .dev-avatar img { width: 12rem; height: 12rem; border-radius: 50%; object-fit: cover; border: 4px solid var(--gray-100); }
+        .dev-name { font-size: 2rem; font-weight: 700; color: var(--gray-900); }
+        .dev-role { color: var(--maroon); font-weight: 600; margin: 0.25rem 0 1.5rem; font-size: 0.9375rem; }
+        .dev-quote { color: var(--gray-500); font-style: italic; font-weight: 300; max-width: 32rem; margin: 0 auto 2rem; line-height: 1.8; }
+        .dev-socials { display: flex; justify-content: center; gap: 1rem; }
+        .dev-social { width: 2.5rem; height: 2.5rem; border-radius: 50%; background: var(--white); display: flex; align-items: center; justify-content: center; color: var(--gray-400); box-shadow: var(--shadow-sm); transition: background 0.2s, color 0.2s; }
+        .dev-social svg { width: 1.25rem; height: 1.25rem; }
+        .dev-social.fb:hover { background: #1877F2; color: var(--white); }
+        .dev-social.ig:hover { background: #E4405F; color: var(--white); }
+        .dev-social.li:hover { background: #0A66C2; color: var(--white); }
+
+        /* RESPONSIVE */
+        @media (max-width: 1024px) {
+            .navbar { padding: 1rem 1.5rem; }
+            .principal-img-wrap { flex: 0 0 45%; max-width: 45%; }
+        }
+        @media (max-width: 768px) {
+            .navbar { padding: 1rem 1.25rem; }
+            .nav-links { display: none; }
+            .hamburger { display: block; }
+            .mobile-menu { display: flex; }
+            .principal-inner { flex-direction: column; }
+            .principal-img-wrap { flex: 0 0 100%; max-width: 100%; }
+            .admin-grid { grid-template-columns: 1fr; }
+            .dept-grid { grid-template-columns: 1fr 1fr; }
+            .section-header-flex { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
+        }
+        @media (max-width: 480px) {
+            .dept-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-brand">
+        <img src="BNIS_logo-removebg-preview.png" alt="BNIS Logo">
+        <div>
+            <div class="nav-brand-name">Bucal National</div>
+            <div class="nav-brand-sub">Integrated School</div>
+        </div>
+    </div>
+    <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="Enrollment.html">Enrollment</a>
+        <a href="SchoolNews.html">School News</a>
+        <a href="CampusUpdates.html">Campus Updates</a>
+        <a href="Admin.html" class="active">Our Admin</a>
+        <a href="admin_login.php" class="nav-btn">Admin Login</a>
+    </div>
+    <button class="hamburger" id="mobileMenuBtn" aria-label="Open menu">
+        <svg style="width:2rem;height:2rem" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+    </button>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+    <button class="mobile-menu-close" id="closeMenuBtn">
+        <svg style="width:2rem;height:2rem" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+    </button>
+    
+    <a href="index.html">Home</a>
+    <a href="Enrollment.html" class="secondary">Enrollment</a>
+    <a href="SchoolNews.html" class="secondary">School News</a>
+    <a href="CampusUpdates.html" class="secondary">Campus Updates</a>
+    <a href="Admin.html" class="secondary active">Our Admin</a>
+    <a href="admin_login.php" class="login-btn">Admin Login</a>
+</div>
+
+<section class="page-hero">
+    <img class="page-hero-bg" src="BNIS_bg.png" alt="BNIS Background">
+    <div class="page-hero-overlay"></div>
+    <div class="page-hero-content">
+        <span class="hero-badge">Excellence in Leadership</span>
+        <h1>Meet Our Administration</h1>
+        <p>The dedicated visionaries and educators guiding BNIS towards a brighter future.</p>
+    </div>
+</section>
+
+<section class="section principal-section">
+    <div class="container">
+        <div class="principal-inner">
+            <div class="principal-img-wrap">
+                <div class="principal-img-glow1"></div>
+                <div class="principal-img-glow2"></div>
+                <img class="principal-img" src="BNIS_logo-removebg-preview.png" alt="Principal">
+            </div>
+            <div class="principal-text">
+                <svg class="quote-icon" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M14.017 21L14.017 18C14.017 16.0547 14.8094 14.1917 16.2198 12.8163C17.6303 11.441 19.5432 10.6683 21.5383 10.6683V5.43236C19.3828 6.07186 17.5202 7.37877 16.1422 9.13098C14.7643 10.8832 13.9261 12.9774 13.7252 15.1764H12.9248C12.7239 12.9774 11.8857 10.8832 10.5078 9.13098C9.12984 7.37877 7.26724 6.07186 5.11174 5.43236V10.6683C7.10686 10.6683 9.01972 11.441 10.4302 12.8163C11.8406 14.1917 12.633 16.0547 12.633 18V21H14.017Z"/>
+                </svg>
+                <h2 class="principal-title">Leading with Vision &amp; Heart</h2>
+                <div class="principal-divider"></div>
+                <p class="principal-quote">
+                    "Education is not just about academic excellence, but about shaping character. At BNIS, we foster an environment where every student is empowered to dream big."
+                </p>
+                <div class="principal-card">
+                    <h4>[Principal Name]</h4>
+                    <p class="role">Principal IV</p>
+                    <p class="email">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                        </svg>
+                        <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="f282809b9c919b82939eb2909c9b81dc979687dc829a">[email&#160;protected]</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section key-admin-section">
+    <div class="container">
+        <div class="section-header-flex">
+            <div>
+                <span class="section-eyebrow">Management Team</span>
+                <h2 class="section-title">Key Administrators</h2>
+            </div>
+        </div>
+        <div class="admin-grid">
+            <div class="admin-card maroon-border">
+                <div class="admin-card-img">
+                    <div class="admin-card-img-overlay"></div>
+                    <img src="BNIS_logo-removebg-preview.png" alt="Assistant Principal">
+                </div>
+                <div class="admin-card-body">
+                    <span class="admin-role-badge">Assistant Principal</span>
+                    <h3>[Name Here]</h3>
+                    <p>Overseeing academic programs and faculty development.</p>
+                </div>
+            </div>
+            <div class="admin-card green-border">
+                <div class="admin-card-img">
+                    <div class="admin-card-img-overlay"></div>
+                    <img src="BNIS_logo-removebg-preview.png" alt="Guidance Counselor">
+                </div>
+                <div class="admin-card-body">
+                    <span class="admin-role-badge">Guidance Counselor</span>
+                    <h3>[Name Here]</h3>
+                    <p>Providing student support services and mental health advocacy.</p>
+                </div>
+            </div>
+            <div class="admin-card blue-border">
+                <div class="admin-card-img">
+                    <div class="admin-card-img-overlay"></div>
+                    <img src="BNIS_logo-removebg-preview.png" alt="Registrar">
+                </div>
+                <div class="admin-card-body">
+                    <span class="admin-role-badge">Registrar</span>
+                    <h3>[Name Here]</h3>
+                    <p>Managing student records, enrollment processes, and documentation.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section dept-section">
+    <div class="container">
+        <div class="dept-header">
+            <span class="section-eyebrow">Academic Leaders</span>
+            <h2 class="section-title" style="font-size:clamp(1.6rem,3vw,2rem)">Department Heads</h2>
+            <div class="section-divider"></div>
+        </div>
+        <div class="dept-grid">
+            <div class="dept-card yellow-t">
+                <div class="dept-card-top">
+                    <div class="dept-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                        </svg>
+                    </div>
+                    <img src="BNIS_logo-removebg-preview.png" alt="Head">
+                </div>
+                <p class="dept-label">English Dept.</p>
+                <h4>[Head Name]</h4>
+                <p class="dept-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="fc99929b90958f94bc9e92958fd2999889d28c94">[email&#160;protected]</a></p>
+            </div>
+            <div class="dept-card maroon-t">
+                <div class="dept-card-top">
+                    <div class="dept-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
+                        </svg>
+                    </div>
+                    <img src="BNIS_logo-removebg-preview.png" alt="Head">
+                </div>
+                <p class="dept-label">Science Dept.</p>
+                <h4>[Head Name]</h4>
+                <p class="dept-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b2c1d1dbd7dcd1d7f2d0dcdbc19cd7d6c79cc2da">[email&#160;protected]</a></p>
+            </div>
+            <div class="dept-card blue-t">
+                <div class="dept-card-top">
+                    <div class="dept-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
+                    <img src="BNIS_logo-removebg-preview.png" alt="Head">
+                </div>
+                <p class="dept-label">Math Dept.</p>
+                <h4>[Head Name]</h4>
+                <p class="dept-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="325f53465a72505c5b411c5756471c425a">[email&#160;protected]</a></p>
+            </div>
+            <div class="dept-card purple-t">
+                <div class="dept-card-top">
+                    <div class="dept-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                    </div>
+                    <img src="BNIS_logo-removebg-preview.png" alt="Head">
+                </div>
+                <p class="dept-label">Research Dept.</p>
+                <h4>[Head Name]</h4>
+                <p class="dept-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="9deff8eef8fceffef5ddfff3f4eeb3f8f9e8b3edf5">[email&#160;protected]</a></p>
+            </div>
+            <div class="dept-card orange-t">
+                <div class="dept-card-top">
+                    <div class="dept-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                        </svg>
+                    </div>
+                    <img src="BNIS_logo-removebg-preview.png" alt="Head">
+                </div>
+                <p class="dept-label">SHS Dept.</p>
+                <h4>[Head Name]</h4>
+                <p class="dept-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="22514a5162404c4b510c4746570c524a">[email&#160;protected]</a></p>
+            </div>
+            <div class="dept-card green-t">
+                <div class="dept-card-top">
+                    <div class="dept-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                        </svg>
+                    </div>
+                    <img src="BNIS_logo-removebg-preview.png" alt="Head">
+                </div>
+                <p class="dept-label">JHS Dept.</p>
+                <h4>[Head Name]</h4>
+                <p class="dept-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a8c2c0dbe8cac6c1db86cdccdd86d8c0">[email&#160;protected]</a></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="dev-section">
+    <div class="dev-inner">
+        <span class="dev-eyebrow">System Creator</span>
+        <div class="dev-avatar">
+            <img src="Developer picture.jpg" alt="Developer">
+        </div>
+        <h3 class="dev-name">Roise Ivan M. Mendoza</h3>
+        <p class="dev-role">Full Stack Developer | BNIS Alumni</p>
+        <p class="dev-quote">"As a proud alumnus of Bucal National Integrated School, I dedicated this project to modernizing our school's enrollment system."</p>
+        <div class="dev-socials">
+            <a href="https://www.facebook.com/ivnmendoza.20/" target="_blank" class="dev-social fb" aria-label="Facebook">
+                <svg fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/>
+                </svg>
+            </a>
+            <a href="https://www.instagram.com/ivnmendoza_/" target="_blank" class="dev-social ig" aria-label="Instagram">
+                <svg fill="currentColor" viewBox="0 0 24 24">
+                    <path fill-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.451 2.535c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z" clip-rule="evenodd"/>
+                </svg>
+            </a>
+            <a href="https://www.linkedin.com/in/roise-ivan-mendoza/" target="_blank" class="dev-social li" aria-label="LinkedIn">
+                <svg fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-1.066-4.396-2.92-4.396-1.5 0-2.316.804-2.7 1.487v-1.272h-3v11h3v-6.024c0-1.59.83-2.196 2.012-2.196 1.155 0 1.908.73 1.908 2.25v6.075h3v-11z"/>
+                </svg>
+            </a>
+        </div>
+    </div>
+</section>
+
+<script>
+    // Simple script to handle the mobile menu toggle
+    const btn = document.getElementById('mobileMenuBtn');
+    const closeBtn = document.getElementById('closeMenuBtn');
+    const menu = document.getElementById('mobileMenu');
+
+    btn.addEventListener('click', () => {
+        menu.classList.add('open');
+    });
+
+    closeBtn.addEventListener('click', () => {
+        menu.classList.remove('open');
+    });
+</script>
+
+</body>
+</html>
 
 // ── Pagination ──────────────────────────────────────────────
 $page  = max(1, intParam('page', 1));
