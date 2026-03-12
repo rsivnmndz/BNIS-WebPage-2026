@@ -59,7 +59,8 @@ require_admin_page();
         .f-search:focus-within{border-color:var(--maroon)}.f-search svg{width:.9rem;height:.9rem;color:var(--gray-400);flex-shrink:0}
         .f-search input{border:none;background:transparent;font-size:.8rem;font-family:'DM Sans',sans-serif;color:var(--gray-800);outline:none;width:100%}
         .f-search input::placeholder{color:var(--gray-400)}
-        .kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.1rem;margin-bottom:1.5rem}
+        /* UPDATED: Changed grid to 2 columns since we removed Elem/JHS */
+        .kpi-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.1rem;margin-bottom:1.5rem}
         .kpi{background:#fff;border-radius:var(--r-lg);padding:1.3rem 1.4rem;border:1.5px solid var(--gray-200);box-shadow:var(--shadow-sm);display:flex;flex-direction:column;gap:.7rem;transition:all .2s;position:relative;overflow:hidden;animation:fadeUp .4s ease both}
         .kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--r-lg) var(--r-lg) 0 0}
         .kpi.c-maroon::before{background:var(--maroon)}.kpi.c-green::before{background:var(--green)}
@@ -126,17 +127,12 @@ require_admin_page();
         .db-error{background:#fff5f5;border:1.5px solid #fecaca;color:var(--red);border-radius:var(--r-lg);padding:1.4rem 1.75rem;margin-bottom:1.5rem;display:none}
         .db-error strong{display:block;margin-bottom:.5rem;font-size:.9rem}.db-error p{font-size:.82rem;line-height:1.7}
         .db-error code{background:#fee2e2;padding:.1rem .4rem;border-radius:4px;font-family:monospace;font-size:.8rem}
-        .setup-info{background:#eff6ff;border:1.5px solid #bfdbfe;color:#1e40af;border-radius:var(--r-lg);padding:1.4rem 1.75rem;margin-bottom:1.5rem}
-        .setup-info strong{display:block;margin-bottom:.5rem;font-size:.9rem}.setup-info p{font-size:.82rem;line-height:1.8}
-        .setup-info code{background:#dbeafe;padding:.1rem .4rem;border-radius:4px;font-family:monospace;font-size:.78rem}
-        .setup-info ol{padding-left:1.25rem;margin-top:.5rem}.setup-info ol li{font-size:.82rem;margin-bottom:.3rem}
         .toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--gray-900);color:#fff;padding:.75rem 1.25rem;border-radius:var(--r-lg);font-size:.8rem;font-weight:500;box-shadow:var(--shadow-lg);transform:translateY(4rem);opacity:0;transition:all .3s;z-index:1000;display:flex;align-items:center;gap:.6rem;max-width:320px}
         .toast.show{transform:translateY(0);opacity:1}.toast.success{border-left:3px solid var(--green)}.toast.error{border-left:3px solid var(--red)}
         @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-        .kpi:nth-child(1){animation-delay:.05s}.kpi:nth-child(2){animation-delay:.1s}.kpi:nth-child(3){animation-delay:.15s}.kpi:nth-child(4){animation-delay:.2s}
-        @media(max-width:1280px){.kpi-grid{grid-template-columns:repeat(2,1fr)}.chart-grid-2{grid-template-columns:1fr}.bottom-grid{grid-template-columns:1fr 1fr}}
-        @media(max-width:900px){.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.main{margin-left:0}.sb-toggle{display:block}.bottom-grid{grid-template-columns:1fr}.kpi-grid{grid-template-columns:repeat(2,1fr)}.content{padding:1.25rem}.topbar{padding:.85rem 1.25rem}.chart-grid-eq{grid-template-columns:1fr}}
-        @media(max-width:560px){.kpi-grid{grid-template-columns:1fr}}
+        .kpi:nth-child(1){animation-delay:.05s}.kpi:nth-child(2){animation-delay:.1s}
+        @media(max-width:1280px){.chart-grid-2{grid-template-columns:1fr}.bottom-grid{grid-template-columns:1fr 1fr}}
+        @media(max-width:900px){.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.main{margin-left:0}.sb-toggle{display:block}.bottom-grid{grid-template-columns:1fr}.kpi-grid{grid-template-columns:1fr}.content{padding:1.25rem}.topbar{padding:.85rem 1.25rem}.chart-grid-eq{grid-template-columns:1fr}}
         .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:45}.overlay.open{display:block}
         @media print{.sidebar,.topbar-right,.filter-bar,.sb-toggle{display:none!important}.main{margin-left:0}body{background:#fff}}
     </style>
@@ -182,20 +178,9 @@ require_admin_page();
     </div>
 
     <div class="content">
-        <div class="setup-info" id="setupInfo">
-            <strong>📋 Setup Instructions — Connect to phpMyAdmin</strong>
-            <ol>
-                <li>Import <code>bnis_database.sql</code> into phpMyAdmin (creates database <code>bnis_db</code> with sample data)</li>
-                <li>Edit <code>config.php</code> and set your MySQL username/password</li>
-                <li>Copy all files to your XAMPP/WAMP web root: e.g. <code>C:\xampp\htdocs\bnis\</code></li>
-                <li>Open <code>http://localhost/bnis/AdminDashboard.html</code> — the dashboard will auto-connect</li>
-                <li>The <strong>DB</strong> badge in the sidebar confirms live database mode</li>
-            </ol>
-            <p style="margin-top:.75rem;font-size:.78rem;opacity:.8">The dashboard auto-refreshes every 5 minutes. All filters (level, strand, year, search) query the database in real time.</p>
-        </div>
         <div class="db-error" id="dbError">
             <strong>⚠ Database Connection Error</strong>
-            <p id="dbErrorMsg">Could not reach the API. Ensure PHP server is running and <code>api/config.php</code> credentials are correct. See setup instructions above.</p>
+            <p id="dbErrorMsg">Could not reach the API. Ensure PHP server is running.</p>
         </div>
 
         <div class="filter-bar">
@@ -205,18 +190,17 @@ require_admin_page();
             <div class="f-divider"></div>
             <div class="f-group"><span class="f-label">Level</span>
                 <div class="f-pills">
-                    <button class="f-pill active" data-level="all" onclick="setLevel(this,'all')">All</button>
-                    <button class="f-pill" data-level="Elementary" onclick="setLevel(this,'Elementary')">Elementary</button>
-                    <button class="f-pill" data-level="JHS" onclick="setLevel(this,'JHS')">JHS</button>
-                    <button class="f-pill" data-level="SHS" onclick="setLevel(this,'SHS')">SHS</button>
+                    <button class="f-pill active" data-level="SHS" onclick="setLevel(this,'SHS')">SHS</button>
                 </div>
             </div>
             <div class="f-divider"></div>
             <div class="f-group"><span class="f-label">Strand</span>
                 <select class="f-select" id="filterStrand" onchange="loadAll()">
                     <option value="all">All Strands</option>
-                    <option value="STEM">STEM</option><option value="ABM">ABM</option>
-                    <option value="HUMSS">HUMSS</option><option value="TVL">TVL</option><option value="GAS">GAS</option>
+                    <option value="STEM">STEM</option>
+                    <option value="ABM">ABM</option>
+                    <option value="HUMSS">HUMSS</option>
+                    <option value="TVL">TVL</option>
                 </select>
             </div>
             <div class="f-divider"></div>
@@ -237,17 +221,7 @@ require_admin_page();
                 <div class="kpi-val" id="kpiSHS"><div class="kpi-skeleton"></div></div>
                 <div class="kpi-foot"><span class="kpi-period">Senior High School</span></div>
             </div>
-            <div class="kpi c-blue">
-                <div class="kpi-top"><span class="kpi-lbl">JHS Enrollees</span><div class="kpi-icon blue"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg></div></div>
-                <div class="kpi-val" id="kpiJHS"><div class="kpi-skeleton"></div></div>
-                <div class="kpi-foot"><span class="kpi-period">Junior High School</span></div>
             </div>
-            <div class="kpi c-amber">
-                <div class="kpi-top"><span class="kpi-lbl">Elementary</span><div class="kpi-icon amber"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"/></svg></div></div>
-                <div class="kpi-val" id="kpiElem"><div class="kpi-skeleton"></div></div>
-                <div class="kpi-foot"><span class="kpi-period">Grades 1–6</span></div>
-            </div>
-        </div>
 
         <div class="chart-grid-2">
             <div class="chart-card">
@@ -266,7 +240,7 @@ require_admin_page();
         <div class="chart-grid-eq">
             <div class="chart-card">
                 <div class="ch-header"><div><div class="ch-title">Monthly Enrollment Trend</div><div class="ch-sub">Registrations per month</div></div>
-                    <div class="ch-actions"><button class="ch-pill active" onclick="switchTrend(this,'all')">All</button><button class="ch-pill" onclick="switchTrend(this,'shs')">SHS</button><button class="ch-pill" onclick="switchTrend(this,'jhs')">JHS</button></div>
+                    <div class="ch-actions"><button class="ch-pill active" onclick="switchTrend(this,'all')">All</button></div>
                 </div>
                 <div class="ch-body"><div style="height:220px;position:relative"><canvas id="trendChart"></canvas></div></div>
             </div>
@@ -309,15 +283,13 @@ require_admin_page();
 
 <script>
 // ─── CONFIG ────────────────────────────────────────────────────────────────
-// Point this to wherever your PHP api/ folder lives.
-// Same folder as this HTML file → 'api'
-// Subfolder example → 'bnis/api'
 const API_BASE = '.';
 
-const SC = { STEM:'#800000', ABM:'#1d4ed8', HUMSS:'#15803d', TVL:'#d97706', GAS:'#6d28d9' };
-const LC = { Elementary:'#d97706', JHS:'#1d4ed8', SHS:'#800000' };
+// Removed GAS from colors
+const SC = { STEM:'#800000', ABM:'#1d4ed8', HUMSS:'#15803d', TVL:'#d97706' };
+const LC = { SHS:'#800000' };
 
-let AL='all', barMode='count', trendMode='all', sortCol='count', sortDir='desc';
+let AL='SHS', barMode='count', trendMode='all', sortCol='count', sortDir='desc';
 let gradeChart,strandChart,trendChart,genderChart,cache=null,exportRows=[];
 let searchTimer;
 
@@ -345,14 +317,12 @@ async function loadAll(){
     try{
         const d=await apiFetch('analytics.php',filters());
         cache=d; setConn('ok',`Live · ${d.generated}`);
-        $('setupInfo').style.display='none';
 
-        // Populate SY dropdown once
         if($('filterSY').options.length<=1&&d.school_years){
             $('filterSY').innerHTML=d.school_years.map(sy=>`<option value="${sy.id}"${sy.is_active?' selected':''}>${sy.label}</option>`).join('');
         }
 
-        $('topbarSub').textContent=`${$('filterSY').selectedOptions[0]?.text||''} · ${AL==='all'?'All Levels':AL} · ${num(d.kpi.total)} enrollees`;
+        $('topbarSub').textContent=`${$('filterSY').selectedOptions[0]?.text||''} · SHS Only · ${num(d.kpi.total)} enrollees`;
         renderKPIs(d.kpi);
         renderGradeChart(d.grades);
         renderStrandChart(d.strands);
@@ -374,8 +344,6 @@ async function loadAll(){
 function renderKPIs(k){
     $('kpiTotal').textContent=num(k.total);
     $('kpiSHS').textContent=num(k.shs);
-    $('kpiJHS').textContent=num(k.jhs);
-    $('kpiElem').textContent=num(k.elem);
     const mp=k.total>0?((k.male/k.total)*100).toFixed(0):0;
     $('kpiTotalChg').innerHTML=`<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:.75rem;height:.75rem"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg> ${mp}% Male`;
 }
@@ -384,7 +352,7 @@ function renderGradeChart(grades){
     const g={};
     grades.forEach(r=>{const l=r.grade_label;if(!g[l])g[l]={c:0,lv:r.level};g[l].c+=Number(r.count);});
     const labels=Object.keys(g),vals=labels.map(l=>g[l].c),tot=vals.reduce((a,b)=>a+b,0);
-    const colors=labels.map(l=>LC[g[l].lv]||'#800000');
+    const colors=labels.map(l=>'#800000');
     const data=barMode==='count'?vals:vals.map(v=>+((v/tot*100).toFixed(1)));
     if(gradeChart)gradeChart.destroy();
     gradeChart=new Chart($('gradeChart'),{type:'bar',data:{labels,datasets:[{label:'Enrollees',data,backgroundColor:colors.map(c=>c+'cc'),borderColor:colors,borderWidth:2,borderRadius:6,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>barMode==='count'?` ${num(ctx.raw)} students`:` ${ctx.raw}%`}}},scales:{x:{grid:{display:false},ticks:{font:{size:10}}},y:{grid:{color:'#f0f0f0'},ticks:{font:{size:10}},beginAtZero:true}}}});
@@ -433,7 +401,7 @@ function renderTable(grades,strands){
     $('tableBody').innerHTML=rows.map((r,i)=>{
         const pct=tot>0?((r.count/tot)*100).toFixed(1):'0.0';
         const bw=Math.round((r.count/max)*100);
-        const dc=SC[r.strand]||(r.level==='Elementary'?'#d97706':r.level==='JHS'?'#1d4ed8':'#800000');
+        const dc=SC[r.strand]||'#800000';
         const [sc,sl]=bw>75?['high','High']:bw>50?['mid','Normal']:bw>30?['low','Below Avg']:['crit','Low'];
         return `<tr><td class="td-rank ${i<3?'top':''}">${i+1}</td><td class="td-name">${r.grade}</td><td><span class="strand-chip" style="background:${dc}18;color:${dc}"><span class="strand-dot" style="background:${dc}"></span>${r.strand}</span></td><td style="font-weight:700;color:var(--gray-900)">${num(r.count)}</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:${bw}%;background:${dc}"></div></div><span class="bar-pct">${pct}%</span></div></td><td style="font-size:.75rem;color:var(--gray-500)">${pct}%</td><td style="font-size:.78rem">${num(r.male)}</td><td style="font-size:.78rem">${num(r.female)}</td><td><span class="status-badge ${sc}">${sl}</span></td></tr>`;
     }).join('');
@@ -454,10 +422,10 @@ function renderStrandProg(strands){
 }
 
 function renderCapacityProg(capacity,grades){
-    const tgt={Elementary:750,JHS:1200,SHS:1200};
-    const lvl={Elementary:0,JHS:0,SHS:0};
+    const tgt={SHS:1200};
+    const lvl={SHS:0};
     grades.forEach(g=>{lvl[g.level]=(lvl[g.level]||0)+Number(g.count);});
-    const lc={Elementary:'#d97706',JHS:'#1d4ed8',SHS:'#800000'};
+    const lc={SHS:'#800000'};
     $('capacityProg').innerHTML=Object.entries(lvl).map(([level,count])=>{
         const t=tgt[level]||count;const pct=Math.min(100,Math.round((count/t)*100));
         return `<div class="prog-item"><div class="prog-top"><span class="prog-name">${level}</span><span class="prog-val">${num(count)} / ${num(t)}</span></div><div class="prog-bar"><div class="prog-fill" style="width:${pct}%;background:${lc[level]}"></div></div><div class="prog-sub">${pct}% capacity filled</div></div>`;
@@ -468,7 +436,7 @@ function renderRecent(recent){
     if(!recent?.length){$('recentList').innerHTML=`<div style="padding:1.5rem;text-align:center;color:var(--gray-400);font-size:.8rem">No recent enrollees</div>`;return;}
     $('recentList').innerHTML=recent.map(r=>{
         const init=r.name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
-        const col=r.level==='SHS'?(SC[r.strand]||'#800000'):r.level==='JHS'?'#1d4ed8':'#d97706';
+        const col=(SC[r.strand]||'#800000');
         return `<div class="enrollee-row"><div class="e-avatar" style="background:${col}">${init}</div><div style="flex:1;min-width:0"><div class="e-name">${r.name}</div><div class="e-grade">Grade ${r.grade} · ${r.strand}</div></div><div class="e-time">${r.enrolled_at||'–'}</div></div>`;
     }).join('');
 }
@@ -476,8 +444,6 @@ function renderRecent(recent){
 function setLevel(el,level){
     document.querySelectorAll('.f-pill[data-level]').forEach(b=>b.classList.remove('active'));
     el.classList.add('active');AL=level;
-    const ss=$('filterStrand');ss.disabled=(level==='Elementary'||level==='JHS');
-    if(ss.disabled)ss.value='all';
     loadAll();
 }
 function debounceSearch(){clearTimeout(searchTimer);searchTimer=setTimeout(loadAll,420);}

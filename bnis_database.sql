@@ -240,7 +240,6 @@ CREATE TABLE admin_users (
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
--- Default admin: username=admin, password=admin (hashed)
 INSERT INTO admin_users (username, password_hash, email, role) VALUES
 ('admin', 'Ivan', 'admin@bnhs.edu', 'admin');
 

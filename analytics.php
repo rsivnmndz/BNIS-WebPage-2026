@@ -15,21 +15,19 @@ if ($syId === 0) {
 }
 
 // ── Filters ─────────────────────────────────────────────────
-$levelAllowed  = ['all','Elementary','JHS','SHS'];
-$strandAllowed = ['all','STEM','ABM','HUMSS','TVL','GAS'];
+// Removed JHS, Elem, and GAS
+$levelAllowed  = ['all','SHS'];
+$strandAllowed = ['all','STEM','ABM','HUMSS','TVL'];
 
 $level  = strParam('level',  $levelAllowed,  'all');
 $strand = strParam('strand', $strandAllowed, 'all');
 $q      = trim($_GET['q'] ?? '');
 
 // Base WHERE (using alias 'e' for enrollees, 's' for sections)
-$where  = ['e.school_year_id = :sy', "e.status = 'Enrolled'"];
+// Add logic to entirely filter out GAS enrollees from showing up in any metrics
+$where  = ['e.school_year_id = :sy', "e.status = 'Enrolled'", "e.strand_code != 'GAS'"];
 $params = [':sy' => $syId];
 
-// The DB is SHS only (Grades 11 & 12). So hide data if looking for Elem/JHS
-if ($level === 'Elementary' || $level === 'JHS') {
-    $where[] = '1 = 0'; 
-}
 if ($strand !== 'all') {
     $where[] = 'e.strand_code = :strand';
     $params[':strand'] = $strand;
@@ -45,8 +43,6 @@ $whereSQL = 'WHERE ' . implode(' AND ', $where);
 $kpiSQL = "
     SELECT
         COUNT(*) AS total,
-        0 AS elem,
-        0 AS jhs,
         COUNT(*) AS shs,
         SUM(e.gender = 'Male') AS male,
         SUM(e.gender = 'Female') AS female
@@ -85,7 +81,7 @@ $strandSQL = "
         SUM(e.gender='Female') AS female,
         COUNT(DISTINCT e.section_id) AS sections
     FROM enrollees e
-    WHERE e.school_year_id = :sy AND e.status = 'Enrolled'
+    WHERE e.school_year_id = :sy AND e.status = 'Enrolled' AND e.strand_code != 'GAS'
     " . ($strand !== 'all' ? "AND e.strand_code = :strand2" : "") . "
     GROUP BY e.strand_code, e.grade
     ORDER BY e.strand_code, e.grade";
@@ -104,7 +100,7 @@ $monthSQL = "
         'SHS' AS level,
         COUNT(*) AS count
     FROM enrollees e
-    WHERE e.school_year_id = :sy AND e.status = 'Enrolled'
+    WHERE e.school_year_id = :sy AND e.status = 'Enrolled' AND e.strand_code != 'GAS'
     GROUP BY YEAR(e.enrolled_at), MONTH(e.enrolled_at)
     ORDER BY yr, mon";
 $stmt = $pdo->prepare($monthSQL);
@@ -114,14 +110,11 @@ $monthlyRaw = $stmt->fetchAll();
 $monthOrder = [6,7,8,9,10,11,12,1,2,3,4,5];
 $monthLabels = ['Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May'];
 $trendAll = array_fill(0, 12, 0);
-$trendSHS = array_fill(0, 12, 0);
-$trendJHS = array_fill(0, 12, 0);
 
 foreach ($monthlyRaw as $r) {
     $idx = array_search((int)$r['mon'], $monthOrder);
     if ($idx !== false) {
         $trendAll[$idx] += (int)$r['count'];
-        $trendSHS[$idx] += (int)$r['count'];
     }
 }
 
@@ -133,7 +126,7 @@ $capacitySQL = "
         SUM(s.capacity) AS capacity,
         COUNT(DISTINCT s.id) AS section_count
     FROM sections s
-    WHERE s.school_year_id = :sy
+    WHERE s.school_year_id = :sy AND s.strand_code != 'GAS'
     GROUP BY s.grade, s.strand_code
     ORDER BY s.grade, s.strand_code";
 $stmt = $pdo->prepare($capacitySQL);
@@ -146,7 +139,7 @@ $recentSQL = "
         CONCAT(e.first_name, ' ', e.last_name) AS name,
         'SHS' AS level, e.grade, e.strand_code AS strand, e.gender, e.enrolled_at
     FROM enrollees e
-    WHERE e.school_year_id = :sy AND e.status = 'Enrolled'
+    WHERE e.school_year_id = :sy AND e.status = 'Enrolled' AND e.strand_code != 'GAS'
     ORDER BY e.enrolled_at DESC
     LIMIT 8";
 $stmt = $pdo->prepare($recentSQL);
@@ -155,19 +148,6 @@ $recent = $stmt->fetchAll();
 
 // ── 7. School years list ─────────────────────────────────────
 $syList = $pdo->query("SELECT id, label, is_active FROM school_years ORDER BY year_from DESC")->fetchAll();
-
-// ── 8. Top sections ───────────────
-$topSectionSQL = "
-    SELECT s.section_name AS section, COUNT(*) AS count, e.grade, e.strand_code AS strand, 'SHS' AS level
-    FROM enrollees e 
-    LEFT JOIN sections s ON e.section_id = s.id
-    $whereSQL AND e.section_id IS NOT NULL
-    GROUP BY s.section_name, e.grade, e.strand_code
-    ORDER BY count DESC
-    LIMIT 10";
-$stmt = $pdo->prepare($topSectionSQL);
-$stmt->execute($params);
-$topSections = $stmt->fetchAll();
 
 // ── Assemble response ────────────────────────────────────────
 json_out([
@@ -181,11 +161,9 @@ json_out([
     'trend'       => [
         'labels' => $monthLabels,
         'all'    => $trendAll,
-        'shs'    => $trendSHS,
-        'jhs'    => $trendJHS,
+        'shs'    => $trendAll // Duplicated since it's SHS only anyway
     ],
     'capacity'    => $capacityData,
     'recent'      => $recent,
-    'school_years'=> $syList,
-    'top_sections'=> $topSections,
+    'school_years'=> $syList
 ]);

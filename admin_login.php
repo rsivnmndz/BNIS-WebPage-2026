@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute([':u' => $username]);
         $row = $stmt->fetch();
 
-        if ($row && password_verify($password, (string)$row['password_hash'])) {
+        if ($row && $password === (string)$row['password_hash']) {
             session_regenerate_id(true);
             $_SESSION['admin_id'] = (int)$row['id'];
             $_SESSION['admin_username'] = (string)$row['username'];
