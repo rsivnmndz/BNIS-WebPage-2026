@@ -1,0 +1,197 @@
+-- ============================================================
+--  BNIS ENROLLMENT DATABASE
+--  Import this file into phpMyAdmin
+--  Database: bnis_db
+-- ============================================================
+
+CREATE DATABASE IF NOT EXISTS bnis_db
+  CHARACTER SET utf8mb4
+  COLLATE utf8mb4_unicode_ci;
+
+USE bnis_db;
+
+-- ──────────────────────────────────────────────────────────
+-- TABLE: school_years
+-- ──────────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS school_years (
+    id        INT AUTO_INCREMENT PRIMARY KEY,
+    label     VARCHAR(20) NOT NULL UNIQUE,   -- e.g. "SY 2026-2027"
+    year_from YEAR        NOT NULL,
+    year_to   YEAR        NOT NULL,
+    is_active TINYINT(1)  NOT NULL DEFAULT 0
+) ENGINE=InnoDB;
+
+INSERT INTO school_years (label, year_from, year_to, is_active) VALUES
+('SY 2026-2027', 2026, 2027, 1),
+('SY 2025-2026', 2025, 2026, 0),
+('SY 2024-2025', 2024, 2025, 0);
+
+-- ──────────────────────────────────────────────────────────
+-- TABLE: enrollees
+-- ──────────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS enrollees (
+    id              INT AUTO_INCREMENT PRIMARY KEY,
+    school_year_id  INT          NOT NULL,
+    last_name       VARCHAR(80)  NOT NULL,
+    first_name      VARCHAR(80)  NOT NULL,
+    middle_name     VARCHAR(80)  DEFAULT NULL,
+    gender          ENUM('Male','Female','Other') NOT NULL,
+    birth_date      DATE         DEFAULT NULL,
+    level           ENUM('Elementary','JHS','SHS') NOT NULL,
+    grade           TINYINT      NOT NULL,   -- 1-12
+    strand          VARCHAR(20)  DEFAULT 'N/A',  -- STEM, ABM, HUMSS, TVL, GAS, N/A
+    section         VARCHAR(40)  DEFAULT NULL,
+    lrn             VARCHAR(20)  DEFAULT NULL UNIQUE,
+    status          ENUM('Enrolled','Pending','Dropped','Transferred') NOT NULL DEFAULT 'Enrolled',
+    enrolled_at     DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (school_year_id) REFERENCES school_years(id) ON DELETE CASCADE,
+    INDEX idx_sy    (school_year_id),
+    INDEX idx_level (level),
+    INDEX idx_grade (grade),
+    INDEX idx_strand(strand),
+    INDEX idx_status(status),
+    INDEX idx_enrolled_at (enrolled_at)
+) ENGINE=InnoDB;
+
+-- ──────────────────────────────────────────────────────────
+-- TABLE: sections  (optional – for capacity tracking)
+-- ──────────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS sections (
+    id             INT AUTO_INCREMENT PRIMARY KEY,
+    school_year_id INT         NOT NULL,
+    grade          TINYINT     NOT NULL,
+    strand         VARCHAR(20) NOT NULL DEFAULT 'N/A',
+    section_name   VARCHAR(40) NOT NULL,
+    capacity       INT         NOT NULL DEFAULT 50,
+    adviser        VARCHAR(120) DEFAULT NULL,
+    FOREIGN KEY (school_year_id) REFERENCES school_years(id) ON DELETE CASCADE,
+    INDEX idx_sy_grade (school_year_id, grade)
+) ENGINE=InnoDB;
+
+-- ──────────────────────────────────────────────────────────
+-- SAMPLE DATA  (approx. 2,847 enrollees for SY 2026-2027)
+-- ──────────────────────────────────────────────────────────
+
+-- Helper: we insert batches per grade/strand
+-- Elementary (SY 2026-2027, id=1)
+INSERT INTO enrollees (school_year_id,last_name,first_name,gender,level,grade,strand,section,enrolled_at)
+SELECT 1, CONCAT('Student',seq), CONCAT('Fname',seq),
+  IF(seq%2=0,'Male','Female'), 'Elementary', 1, 'N/A', 'Sampaguita',
+  DATE_ADD('2026-06-01', INTERVAL FLOOR(RAND()*90) DAY)
+FROM (
+  SELECT a.N + b.N*10 + 1 AS seq
+  FROM (SELECT 0 AS N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4
+        UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) a,
+       (SELECT 0 AS N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4
+        UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) b
+  LIMIT 128
+) nums;
+
+-- Grade 2 Elementary
+INSERT INTO enrollees (school_year_id,last_name,first_name,gender,level,grade,strand,section,enrolled_at)
+SELECT 1,CONCAT('Student',seq+200),CONCAT('Fname',seq+200),
+  IF(seq%2=0,'Male','Female'),'Elementary',2,'N/A','Rosal',
+  DATE_ADD('2026-06-01',INTERVAL FLOOR(RAND()*90) DAY)
+FROM (SELECT a.N+b.N*10+1 AS seq FROM
+  (SELECT 0 N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) a,
+  (SELECT 0 N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) b
+  LIMIT 134) n;
+
+-- Grade 3
+INSERT INTO enrollees (school_year_id,last_name,first_name,gender,level,grade,strand,section,enrolled_at)
+SELECT 1,CONCAT('St',seq+400),CONCAT('F',seq+400),IF(seq%2=0,'Male','Female'),'Elementary',3,'N/A','Ilang-Ilang',DATE_ADD('2026-06-01',INTERVAL FLOOR(RAND()*90) DAY)
+FROM (SELECT a.N+b.N*10+1 AS seq FROM (SELECT 0 N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) a,(SELECT 0 N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) b LIMIT 122) n;
+
+-- Grade 4
+INSERT INTO enrollees (school_year_id,last_name,first_name,gender,level,grade,strand,section,enrolled_at)
+SELECT 1,CONCAT('St',seq+600),CONCAT('F',seq+600),IF(seq%2=0,'Male','Female'),'Elementary',4,'N/A','Dahlia',DATE_ADD('2026-06-01',INTERVAL FLOOR(RAND()*90) DAY)
+FROM (SELECT a.N+b.N*10+1 AS seq FROM (SELECT 0 N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) a,(SELECT 0 N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) b LIMIT 119) n;
+
+-- Grade 5
+INSERT INTO enrollees (school_year_id,last_name,first_name,gender,level,grade,strand,section,enrolled_at)
+SELECT 1,CONCAT('St',seq+800),CONCAT('F',seq+800),IF(seq%2=0,'Male','Female'),'Elementary',5,'N/A','Camia',DATE_ADD('2026-06-01',INTERVAL FLOOR(RAND()*90) DAY)
+FROM (SELECT a.N+b.N*10+1 AS seq FROM (SELECT 0 N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) a,(SELECT 0 N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) b LIMIT 82) n;
+
+-- Grade 6
+INSERT INTO enrollees (school_year_id,last_name,first_name,gender,level,grade,strand,section,enrolled_at)
+SELECT 1,CONCAT('St',seq+950),CONCAT('F',seq+950),IF(seq%2=0,'Male','Female'),'Elementary',6,'N/A','Jasmine',DATE_ADD('2026-06-01',INTERVAL FLOOR(RAND()*90) DAY)
+FROM (SELECT a.N+b.N*10+1 AS seq FROM (SELECT 0 N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) a,(SELECT 0 N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) b LIMIT 80) n;
+
+-- Grade 7 JHS
+INSERT INTO enrollees (school_year_id,last_name,first_name,gender,level,grade,strand,section,enrolled_at)
+SELECT 1,CONCAT('St',seq+1100),CONCAT('F',seq+1100),IF(seq%3=0,'Female',IF(seq%3=1,'Male','Female')),'JHS',7,'N/A',ELT(1+FLOOR(RAND()*6),'Aguinaldo','Bonifacio','Rizal','Mabini','Luna','Silang'),DATE_ADD('2026-06-01',INTERVAL FLOOR(RAND()*90) DAY)
+FROM (SELECT a.N+b.N*10+c.N*100+1 AS seq FROM (SELECT 0 N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) a,(SELECT 0 N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) b,(SELECT 0 N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3) c LIMIT 324) n;
+
+-- Grade 8 JHS
+INSERT INTO enrollees (school_year_id,last_name,first_name,gender,level,grade,strand,section,enrolled_at)
+SELECT 1,CONCAT('St',seq+1500),CONCAT('F',seq+1500),IF(seq%2=0,'Male','Female'),'JHS',8,'N/A',ELT(1+FLOOR(RAND()*5),'Lapu-Lapu','Dagohoy','Del Pilar','Burgos','Gomez'),DATE_ADD('2026-06-01',INTERVAL FLOOR(RAND()*90) DAY)
+FROM (SELECT a.N+b.N*10+c.N*100+1 AS seq FROM (SELECT 0 N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) a,(SELECT 0 N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) b,(SELECT 0 N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3) c LIMIT 298) n;
+
+-- Grade 9 JHS
+INSERT INTO enrollees (school_year_id,last_name,first_name,gender,level,grade,strand,section,enrolled_at)
+SELECT 1,CONCAT('St',seq+1900),CONCAT('F',seq+1900),IF(seq%2=0,'Male','Female'),'JHS',9,'N/A',ELT(1+FLOOR(RAND()*5),'Quezon','Osmena','Roxas','Quirino','Magsaysay'),DATE_ADD('2026-06-01',INTERVAL FLOOR(RAND()*90) DAY)
+FROM (SELECT a.N+b.N*10+c.N*100+1 AS seq FROM (SELECT 0 N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) a,(SELECT 0 N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) b,(SELECT 0 N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3) c LIMIT 279) n;
+
+-- Grade 10 JHS
+INSERT INTO enrollees (school_year_id,last_name,first_name,gender,level,grade,strand,section,enrolled_at)
+SELECT 1,CONCAT('St',seq+2300),CONCAT('F',seq+2300),IF(seq%2=0,'Male','Female'),'JHS',10,'N/A',ELT(1+FLOOR(RAND()*5),'Diosdado','Garcia','Marcos','Aquino','Ramos'),DATE_ADD('2026-06-01',INTERVAL FLOOR(RAND()*90) DAY)
+FROM (SELECT a.N+b.N*10+c.N*100+1 AS seq FROM (SELECT 0 N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) a,(SELECT 0 N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) b,(SELECT 0 N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3) c LIMIT 257) n;
+
+-- Grade 11 SHS – STEM
+INSERT INTO enrollees (school_year_id,last_name,first_name,gender,level,grade,strand,section,enrolled_at)
+SELECT 1,CONCAT('St',seq+2700),CONCAT('F',seq+2700),IF(seq%2=0,'Male','Female'),'SHS',11,'STEM',ELT(1+FLOOR(RAND()*3),'STEM-A','STEM-B','STEM-C'),DATE_ADD('2026-06-01',INTERVAL FLOOR(RAND()*90) DAY)
+FROM (SELECT a.N+b.N*10+c.N*100+1 AS seq FROM (SELECT 0 N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) a,(SELECT 0 N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) b,(SELECT 0 N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3) c LIMIT 220) n;
+
+-- Grade 11 SHS – ABM
+INSERT INTO enrollees (school_year_id,last_name,first_name,gender,level,grade,strand,section,enrolled_at)
+SELECT 1,CONCAT('St',seq+3100),CONCAT('F',seq+3100),IF(seq%2=0,'Female','Male'),'SHS',11,'ABM',ELT(1+FLOOR(RAND()*2),'ABM-A','ABM-B'),DATE_ADD('2026-06-01',INTERVAL FLOOR(RAND()*90) DAY)
+FROM (SELECT a.N+b.N*10+1 AS seq FROM (SELECT 0 N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) a,(SELECT 0 N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) b LIMIT 148) n;
+
+-- Grade 11 SHS – HUMSS
+INSERT INTO enrollees (school_year_id,last_name,first_name,gender,level,grade,strand,section,enrolled_at)
+SELECT 1,CONCAT('St',seq+3300),CONCAT('F',seq+3300),IF(seq%3=0,'Male','Female'),'SHS',11,'HUMSS',ELT(1+FLOOR(RAND()*2),'HUMSS-A','HUMSS-B'),DATE_ADD('2026-06-01',INTERVAL FLOOR(RAND()*90) DAY)
+FROM (SELECT a.N+b.N*10+1 AS seq FROM (SELECT 0 N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) a,(SELECT 0 N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) b LIMIT 132) n;
+
+-- Grade 11 SHS – TVL
+INSERT INTO enrollees (school_year_id,last_name,first_name,gender,level,grade,strand,section,enrolled_at)
+SELECT 1,CONCAT('St',seq+3500),CONCAT('F',seq+3500),IF(seq%2=0,'Male','Female'),'SHS',11,'TVL',ELT(1+FLOOR(RAND()*2),'TVL-A','TVL-B'),DATE_ADD('2026-06-01',INTERVAL FLOOR(RAND()*90) DAY)
+FROM (SELECT a.N+b.N*10+1 AS seq FROM (SELECT 0 N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) a,(SELECT 0 N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) b LIMIT 116) n;
+
+-- Grade 11 SHS – GAS
+INSERT INTO enrollees (school_year_id,last_name,first_name,gender,level,grade,strand,section,enrolled_at)
+SELECT 1,CONCAT('St',seq+3700),CONCAT('F',seq+3700),IF(seq%2=0,'Male','Female'),'SHS',11,'GAS','GAS-A',DATE_ADD('2026-06-01',INTERVAL FLOOR(RAND()*90) DAY)
+FROM (SELECT a.N+b.N*10+1 AS seq FROM (SELECT 0 N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) a,(SELECT 0 N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) b LIMIT 68) n;
+
+-- Grade 12 SHS strands
+INSERT INTO enrollees (school_year_id,last_name,first_name,gender,level,grade,strand,section,enrolled_at)
+SELECT 1,CONCAT('S12',seq),CONCAT('G12F',seq),IF(seq%2=0,'Male','Female'),'SHS',12,'STEM',ELT(1+FLOOR(RAND()*3),'STEM-A','STEM-B','STEM-C'),DATE_ADD('2026-06-01',INTERVAL FLOOR(RAND()*90) DAY)
+FROM (SELECT a.N+b.N*10+c.N*100+1 AS seq FROM (SELECT 0 N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) a,(SELECT 0 N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) b,(SELECT 0 N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3) c LIMIT 198) n;
+
+INSERT INTO enrollees (school_year_id,last_name,first_name,gender,level,grade,strand,section,enrolled_at)
+SELECT 1,CONCAT('S12ABM',seq),CONCAT('G12ABM',seq),IF(seq%2=0,'Female','Male'),'SHS',12,'ABM',ELT(1+FLOOR(RAND()*2),'ABM-A','ABM-B'),DATE_ADD('2026-06-01',INTERVAL FLOOR(RAND()*90) DAY)
+FROM (SELECT a.N+b.N*10+1 AS seq FROM (SELECT 0 N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) a,(SELECT 0 N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) b LIMIT 104) n;
+
+INSERT INTO enrollees (school_year_id,last_name,first_name,gender,level,grade,strand,section,enrolled_at)
+SELECT 1,CONCAT('S12HU',seq),CONCAT('G12HU',seq),IF(seq%3=0,'Male','Female'),'SHS',12,'HUMSS',ELT(1+FLOOR(RAND()*2),'HUMSS-A','HUMSS-B'),DATE_ADD('2026-06-01',INTERVAL FLOOR(RAND()*90) DAY)
+FROM (SELECT a.N+b.N*10+1 AS seq FROM (SELECT 0 N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) a,(SELECT 0 N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) b LIMIT 88) n;
+
+INSERT INTO enrollees (school_year_id,last_name,first_name,gender,level,grade,strand,section,enrolled_at)
+SELECT 1,CONCAT('S12TV',seq),CONCAT('G12TV',seq),IF(seq%2=0,'Male','Female'),'SHS',12,'TVL','TVL-A',DATE_ADD('2026-06-01',INTERVAL FLOOR(RAND()*90) DAY)
+FROM (SELECT a.N+b.N*10+1 AS seq FROM (SELECT 0 N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) a,(SELECT 0 N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) b LIMIT 64) n;
+
+INSERT INTO enrollees (school_year_id,last_name,first_name,gender,level,grade,strand,section,enrolled_at)
+SELECT 1,CONCAT('S12GA',seq),CONCAT('G12GA',seq),IF(seq%2=0,'Male','Female'),'SHS',12,'GAS','GAS-A',DATE_ADD('2026-06-01',INTERVAL FLOOR(RAND()*90) DAY)
+FROM (SELECT a.N+b.N*10+1 AS seq FROM (SELECT 0 N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) a,(SELECT 0 N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) b LIMIT 44) n;
+
+-- Sections reference data
+INSERT INTO sections (school_year_id, grade, strand, section_name, capacity, adviser) VALUES
+(1,11,'STEM','STEM-A',50,'Mr. Cruz'),(1,11,'STEM','STEM-B',50,'Ms. Santos'),(1,11,'STEM','STEM-C',50,'Mr. Dela Cruz'),
+(1,11,'ABM','ABM-A',50,'Ms. Reyes'),(1,11,'ABM','ABM-B',50,'Mr. Lim'),
+(1,11,'HUMSS','HUMSS-A',50,'Ms. Garcia'),(1,11,'HUMSS','HUMSS-B',50,'Mr. Flores'),
+(1,11,'TVL','TVL-A',50,'Mr. Villanueva'),(1,11,'TVL','TVL-B',50,'Ms. Torres'),
+(1,11,'GAS','GAS-A',50,'Ms. Ramos'),
+(1,12,'STEM','STEM-A',50,'Ms. Mendoza'),(1,12,'STEM','STEM-B',50,'Mr. Rivera'),(1,12,'STEM','STEM-C',50,'Ms. Aquino'),
+(1,12,'ABM','ABM-A',50,'Mr. Bautista'),(1,12,'ABM','ABM-B',50,'Ms. Castro'),
+(1,12,'HUMSS','HUMSS-A',50,'Mr. Ortega'),(1,12,'HUMSS','HUMSS-B',50,'Ms. Navarro'),
+(1,12,'TVL','TVL-A',50,'Mr. Santiago'),
+(1,12,'GAS','GAS-A',50,'Ms. Fernandez');
