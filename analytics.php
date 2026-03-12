@@ -1,13 +1,7 @@
 <?php
 // ============================================================
-//  api/analytics.php
+//  analytics.php
 //  Main endpoint — returns all dashboard data as one JSON blob
-//
-//  GET params:
-//    sy     = school_year_id  (default: active year)
-//    level  = all | Elementary | JHS | SHS
-//    strand = all | STEM | ABM | HUMSS | TVL | GAS
-//    q      = search string (grade name / strand)
 // ============================================================
 require_once __DIR__ . '/config.php';
 
@@ -28,7 +22,7 @@ $level  = strParam('level',  $levelAllowed,  'all');
 $strand = strParam('strand', $strandAllowed, 'all');
 $q      = trim($_GET['q'] ?? '');
 
-// Base WHERE
+// Base WHERE (using alias 'e' for enrollees, 's' for sections)
 $where  = ['e.school_year_id = :sy', "e.status = 'Enrolled'"];
 $params = [':sy' => $syId];
 
@@ -41,7 +35,8 @@ if ($strand !== 'all') {
     $params[':strand'] = $strand;
 }
 if ($q !== '') {
-    $where[] = "(CONCAT('Grade ', e.grade) LIKE :q OR e.strand LIKE :q OR e.section LIKE :q)";
+    // UPDATED: Now queries s.section_name instead of e.section
+    $where[] = "(CONCAT('Grade ', e.grade) LIKE :q OR e.strand LIKE :q OR s.section_name LIKE :q)";
     $params[':q'] = '%' . $q . '%';
 }
 
@@ -51,12 +46,14 @@ $whereSQL = 'WHERE ' . implode(' AND ', $where);
 $kpiSQL = "
     SELECT
         COUNT(*) AS total,
-        SUM(level = 'Elementary') AS elem,
-        SUM(level = 'JHS')        AS jhs,
-        SUM(level = 'SHS')        AS shs,
-        SUM(gender = 'Male')      AS male,
-        SUM(gender = 'Female')    AS female
-    FROM enrollees e $whereSQL";
+        SUM(e.level = 'Elementary') AS elem,
+        SUM(e.level = 'JHS')        AS jhs,
+        SUM(e.level = 'SHS')        AS shs,
+        SUM(e.gender = 'Male')      AS male,
+        SUM(e.gender = 'Female')    AS female
+    FROM enrollees e
+    LEFT JOIN sections s ON e.section_id = s.id 
+    $whereSQL";
 $stmt = $pdo->prepare($kpiSQL);
 $stmt->execute($params);
 $kpi = $stmt->fetch();
@@ -68,9 +65,11 @@ $gradeSQL = "
         e.grade,
         CONCAT('Grade ', e.grade) AS grade_label,
         COUNT(*) AS count,
-        SUM(gender='Male') AS male,
-        SUM(gender='Female') AS female
-    FROM enrollees e $whereSQL
+        SUM(e.gender='Male') AS male,
+        SUM(e.gender='Female') AS female
+    FROM enrollees e 
+    LEFT JOIN sections s ON e.section_id = s.id 
+    $whereSQL
     GROUP BY e.level, e.grade
     ORDER BY e.grade";
 $stmt = $pdo->prepare($gradeSQL);
@@ -78,15 +77,14 @@ $stmt->execute($params);
 $grades = $stmt->fetchAll();
 
 // ── 3. Strand breakdown (SHS only) ─────────────────────────
-// We always show full SHS strand data regardless of level filter for the doughnut
 $strandSQL = "
     SELECT
         e.strand,
         e.grade,
         COUNT(*) AS count,
-        SUM(gender='Male') AS male,
-        SUM(gender='Female') AS female,
-        COUNT(DISTINCT e.section) AS sections
+        SUM(e.gender='Male') AS male,
+        SUM(e.gender='Female') AS female,
+        COUNT(DISTINCT e.section_id) AS sections
     FROM enrollees e
     WHERE e.school_year_id = :sy AND e.status = 'Enrolled' AND e.level = 'SHS'
     " . ($strand !== 'all' ? "AND e.strand = :strand2" : "") . "
@@ -102,19 +100,18 @@ $strands = $stmt->fetchAll();
 // ── 4. Monthly trend ────────────────────────────────────────
 $monthSQL = "
     SELECT
-        MONTH(enrolled_at)   AS mon,
-        YEAR(enrolled_at)    AS yr,
+        MONTH(e.enrolled_at) AS mon,
+        YEAR(e.enrolled_at)  AS yr,
         e.level,
         COUNT(*) AS count
     FROM enrollees e
     WHERE e.school_year_id = :sy AND e.status = 'Enrolled'
-    GROUP BY YEAR(enrolled_at), MONTH(enrolled_at), e.level
+    GROUP BY YEAR(e.enrolled_at), MONTH(e.enrolled_at), e.level
     ORDER BY yr, mon";
 $stmt = $pdo->prepare($monthSQL);
 $stmt->execute([':sy' => $syId]);
 $monthlyRaw = $stmt->fetchAll();
 
-// Build 12-slot arrays (Jun=1 → May=12 in school-year order)
 $monthOrder = [6,7,8,9,10,11,12,1,2,3,4,5];
 $monthLabels = ['Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May'];
 $trendAll = array_fill(0, 12, 0);
@@ -148,11 +145,11 @@ $capacityData = $stmt->fetchAll();
 // ── 6. Recent enrollees ─────────────────────────────────────
 $recentSQL = "
     SELECT
-        CONCAT(first_name, ' ', last_name) AS name,
-        level, grade, strand, gender, enrolled_at
+        CONCAT(e.first_name, ' ', e.last_name) AS name,
+        e.level, e.grade, e.strand, e.gender, e.enrolled_at
     FROM enrollees e
     WHERE e.school_year_id = :sy AND e.status = 'Enrolled'
-    ORDER BY enrolled_at DESC
+    ORDER BY e.enrolled_at DESC
     LIMIT 8";
 $stmt = $pdo->prepare($recentSQL);
 $stmt->execute([':sy' => $syId]);
@@ -161,11 +158,13 @@ $recent = $stmt->fetchAll();
 // ── 7. School years list ─────────────────────────────────────
 $syList = $pdo->query("SELECT id, label, is_active FROM school_years ORDER BY year_from DESC")->fetchAll();
 
-// ── 8. Top sections ─────────────────────────────────────────
+// ── 8. Top sections (UPDATED for Foreign Key) ───────────────
 $topSectionSQL = "
-    SELECT section, COUNT(*) AS count, grade, strand, level
-    FROM enrollees e $whereSQL AND e.section IS NOT NULL
-    GROUP BY section, grade, strand, level
+    SELECT s.section_name AS section, COUNT(*) AS count, e.grade, e.strand, e.level
+    FROM enrollees e 
+    LEFT JOIN sections s ON e.section_id = s.id
+    $whereSQL AND e.section_id IS NOT NULL
+    GROUP BY s.section_name, e.grade, e.strand, e.level
     ORDER BY count DESC
     LIMIT 10";
 $stmt = $pdo->prepare($topSectionSQL);
