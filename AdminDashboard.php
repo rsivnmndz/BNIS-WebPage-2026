@@ -1,3 +1,11 @@
+<?php
+session_start();
+// If the user is not logged in, kick them back to the login page
+if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
+    header("Location: login.php");
+    exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
