@@ -26,17 +26,16 @@ $q      = trim($_GET['q'] ?? '');
 $where  = ['e.school_year_id = :sy', "e.status = 'Enrolled'"];
 $params = [':sy' => $syId];
 
-if ($level !== 'all') {
-    $where[] = 'e.level = :level';
-    $params[':level'] = $level;
+// The DB is SHS only (Grades 11 & 12). So hide data if looking for Elem/JHS
+if ($level === 'Elementary' || $level === 'JHS') {
+    $where[] = '1 = 0'; 
 }
 if ($strand !== 'all') {
-    $where[] = 'e.strand = :strand';
+    $where[] = 'e.strand_code = :strand';
     $params[':strand'] = $strand;
 }
 if ($q !== '') {
-    // UPDATED: Now queries s.section_name instead of e.section
-    $where[] = "(CONCAT('Grade ', e.grade) LIKE :q OR e.strand LIKE :q OR s.section_name LIKE :q)";
+    $where[] = "(CONCAT('Grade ', e.grade) LIKE :q OR e.strand_code LIKE :q OR s.section_name LIKE :q)";
     $params[':q'] = '%' . $q . '%';
 }
 
@@ -46,11 +45,11 @@ $whereSQL = 'WHERE ' . implode(' AND ', $where);
 $kpiSQL = "
     SELECT
         COUNT(*) AS total,
-        SUM(e.level = 'Elementary') AS elem,
-        SUM(e.level = 'JHS')        AS jhs,
-        SUM(e.level = 'SHS')        AS shs,
-        SUM(e.gender = 'Male')      AS male,
-        SUM(e.gender = 'Female')    AS female
+        0 AS elem,
+        0 AS jhs,
+        COUNT(*) AS shs,
+        SUM(e.gender = 'Male') AS male,
+        SUM(e.gender = 'Female') AS female
     FROM enrollees e
     LEFT JOIN sections s ON e.section_id = s.id 
     $whereSQL";
@@ -61,7 +60,7 @@ $kpi = $stmt->fetch();
 // ── 2. Grade breakdown ──────────────────────────────────────
 $gradeSQL = "
     SELECT
-        e.level,
+        'SHS' AS level,
         e.grade,
         CONCAT('Grade ', e.grade) AS grade_label,
         COUNT(*) AS count,
@@ -70,7 +69,7 @@ $gradeSQL = "
     FROM enrollees e 
     LEFT JOIN sections s ON e.section_id = s.id 
     $whereSQL
-    GROUP BY e.level, e.grade
+    GROUP BY e.grade
     ORDER BY e.grade";
 $stmt = $pdo->prepare($gradeSQL);
 $stmt->execute($params);
@@ -79,17 +78,17 @@ $grades = $stmt->fetchAll();
 // ── 3. Strand breakdown (SHS only) ─────────────────────────
 $strandSQL = "
     SELECT
-        e.strand,
+        e.strand_code AS strand,
         e.grade,
         COUNT(*) AS count,
         SUM(e.gender='Male') AS male,
         SUM(e.gender='Female') AS female,
         COUNT(DISTINCT e.section_id) AS sections
     FROM enrollees e
-    WHERE e.school_year_id = :sy AND e.status = 'Enrolled' AND e.level = 'SHS'
-    " . ($strand !== 'all' ? "AND e.strand = :strand2" : "") . "
-    GROUP BY e.strand, e.grade
-    ORDER BY e.strand, e.grade";
+    WHERE e.school_year_id = :sy AND e.status = 'Enrolled'
+    " . ($strand !== 'all' ? "AND e.strand_code = :strand2" : "") . "
+    GROUP BY e.strand_code, e.grade
+    ORDER BY e.strand_code, e.grade";
 
 $strandParams = [':sy' => $syId];
 if ($strand !== 'all') $strandParams[':strand2'] = $strand;
@@ -102,11 +101,11 @@ $monthSQL = "
     SELECT
         MONTH(e.enrolled_at) AS mon,
         YEAR(e.enrolled_at)  AS yr,
-        e.level,
+        'SHS' AS level,
         COUNT(*) AS count
     FROM enrollees e
     WHERE e.school_year_id = :sy AND e.status = 'Enrolled'
-    GROUP BY YEAR(e.enrolled_at), MONTH(e.enrolled_at), e.level
+    GROUP BY YEAR(e.enrolled_at), MONTH(e.enrolled_at)
     ORDER BY yr, mon";
 $stmt = $pdo->prepare($monthSQL);
 $stmt->execute([':sy' => $syId]);
@@ -122,8 +121,7 @@ foreach ($monthlyRaw as $r) {
     $idx = array_search((int)$r['mon'], $monthOrder);
     if ($idx !== false) {
         $trendAll[$idx] += (int)$r['count'];
-        if ($r['level'] === 'SHS') $trendSHS[$idx] += (int)$r['count'];
-        if ($r['level'] === 'JHS') $trendJHS[$idx] += (int)$r['count'];
+        $trendSHS[$idx] += (int)$r['count'];
     }
 }
 
@@ -131,13 +129,13 @@ foreach ($monthlyRaw as $r) {
 $capacitySQL = "
     SELECT
         s.grade,
-        s.strand,
+        s.strand_code AS strand,
         SUM(s.capacity) AS capacity,
         COUNT(DISTINCT s.id) AS section_count
     FROM sections s
     WHERE s.school_year_id = :sy
-    GROUP BY s.grade, s.strand
-    ORDER BY s.grade, s.strand";
+    GROUP BY s.grade, s.strand_code
+    ORDER BY s.grade, s.strand_code";
 $stmt = $pdo->prepare($capacitySQL);
 $stmt->execute([':sy' => $syId]);
 $capacityData = $stmt->fetchAll();
@@ -146,7 +144,7 @@ $capacityData = $stmt->fetchAll();
 $recentSQL = "
     SELECT
         CONCAT(e.first_name, ' ', e.last_name) AS name,
-        e.level, e.grade, e.strand, e.gender, e.enrolled_at
+        'SHS' AS level, e.grade, e.strand_code AS strand, e.gender, e.enrolled_at
     FROM enrollees e
     WHERE e.school_year_id = :sy AND e.status = 'Enrolled'
     ORDER BY e.enrolled_at DESC
@@ -158,13 +156,13 @@ $recent = $stmt->fetchAll();
 // ── 7. School years list ─────────────────────────────────────
 $syList = $pdo->query("SELECT id, label, is_active FROM school_years ORDER BY year_from DESC")->fetchAll();
 
-// ── 8. Top sections (UPDATED for Foreign Key) ───────────────
+// ── 8. Top sections ───────────────
 $topSectionSQL = "
-    SELECT s.section_name AS section, COUNT(*) AS count, e.grade, e.strand, e.level
+    SELECT s.section_name AS section, COUNT(*) AS count, e.grade, e.strand_code AS strand, 'SHS' AS level
     FROM enrollees e 
     LEFT JOIN sections s ON e.section_id = s.id
     $whereSQL AND e.section_id IS NOT NULL
-    GROUP BY s.section_name, e.grade, e.strand, e.level
+    GROUP BY s.section_name, e.grade, e.strand_code
     ORDER BY count DESC
     LIMIT 10";
 $stmt = $pdo->prepare($topSectionSQL);

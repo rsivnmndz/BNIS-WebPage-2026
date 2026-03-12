@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SHS Analytics | BNIS Admin Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{
+  --maroon:#800000;--maroon-dark:#5a0000;--maroon-faint:#fff5f5;
+  --gold:#f0c040;--gold-dark:#c9a227;
+  --sidebar-bg:#0d0d0d;--sidebar-border:#1c1c1c;
+  --body-bg:#f2f2ee;--white:#fff;
+  --g900:#111827;--g800:#1f2937;--g700:#374151;--g600:#4b5563;
+  --g500:#6b7280;--g400:#9ca3af;--g300:#d1d5db;--g200:#e5e7eb;
+  --g100:#f3f4f6;--g50:#f9fafb;
+  --green:#15803d;--gl:#dcfce7;
+  --blue:#1d4ed8;--bl:#dbeafe;
+  --amber:#d97706;--al:#fef3c7;
+  --purple:#6d28d9;--pl:#ede9fe;
+  --red:#dc2626;--rl:#fee2e2;
+  --c-stem:#800000;--c-abm:#1d4ed8;--c-humss:#15803d;--c-tvl:#d97706;--c-gas:#6d28d9;
+  --sh:0 1px 3px rgba(0,0,0,.07);--sm:0 4px 16px rgba(0,0,0,.09);--sl:0 10px 40px rgba(0,0,0,.12);
+  --r:8px;--rm:12px;--rl:18px;--rf:9999px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--body-bg);color:var(--g800);line-height:1.5;display:flex;min-height:100vh;overflow-x:hidden}
+
+/* ── SIDEBAR ── */
+.sidebar{width:252px;min-height:100vh;background:var(--sidebar-bg);display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;z-index:50;border-right:1px solid var(--sidebar-border);transition:transform .3s cubic-bezier(.4,0,.2,1)}
+.sb-logo{padding:1.6rem 1.4rem 1.4rem;border-bottom:1px solid var(--sidebar-border);display:flex;align-items:center;gap:.8rem}
+.sb-logo-icon{width:38px;height:38px;background:var(--maroon);border-radius:var(--r);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-logo-icon img{width:26px;height:26px;object-fit:contain;border-radius:50%}
+.sb-logo-name{font-family:'Playfair Display',serif;font-size:.9rem;font-weight:700;color:#fff;line-height:1.15}
+.sb-logo-sub{font-size:.58rem;color:#4a4a4a;text-transform:uppercase;letter-spacing:.18em;font-weight:600}
+.sb-section{padding:1.1rem .9rem .4rem}
+.sb-lbl{font-size:.56rem;font-weight:700;text-transform:uppercase;letter-spacing:.22em;color:#3a3a3a;padding:0 .5rem;margin-bottom:.35rem}
+.sb-nav{list-style:none;display:flex;flex-direction:column;gap:2px}
+.sb-nav a{display:flex;align-items:center;gap:.7rem;padding:.6rem .8rem;border-radius:var(--r);color:#666;font-size:.8rem;font-weight:500;transition:all .18s;text-decoration:none}
+.sb-nav a:hover{background:#181818;color:#aaa}
+.sb-nav a.active{background:var(--maroon);color:#fff}
+.sb-nav a svg{width:.95rem;height:.95rem;flex-shrink:0}
+.sb-badge{margin-left:auto;background:rgba(255,255,255,.15);color:#fff;font-size:.55rem;font-weight:700;padding:.12rem .4rem;border-radius:var(--rf)}
+.sb-nav a:not(.active) .sb-badge{background:var(--maroon);color:#fff}
+.sb-user{margin-top:auto;padding:1.1rem 1.2rem;border-top:1px solid var(--sidebar-border);display:flex;align-items:center;gap:.7rem}
+.u-avatar{width:32px;height:32px;background:var(--maroon);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:#fff;flex-shrink:0}
+.u-name{font-size:.78rem;font-weight:600;color:#ddd}
+.u-role{font-size:.58rem;color:#4a4a4a;text-transform:uppercase;letter-spacing:.1em}
+
+/* ── MAIN ── */
+.main{margin-left:252px;flex:1;display:flex;flex-direction:column;min-height:100vh}
+
+/* TOPBAR */
+.topbar{background:var(--white);border-bottom:1px solid var(--g200);padding:.9rem 1.8rem;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:40;box-shadow:var(--sh)}
+.tb-left h1{font-size:1.1rem;font-weight:700;color:var(--g900);font-family:'Playfair Display',serif}
+.tb-left p{font-size:.72rem;color:var(--g500);margin-top:.08rem}
+.tb-right{display:flex;align-items:center;gap:.65rem}
+.btn{display:flex;align-items:center;gap:.45rem;padding:.46rem .9rem;border-radius:var(--rm);border:1.5px solid var(--g200);background:var(--white);color:var(--g600);font-size:.75rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
+.btn:hover{border-color:var(--maroon);color:var(--maroon);background:var(--maroon-faint)}
+.btn svg{width:.85rem;height:.85rem}
+.btn.primary{background:var(--maroon);color:#fff;border-color:var(--maroon)}
+.btn.primary:hover{background:var(--maroon-dark)}
+.sb-toggle{display:none;background:none;border:none;cursor:pointer;color:var(--g600);padding:.3rem}
+.sb-toggle svg{width:1.3rem;height:1.3rem}
+
+/* CONN STATUS */
+.conn{display:flex;align-items:center;gap:.38rem;font-size:.7rem;font-weight:600;padding:.3rem .75rem;border-radius:var(--rf);border:1.5px solid var(--g200)}
+.conn-dot{width:6px;height:6px;border-radius:50%;animation:blink 2s infinite}
+.conn.ok{color:var(--green);border-color:#bbf7d0;background:var(--gl)}.conn.ok .conn-dot{background:var(--green)}
+.conn.err{color:var(--red);border-color:#fecaca;background:var(--rl)}.conn.err .conn-dot{background:var(--red);animation:none}
+.conn.loading{color:var(--g500)}.conn.loading .conn-dot{background:var(--g400)}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+
+/* CONTENT */
+.content{padding:1.6rem 1.8rem;flex:1}
+
+/* GRADE TABS */
+.grade-tabs{display:flex;gap:.5rem;margin-bottom:1.4rem;background:var(--white);border:1.5px solid var(--g200);border-radius:var(--rl);padding:.5rem;box-shadow:var(--sh);width:fit-content}
+.g-tab{padding:.5rem 1.5rem;border-radius:var(--rm);font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s;border:none;font-family:'DM Sans',sans-serif;color:var(--g500);background:transparent}
+.g-tab:hover{background:var(--g100);color:var(--g800)}
+.g-tab.active{background:var(--maroon);color:#fff;box-shadow:0 2px 8px rgba(128,0,0,.3)}
+
+/* STRAND FILTER */
+.filter-bar{background:var(--white);border-radius:var(--rl);border:1.5px solid var(--g200);padding:1rem 1.4rem;margin-bottom:1.4rem;display:flex;align-items:center;gap:.9rem;flex-wrap:wrap;box-shadow:var(--sh)}
+.f-lbl{font-size:.65rem;font-weight:700;color:var(--g500);text-transform:uppercase;letter-spacing:.12em;white-space:nowrap}
+.f-divider{width:1px;height:1.5rem;background:var(--g200);flex-shrink:0}
+.f-pills{display:flex;gap:.3rem;flex-wrap:wrap}
+.pill{padding:.3rem .72rem;border-radius:var(--rf);border:1.5px solid var(--g200);background:var(--white);font-size:.68rem;font-weight:700;cursor:pointer;transition:all .18s;font-family:'DM Sans',sans-serif;color:var(--g600)}
+.pill:hover{border-color:var(--maroon);color:var(--maroon)}
+.pill.active{color:#fff;border-color:transparent}
+.pill[data-strand="all"].active{background:var(--g800)}
+.pill[data-strand="STEM"].active{background:var(--c-stem)}
+.pill[data-strand="ABM"].active{background:var(--c-abm)}
+.pill[data-strand="HUMSS"].active{background:var(--c-humss)}
+.pill[data-strand="TVL"].active{background:var(--c-tvl)}
+.pill[data-strand="GAS"].active{background:var(--c-gas)}
+.f-sel{padding:.38rem .8rem;border-radius:var(--rm);border:1.5px solid var(--g200);background:var(--body-bg);color:var(--g800);font-size:.78rem;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;outline:none}
+.f-sel:focus{border-color:var(--maroon)}
+.f-search{display:flex;align-items:center;gap:.45rem;flex:1;min-width:150px;border:1.5px solid var(--g200);border-radius:var(--rm);padding:.35rem .75rem;background:var(--body-bg)}
+.f-search:focus-within{border-color:var(--maroon)}
+.f-search svg{width:.85rem;height:.85rem;color:var(--g400);flex-shrink:0}
+.f-search input{border:none;background:transparent;font-size:.78rem;font-family:'DM Sans',sans-serif;color:var(--g800);outline:none;width:100%}
+.f-search input::placeholder{color:var(--g400)}
+
+/* KPI GRID */
+.kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1rem;margin-bottom:1.4rem}
+.kpi{background:var(--white);border-radius:var(--rl);padding:1.2rem 1.3rem;border:1.5px solid var(--g200);box-shadow:var(--sh);display:flex;flex-direction:column;gap:.65rem;transition:all .2s;position:relative;overflow:hidden;animation:up .4s ease both}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--rl) var(--rl) 0 0}
+.kpi.k-total::before{background:linear-gradient(90deg,var(--maroon),var(--maroon-dark))}
+.kpi.k-g11::before{background:var(--blue)}
+.kpi.k-g12::before{background:var(--green)}
+.kpi.k-male::before{background:var(--purple)}
+.kpi.k-female::before{background:var(--amber)}
+.kpi:hover{box-shadow:var(--sm);transform:translateY(-2px)}
+.kpi-top{display:flex;justify-content:space-between;align-items:flex-start}
+.kpi-lbl{font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--g500)}
+.kpi-ico{width:2rem;height:2rem;border-radius:var(--r);display:flex;align-items:center;justify-content:center}
+.kpi-ico svg{width:1rem;height:1rem}
+.kpi-ico.red{background:#fee2e2;color:var(--maroon)}.kpi-ico.blue{background:var(--bl);color:var(--blue)}
+.kpi-ico.green{background:var(--gl);color:var(--green)}.kpi-ico.purple{background:var(--pl);color:var(--purple)}.kpi-ico.amber{background:var(--al);color:var(--amber)}
+.kpi-val{font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:700;color:var(--g900);line-height:1}
+.kpi-sk{height:1.9rem;background:linear-gradient(90deg,#f0f0f0 25%,#e4e4e4 50%,#f0f0f0 75%);background-size:200%;animation:shimmer 1.2s infinite;border-radius:6px;width:55%}
+@keyframes shimmer{0%{background-position:200%}100%{background-position:-200%}}
+.kpi-foot{display:flex;align-items:center;gap:.35rem}
+.kpi-chg{font-size:.65rem;font-weight:700;display:flex;align-items:center;gap:.18rem}
+.kpi-chg.up{color:var(--green)}.kpi-chg.dn{color:var(--red)}.kpi-chg svg{width:.7rem;height:.7rem}
+.kpi-period{font-size:.62rem;color:var(--g400)}
+
+/* STRAND SCORECARDS */
+.strand-cards{display:grid;grid-template-columns:repeat(5,1fr);gap:1rem;margin-bottom:1.4rem}
+.sc{background:var(--white);border-radius:var(--rl);padding:1.1rem 1.2rem;border:1.5px solid var(--g200);box-shadow:var(--sh);transition:all .2s;cursor:default;position:relative;overflow:hidden}
+.sc::after{content:'';position:absolute;top:0;right:0;width:4px;height:100%;border-radius:0 var(--rl) var(--rl) 0}
+.sc.s-stem::after{background:var(--c-stem)}.sc.s-abm::after{background:var(--c-abm)}
+.sc.s-humss::after{background:var(--c-humss)}.sc.s-tvl::after{background:var(--c-tvl)}.sc.s-gas::after{background:var(--c-gas)}
+.sc:hover{box-shadow:var(--sm);transform:translateY(-2px)}
+.sc-badge{display:inline-block;font-size:.58rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;padding:.18rem .5rem;border-radius:var(--rf);color:#fff;margin-bottom:.6rem}
+.sc-badge.s-stem{background:var(--c-stem)}.sc-badge.s-abm{background:var(--c-abm)}
+.sc-badge.s-humss{background:var(--c-humss)}.sc-badge.s-tvl{background:var(--c-tvl)}.sc-badge.s-gas{background:var(--c-gas)}
+.sc-name{font-size:.7rem;color:var(--g500);margin-bottom:.5rem;line-height:1.3}
+.sc-total{font-family:'Playfair Display',serif;font-size:1.65rem;font-weight:700;color:var(--g900);line-height:1;margin-bottom:.25rem}
+.sc-sub{font-size:.68rem;color:var(--g400)}
+.sc-bar-row{display:flex;gap:.3rem;margin-top:.6rem}
+.sc-mini-bar{flex:1;height:4px;border-radius:var(--rf);overflow:hidden;background:var(--g100)}
+.sc-mini-fill{height:100%;border-radius:var(--rf);transition:width 1s cubic-bezier(.4,0,.2,1)}
+.sc-pct{font-size:.6rem;color:var(--g400);margin-top:.2rem}
+.sc-gender{display:flex;gap:.4rem;margin-top:.4rem;font-size:.65rem;font-weight:600}
+.sc-m{color:var(--blue)}.sc-f{color:var(--purple)}
+
+/* CHART GRID */
+.cg-2{display:grid;grid-template-columns:1.5fr 1fr;gap:1rem;margin-bottom:1.4rem}
+.cg-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.4rem}
+.cg-eq{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.4rem}
+.cc{background:var(--white);border-radius:var(--rl);border:1.5px solid var(--g200);box-shadow:var(--sh);overflow:hidden}
+.cc-h{padding:1.1rem 1.4rem 0;display:flex;justify-content:space-between;align-items:flex-start}
+.cc-title{font-size:.85rem;font-weight:700;color:var(--g900)}
+.cc-sub{font-size:.68rem;color:var(--g400);margin-top:.1rem}
+.cc-acts{display:flex;gap:.3rem}
+.cp{padding:.2rem .55rem;border-radius:var(--rf);font-size:.6rem;font-weight:700;border:1.5px solid var(--g200);background:var(--white);color:var(--g500);cursor:pointer;transition:all .18s;font-family:'DM Sans',sans-serif}
+.cp.active{background:var(--maroon);color:#fff;border-color:var(--maroon)}
+.cc-body{padding:.8rem 1.4rem 1.3rem}
+.legend{display:flex;flex-wrap:wrap;gap:.55rem;padding:.55rem 1.4rem;border-top:1px solid var(--g100)}
+.l-item{display:flex;align-items:center;gap:.3rem;font-size:.65rem;color:var(--g600);font-weight:500}
+.l-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+
+/* SECTION TABLE */
+.tbl-card{background:var(--white);border-radius:var(--rl);border:1.5px solid var(--g200);box-shadow:var(--sh);overflow:hidden;margin-bottom:1.4rem}
+.tbl-h{padding:1rem 1.4rem;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--g200);flex-wrap:wrap;gap:.65rem}
+.tbl-h h2{font-size:.85rem;font-weight:700;color:var(--g900)}
+.tbl-h p{font-size:.68rem;color:var(--g400)}
+table{width:100%;border-collapse:collapse}
+thead th{padding:.65rem 1.2rem;text-align:left;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--g400);background:var(--g100);border-bottom:1px solid var(--g200);white-space:nowrap;cursor:pointer;user-select:none}
+thead th:hover{color:var(--maroon)}
+tbody tr{border-bottom:1px solid var(--g100);transition:background .15s}
+tbody tr:last-child{border-bottom:none}tbody tr:hover{background:#fafafa}
+tbody td{padding:.75rem 1.2rem;font-size:.78rem;color:var(--g700)}
+.td-n{font-weight:600;color:var(--g900)}
+.strand-chip{display:inline-flex;align-items:center;gap:.3rem;font-size:.67rem;font-weight:700;padding:.18rem .5rem;border-radius:var(--rf)}
+.s-dot{width:5px;height:5px;border-radius:50%}
+.bar-w{display:flex;align-items:center;gap:.55rem;min-width:100px}
+.bar-bg{flex:1;height:5px;background:var(--g200);border-radius:var(--rf);overflow:hidden}
+.bar-fill{height:100%;border-radius:var(--rf);transition:width .8s cubic-bezier(.4,0,.2,1)}
+.bar-pct{font-size:.65rem;color:var(--g400);min-width:2rem;text-align:right}
+.badge{display:inline-block;padding:.15rem .5rem;border-radius:var(--rf);font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.badge.high{background:var(--gl);color:var(--green)}.badge.mid{background:var(--bl);color:var(--blue)}
+.badge.low{background:var(--al);color:var(--amber)}.badge.crit{background:var(--rl);color:var(--red)}
+.fill-bar{height:8px;background:var(--g200);border-radius:var(--rf);overflow:hidden;width:80px}
+.fill-inner{height:100%;border-radius:var(--rf);transition:width 1s}
+
+/* PROG LISTS */
+.prog-list{display:flex;flex-direction:column;gap:.85rem;padding:1rem 1.4rem}
+.prog-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:.28rem}
+.prog-name{font-size:.75rem;font-weight:600;color:var(--g800)}
+.prog-val{font-size:.72rem;font-weight:700;color:var(--g900)}
+.prog-bar{height:6px;background:var(--g100);border-radius:var(--rf);overflow:hidden}
+.prog-fill{height:100%;border-radius:var(--rf);transition:width 1s cubic-bezier(.4,0,.2,1)}
+.prog-sub{font-size:.6rem;color:var(--g400);margin-top:.16rem}
+
+/* RECENT */
+.r-list{display:flex;flex-direction:column}
+.r-row{display:flex;align-items:center;gap:.75rem;padding:.7rem 1.3rem;border-bottom:1px solid var(--g100);transition:background .15s}
+.r-row:last-child{border-bottom:none}.r-row:hover{background:#fafafa}
+.r-av{width:1.8rem;height:1.8rem;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:700;color:#fff}
+.r-name{font-size:.76rem;font-weight:600;color:var(--g900)}
+.r-info{font-size:.64rem;color:var(--g500);margin-top:.04rem}
+.r-time{font-size:.6rem;color:var(--g400);white-space:nowrap;margin-left:auto}
+
+/* YOY */
+.yoy-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1rem;margin-bottom:1.4rem}
+.yoy-card{background:var(--white);border-radius:var(--rl);padding:1rem 1.1rem;border:1.5px solid var(--g200);box-shadow:var(--sh)}
+.yoy-strand{font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem}
+.yoy-nums{display:flex;gap:.5rem;align-items:flex-end;margin-bottom:.4rem}
+.yoy-curr{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:var(--g900);line-height:1}
+.yoy-prev{font-size:.75rem;color:var(--g400);padding-bottom:.15rem}
+.yoy-chg{font-size:.7rem;font-weight:700;display:flex;align-items:center;gap:.2rem}
+.yoy-chg.up{color:var(--green)}.yoy-chg.dn{color:var(--red)}
+.yoy-bar{height:3px;background:var(--g100);border-radius:var(--rf);margin-top:.5rem;overflow:hidden}
+.yoy-bar-fill{height:100%;border-radius:var(--rf);transition:width 1s}
+
+/* ERROR/TOAST */
+.db-error{background:var(--rl);border:1.5px solid #fecaca;color:var(--red);border-radius:var(--rl);padding:1.2rem 1.5rem;margin-bottom:1.4rem;display:none}
+.db-error strong{display:block;margin-bottom:.4rem}
+.db-error code{background:#fee2e2;padding:.1rem .35rem;border-radius:4px;font-family:monospace;font-size:.76rem}
+.setup-box{background:#eff6ff;border:1.5px solid #bfdbfe;color:#1e40af;border-radius:var(--rl);padding:1.2rem 1.5rem;margin-bottom:1.4rem}
+.setup-box strong{display:block;margin-bottom:.4rem;font-size:.88rem}
+.setup-box ol{padding-left:1.2rem;margin-top:.4rem}
+.setup-box li{font-size:.8rem;margin-bottom:.25rem;line-height:1.6}
+.setup-box code{background:#dbeafe;padding:.1rem .35rem;border-radius:4px;font-family:monospace;font-size:.75rem}
+.toast{position:fixed;bottom:1.4rem;right:1.4rem;background:var(--g900);color:#fff;padding:.7rem 1.1rem;border-radius:var(--rl);font-size:.78rem;font-weight:500;box-shadow:var(--sl);transform:translateY(4rem);opacity:0;transition:all .3s;z-index:999;max-width:300px}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.ok{border-left:3px solid var(--green)}.toast.er{border-left:3px solid var(--red)}
+
+/* ANIMATIONS */
+@keyframes up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.kpi:nth-child(1){animation-delay:.05s}.kpi:nth-child(2){animation-delay:.1s}
+.kpi:nth-child(3){animation-delay:.15s}.kpi:nth-child(4){animation-delay:.2s}.kpi:nth-child(5){animation-delay:.25s}
+
+/* RESPONSIVE */
+@media(max-width:1400px){.kpi-grid,.strand-cards,.yoy-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:1100px){.cg-2,.cg-eq{grid-template-columns:1fr}.cg-3{grid-template-columns:1fr 1fr}}
+@media(max-width:900px){.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.main{margin-left:0}.sb-toggle{display:block}.kpi-grid,.strand-cards,.yoy-grid{grid-template-columns:1fr 1fr}.content{padding:1.1rem 1rem}.topbar{padding:.8rem 1rem}.cg-3{grid-template-columns:1fr}}
+@media(max-width:560px){.kpi-grid,.strand-cards,.yoy-grid{grid-template-columns:1fr}}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:45}.overlay.open{display:block}
+@media print{.sidebar,.tb-right,.filter-bar,.sb-toggle,.grade-tabs{display:none!important}.main{margin-left:0}body{background:#fff}}
+</style>
+</head>
+<body>
+<div class="overlay" id="ov"></div>
+<div class="toast" id="toast"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sb">
+  <div class="sb-logo">
+    <div class="sb-logo-icon"><img src="BNIS_logo-removebg-preview.png" alt="BNIS" onerror="this.style.display='none';this.parentNode.innerHTML='<svg fill=\'none\' stroke=\'#fff\' viewBox=\'0 0 24 24\' style=\'width:1.1rem;height:1.1rem\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253\'/></svg>'"></div>
+    <div><div class="sb-logo-name">BNIS Admin</div><div class="sb-logo-sub">SHS Analytics</div></div>
+  </div>
+  <div class="sb-section"><div class="sb-lbl">Main</div>
+    <ul class="sb-nav">
+      <li><a href="Admin.html"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>Admin Home</a></li>
+      <li><a href="AdminDashboard.html" class="active"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>SHS Analytics<span class="sb-badge">DB</span></a></li>
+      <li><a href="Enrollment.html"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>Enrollment Form</a></li>
+    </ul>
+  </div>
+  <div class="sb-section"><div class="sb-lbl">School</div>
+    <ul class="sb-nav">
+      <li><a href="SchoolNews.html"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10l4 4v10a2 2 0 01-2 2z"/></svg>School News</a></li>
+      <li><a href="CampusUpdates.html"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>Campus Updates</a></li>
+      <li><a href="index.html"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9"/></svg>Public Site</a></li>
+    </ul>
+  </div>
+  <div class="sb-user"><div class="u-avatar">AD</div><div><div class="u-name">Admin</div><div class="u-role">School Admin</div></div></div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:.9rem">
+      <button class="sb-toggle" id="sbBtn"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+      <div class="tb-left"><h1>SHS Enrollment Analytics</h1><p id="tbSub">Grade 11 &amp; 12 · Connecting…</p></div>
+    </div>
+    <div class="tb-right">
+      <div class="conn loading" id="conn"><div class="conn-dot"></div><span id="connTxt">Connecting…</span></div>
+      <button class="btn" onclick="loadAll()"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>Refresh</button>
+      <button class="btn" onclick="window.print()"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>Print</button>
+      <button class="btn primary" onclick="doExport()"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>Export CSV</button>
+    </div>
+  </div>
+
+  <div class="content">
+    <!-- SETUP INFO -->
+    <div class="setup-box" id="setupBox">
+      <strong>📋 How to connect to phpMyAdmin</strong>
+      <ol>
+        <li>Import <code>bnis_database.sql</code> into phpMyAdmin — creates <code>bnis_db</code> with Grade 11 &amp; 12 SHS data</li>
+        <li>Edit <code>config.php</code> — set your MySQL username &amp; password</li>
+        <li>Copy all files into <code>C:\xampp\htdocs\bnis\</code> (XAMPP) or your WAMP folder</li>
+        <li>Open <code>http://localhost/bnis/AdminDashboard.html</code></li>
+      </ol>
+    </div>
+    <div class="db-error" id="dbErr"><strong>⚠ Database Error</strong><p id="dbErrMsg">Cannot connect. Check your PHP server and <code>config.php</code>.</p></div>
+
+    <!-- GRADE TABS + FILTERS -->
+    <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin-bottom:1.2rem">
+      <div class="grade-tabs">
+        <button class="g-tab active" data-g="all"  onclick="setGrade(this,'all')">All SHS</button>
+        <button class="g-tab"        data-g="11"   onclick="setGrade(this,'11')">Grade 11</button>
+        <button class="g-tab"        data-g="12"   onclick="setGrade(this,'12')">Grade 12</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:.6rem">
+        <span class="f-lbl">Year</span>
+        <select class="f-sel" id="fSY" onchange="loadAll()"><option value="1">SY 2026-2027</option></select>
+      </div>
+    </div>
+
+    <div class="filter-bar">
+      <span class="f-lbl">Strand</span>
+      <div class="f-pills">
+        <button class="pill active" data-strand="all"   onclick="setStrand(this,'all')">All Strands</button>
+        <button class="pill"        data-strand="STEM"  onclick="setStrand(this,'STEM')">STEM</button>
+        <button class="pill"        data-strand="ABM"   onclick="setStrand(this,'ABM')">ABM</button>
+        <button class="pill"        data-strand="HUMSS" onclick="setStrand(this,'HUMSS')">HUMSS</button>
+        <button class="pill"        data-strand="TVL"   onclick="setStrand(this,'TVL')">TVL</button>
+        <button class="pill"        data-strand="GAS"   onclick="setStrand(this,'GAS')">GAS</button>
+      </div>
+      <div class="f-divider"></div>
+      <div class="f-search">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        <input type="text" id="fQ" placeholder="Search section or strand…" oninput="debouncedLoad()">
+      </div>
+    </div>
+
+    <!-- KPI CARDS -->
+    <div class="kpi-grid">
+      <div class="kpi k-total">
+        <div class="kpi-top"><span class="kpi-lbl">Total SHS</span><div class="kpi-ico red"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div></div>
+        <div class="kpi-val" id="kTotal"><div class="kpi-sk"></div></div>
+        <div class="kpi-foot"><span class="kpi-period">enrolled this SY</span></div>
+      </div>
+      <div class="kpi k-g11">
+        <div class="kpi-top"><span class="kpi-lbl">Grade 11</span><div class="kpi-ico blue"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg></div></div>
+        <div class="kpi-val" id="kG11"><div class="kpi-sk"></div></div>
+        <div class="kpi-foot"><span class="kpi-chg up" id="kG11Chg"></span><span class="kpi-period" id="kG11Per"></span></div>
+      </div>
+      <div class="kpi k-g12">
+        <div class="kpi-top"><span class="kpi-lbl">Grade 12</span><div class="kpi-ico green"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg></div></div>
+        <div class="kpi-val" id="kG12"><div class="kpi-sk"></div></div>
+        <div class="kpi-foot"><span class="kpi-chg up" id="kG12Chg"></span><span class="kpi-period" id="kG12Per"></span></div>
+      </div>
+      <div class="kpi k-male">
+        <div class="kpi-top"><span class="kpi-lbl">Male</span><div class="kpi-ico purple"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg></div></div>
+        <div class="kpi-val" id="kMale"><div class="kpi-sk"></div></div>
+        <div class="kpi-foot"><span class="kpi-period" id="kMalePct"></span></div>
+      </div>
+      <div class="kpi k-female">
+        <div class="kpi-top"><span class="kpi-lbl">Female</span><div class="kpi-ico amber"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg></div></div>
+        <div class="kpi-val" id="kFemale"><div class="kpi-sk"></div></div>
+        <div class="kpi-foot"><span class="kpi-period" id="kFemalePct"></span></div>
+      </div>
+    </div>
+
+    <!-- STRAND SCORECARDS -->
+    <div class="strand-cards" id="strandCards">
+      <!-- rendered by JS -->
+    </div>
+
+    <!-- CHART ROW 1: Grade comparison bar + Doughnut -->
+    <div class="cg-2">
+      <div class="cc">
+        <div class="cc-h"><div><div class="cc-title">Grade 11 vs Grade 12 — By Strand</div><div class="cc-sub">Side-by-side enrollment count per strand</div></div>
+          <div class="cc-acts"><button class="cp active" onclick="switchBar(this,'count')">Count</button><button class="cp" onclick="switchBar(this,'pct')">%</button></div>
+        </div>
+        <div class="cc-body"><div style="height:260px;position:relative"><canvas id="gradeBarChart"></canvas></div></div>
+      </div>
+      <div class="cc">
+        <div class="cc-h"><div><div class="cc-title">Overall Strand Share</div><div class="cc-sub">Total SHS enrollment distribution</div></div></div>
+        <div class="cc-body"><div style="height:220px;position:relative"><canvas id="donutChart"></canvas></div></div>
+        <div class="legend" id="donutLegend"></div>
+      </div>
+    </div>
+
+    <!-- CHART ROW 2: Trend + Gender -->
+    <div class="cg-eq">
+      <div class="cc">
+        <div class="cc-h"><div><div class="cc-title">Monthly Enrollment Trend</div><div class="cc-sub">Registrations received per month</div></div>
+          <div class="cc-acts">
+            <button class="cp active" onclick="switchTrend(this,'all')">All</button>
+            <button class="cp" onclick="switchTrend(this,'g11')">Gr.11</button>
+            <button class="cp" onclick="switchTrend(this,'g12')">Gr.12</button>
+          </div>
+        </div>
+        <div class="cc-body"><div style="height:220px;position:relative"><canvas id="trendChart"></canvas></div></div>
+      </div>
+      <div class="cc">
+        <div class="cc-h"><div><div class="cc-title">Gender per Strand</div><div class="cc-sub">Male vs Female breakdown</div></div></div>
+        <div class="cc-body"><div style="height:220px;position:relative"><canvas id="genderChart"></canvas></div></div>
+      </div>
+    </div>
+
+    <!-- YEAR-OVER-YEAR SECTION -->
+    <div class="tbl-h" style="background:var(--white);border-radius:var(--rl) var(--rl) 0 0;border:1.5px solid var(--g200);border-bottom:none;padding:1rem 1.4rem;margin-bottom:0">
+      <div><h2 style="font-size:.88rem;font-weight:700;color:var(--g900)">Year-over-Year Comparison</h2><p style="font-size:.68rem;color:var(--g400)">SY 2026-2027 vs SY 2025-2026 per strand</p></div>
+    </div>
+    <div class="yoy-grid" id="yoyGrid" style="background:var(--white);border:1.5px solid var(--g200);border-top:none;border-radius:0 0 var(--rl) var(--rl);padding:1.1rem;margin-bottom:1.4rem;gap:.8rem">
+      <!-- rendered by JS -->
+    </div>
+
+    <!-- SECTION TABLE -->
+    <div class="tbl-card">
+      <div class="tbl-h">
+        <div><h2>Section Fill Rate</h2><p id="tblSub">Loading sections…</p></div>
+        <button class="btn" onclick="doExport()"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>CSV</button>
+      </div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead><tr>
+            <th onclick="srt('grade')">Grade<span id="s-grade"></span></th>
+            <th onclick="srt('strand')">Strand<span id="s-strand"></span></th>
+            <th onclick="srt('section')">Section<span id="s-section"></span></th>
+            <th>Adviser</th>
+            <th onclick="srt('enrolled')">Enrolled<span id="s-enrolled">↓</span></th>
+            <th onclick="srt('capacity')">Capacity<span id="s-capacity"></span></th>
+            <th>Fill Bar</th>
+            <th onclick="srt('fill')">Fill %<span id="s-fill"></span></th>
+            <th onclick="srt('male')">Male<span id="s-male"></span></th>
+            <th onclick="srt('female')">Female<span id="s-female"></span></th>
+            <th>Status</th>
+          </tr></thead>
+          <tbody id="tblBody"><tr><td colspan="11" style="text-align:center;padding:2rem;color:var(--g400)">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- BOTTOM ROW -->
+    <div class="cg-3">
+      <div class="cc">
+        <div class="cc-h" style="padding:1rem 1.3rem"><div><div class="cc-title">Strand Ranking</div><div class="cc-sub">Most enrolled strands (SHS)</div></div></div>
+        <div class="prog-list" id="strandRank"></div>
+      </div>
+      <div class="cc">
+        <div class="cc-h" style="padding:1rem 1.3rem"><div><div class="cc-title">Capacity Utilization</div><div class="cc-sub">Sections by fill rate</div></div></div>
+        <div class="prog-list" id="capProg"></div>
+      </div>
+      <div class="cc">
+        <div class="cc-h" style="padding:1rem 1.3rem 0"><div><div class="cc-title">Recent Enrollees</div><div class="cc-sub">Latest from database</div></div></div>
+        <div class="r-list" id="recentList"></div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<script>
+// ── CONFIG ────────────────────────────────────────────────────────────
+const API = ''; // path to your PHP API (root folder)
+
+const SC = {STEM:'#800000',ABM:'#1d4ed8',HUMSS:'#15803d',TVL:'#d97706',GAS:'#6d28d9'};
+const SN = {STEM:'Science, Technology, Eng. & Math',ABM:'Accountancy, Business & Mgmt',HUMSS:'Humanities & Social Sciences',TVL:'Technical-Vocational-Livelihood',GAS:'General Academic Strand'};
+const STRANDS = ['STEM','ABM','HUMSS','TVL','GAS'];
+
+let activeGrade='all', activeStrand='all', barMode='count', trendMode='all';
+let sortCol='enrolled', sortDir='desc';
+let cache=null, exportData=[], timer;
+
+const $=id=>document.getElementById(id);
+const N=n=>Number(n).toLocaleString();
+const pct=(a,b)=>b>0?((a/b)*100).toFixed(1)+'%':'0%';
+
+function toast(m,t='ok'){const el=$('toast');el.textContent=m;el.className=`toast ${t} show`;setTimeout(()=>el.classList.remove('show'),3000);}
+function setConn(s,t){$('conn').className=`conn ${s}`;$('connTxt').textContent=t;}
+
+async function api(ep,p={}){
+  const u=new URL(`${API}/${ep}`,location.href);
+  Object.entries(p).forEach(([k,v])=>u.searchParams.set(k,v));
+  const r=await fetch(u); if(!r.ok) throw new Error(`HTTP ${r.status}`);
+  const d=await r.json(); if(!d.ok) throw new Error(d.error||'API error');
+  return d;
+}
+
+function params(){
+  return {sy:$('fSY').value, grade:activeGrade, strand:activeStrand, q:$('fQ').value.trim()};
+}
+
+async function loadAll(){
+  setConn('loading','Loading…');
+  $('dbErr').style.display='none';
+  try{
+    const d=await api('analytics.php',params());
+    cache=d;
+    setConn('ok',`Live · ${d.generated}`);
+    $('setupBox').style.display='none';
+
+    // Populate SY dropdown once
+    if($('fSY').options.length<=1&&d.school_years?.length){
+      $('fSY').innerHTML=d.school_years.map(s=>`<option value="${s.id}"${s.is_active?' selected':''}>${s.label}</option>`).join('');
+    }
+
+    const syLabel=$('fSY').selectedOptions[0]?.text||'';
+    $('tbSub').textContent=`${syLabel} · Grade ${activeGrade==='all'?'11 & 12':activeGrade} · ${activeStrand==='all'?'All Strands':activeStrand} · ${N(d.kpi.total)} enrolled`;
+
+    renderKPIs(d.kpi,d.kpi_prev);
+    renderStrandCards(d.strands);
+    renderGradeBarChart(d.strands);
+    renderDonut(d.strands);
+    renderTrend(d.trend);
+    renderGender(d.strands);
+    renderYoY(d.yoy);
+    renderSectionTable(d.sections);
+    renderRankings(d.strands,d.sections);
+    renderRecent(d.recent);
+    toast(`Loaded ${N(d.kpi.total)} SHS enrollees`);
+  } catch(e){
+    setConn('err','DB Error');
+    $('dbErr').style.display='block';
+    $('dbErrMsg').textContent=e.message;
+    toast(e.message,'er');
+  }
+}
+
+function debouncedLoad(){clearTimeout(timer);timer=setTimeout(loadAll,400);}
+
+// ── FILTER SETTERS ────────────────────────────────────────────────────
+function setGrade(el,g){
+  document.querySelectorAll('.g-tab').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active'); activeGrade=g; loadAll();
+}
+function setStrand(el,s){
+  document.querySelectorAll('.pill[data-strand]').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active'); activeStrand=s; loadAll();
+}
+
+// ── KPIs ──────────────────────────────────────────────────────────────
+function renderKPIs(k,p){
+  $('kTotal').textContent=N(k.total);
+  $('kG11').textContent=N(k.g11);
+  $('kG12').textContent=N(k.g12);
+  $('kMale').textContent=N(k.male);
+  $('kFemale').textContent=N(k.female);
+  $('kMalePct').textContent=pct(k.male,k.total)+' of total';
+  $('kFemalePct').textContent=pct(k.female,k.total)+' of total';
+
+  if(p){
+    const d11=k.g11-p.g11, d12=k.g12-p.g12;
+    const arrow=n=>`<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:.7rem;height:.7rem"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${n>0?'M5 10l7-7m0 0l7 7m-7-7v18':'M19 14l-7 7m0 0l-7-7m7 7V3'}"/></svg>`;
+    $('kG11Chg').innerHTML=`${arrow(d11)}${d11>0?'+':''}${d11}`;
+    $('kG11Chg').className=`kpi-chg ${d11>=0?'up':'dn'}`;
+    $('kG11Per').textContent='vs last year';
+    $('kG12Chg').innerHTML=`${arrow(d12)}${d12>0?'+':''}${d12}`;
+    $('kG12Chg').className=`kpi-chg ${d12>=0?'up':'dn'}`;
+    $('kG12Per').textContent='vs last year';
+  }
+}
+
+// ── STRAND SCORECARDS ─────────────────────────────────────────────────
+function renderStrandCards(strands){
+  const tot={};STRANDS.forEach(s=>tot[s]={t:0,m:0,f:0,g11:0,g12:0});
+  strands.forEach(r=>{const s=r.strand;if(!tot[s])return;tot[s].t+=+r.total;tot[s].m+=+r.male;tot[s].f+=+r.female;if(+r.grade===11)tot[s].g11+=+r.total;else tot[s].g12+=+r.total;});
+  const maxT=Math.max(...Object.values(tot).map(v=>v.t),1);
+  $('strandCards').innerHTML=STRANDS.map(s=>{
+    const v=tot[s],cl=s.toLowerCase();
+    return `<div class="sc s-${cl}">
+      <div><span class="sc-badge s-${cl}">${s}</span></div>
+      <div class="sc-name">${SN[s]||s}</div>
+      <div class="sc-total">${N(v.t)}</div>
+      <div class="sc-sub">Gr.11: ${N(v.g11)} &nbsp;·&nbsp; Gr.12: ${N(v.g12)}</div>
+      <div class="sc-bar-row"><div class="sc-mini-bar"><div class="sc-mini-fill" style="width:${Math.round(v.t/maxT*100)}%;background:${SC[s]}"></div></div></div>
+      <div class="sc-pct">${Math.round(v.t/maxT*100)}% of top strand</div>
+      <div class="sc-gender"><span class="sc-m">♂ ${N(v.m)}</span><span class="sc-f">♀ ${N(v.f)}</span></div>
+    </div>`;
+  }).join('');
+}
+
+// ── GRADE BAR CHART ───────────────────────────────────────────────────
+let gBarChart;
+function renderGradeBarChart(strands){
+  const g11={},g12={};STRANDS.forEach(s=>{g11[s]=0;g12[s]=0;});
+  strands.forEach(r=>{if(STRANDS.includes(r.strand)){if(+r.grade===11)g11[r.strand]+=+r.total;else g12[r.strand]+=+r.total;}});
+  const tot11=Object.values(g11).reduce((a,b)=>a+b,0)||1;
+  const tot12=Object.values(g12).reduce((a,b)=>a+b,0)||1;
+  const d11=STRANDS.map(s=>barMode==='count'?g11[s]:+((g11[s]/tot11*100).toFixed(1)));
+  const d12=STRANDS.map(s=>barMode==='count'?g12[s]:+((g12[s]/tot12*100).toFixed(1)));
+  if(gBarChart)gBarChart.destroy();
+  gBarChart=new Chart($('gradeBarChart'),{type:'bar',
+    data:{labels:STRANDS,datasets:[
+      {label:'Grade 11',data:d11,backgroundColor:STRANDS.map(s=>SC[s]+'bb'),borderColor:STRANDS.map(s=>SC[s]),borderWidth:2,borderRadius:5,borderSkipped:false},
+      {label:'Grade 12',data:d12,backgroundColor:STRANDS.map(s=>SC[s]+'55'),borderColor:STRANDS.map(s=>SC[s]),borderWidth:2,borderRadius:5,borderSkipped:false,borderDash:[4,3]}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{position:'bottom',labels:{font:{size:10},boxWidth:10,padding:10}},
+        tooltip:{callbacks:{label:ctx=>` ${ctx.dataset.label}: ${barMode==='count'?N(ctx.raw)+' students':ctx.raw+'%'}`}}},
+      scales:{x:{grid:{display:false},ticks:{font:{size:11}}},y:{grid:{color:'#f0f0f0'},ticks:{font:{size:10}},beginAtZero:true}}}
+  });
+}
+function switchBar(el,m){barMode=m;el.closest('.cc-acts').querySelectorAll('.cp').forEach(b=>b.classList.remove('active'));el.classList.add('active');if(cache)renderGradeBarChart(cache.strands);}
+
+// ── DONUT ─────────────────────────────────────────────────────────────
+let donutChart;
+function renderDonut(strands){
+  const tot={};STRANDS.forEach(s=>tot[s]=0);
+  strands.forEach(r=>{if(STRANDS.includes(r.strand))tot[r.strand]+=+r.total;});
+  const vals=STRANDS.map(s=>tot[s]);
+  $('donutLegend').innerHTML=STRANDS.map((s,i)=>`<div class="l-item"><div class="l-dot" style="background:${SC[s]}"></div>${s}: <strong style="margin-left:3px">${N(vals[i])}</strong></div>`).join('');
+  if(donutChart)donutChart.destroy();
+  donutChart=new Chart($('donutChart'),{type:'doughnut',
+    data:{labels:STRANDS,datasets:[{data:vals,backgroundColor:STRANDS.map(s=>SC[s]),borderWidth:3,borderColor:'#fff',hoverOffset:8}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'62%',
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.label}: ${N(ctx.raw)}`}}}}
+  });
+}
+
+// ── TREND ─────────────────────────────────────────────────────────────
+let trendChart;
+function renderTrend(trend){
+  if(trendChart)trendChart.destroy();
+  trendChart=new Chart($('trendChart'),{type:'line',
+    data:{labels:trend.labels,datasets:[{label:'Enrollees',data:trend[trendMode],
+      borderColor:'#800000',backgroundColor:'rgba(128,0,0,0.07)',fill:true,tension:.4,
+      pointRadius:4,pointBackgroundColor:'#800000',borderWidth:2.5}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false}},
+      scales:{x:{grid:{display:false},ticks:{font:{size:10}}},y:{grid:{color:'#f5f5f5'},ticks:{font:{size:10}},beginAtZero:true}}}
+  });
+}
+function switchTrend(el,m){trendMode=m;el.closest('.cc-acts').querySelectorAll('.cp').forEach(b=>b.classList.remove('active'));el.classList.add('active');if(trendChart&&cache){trendChart.data.datasets[0].data=cache.trend[m];trendChart.update();}}
+
+// ── GENDER ────────────────────────────────────────────────────────────
+let genderChart;
+function renderGender(strands){
+  const gm={};STRANDS.forEach(s=>gm[s]={m:0,f:0});
+  strands.forEach(r=>{if(gm[r.strand]){gm[r.strand].m+=+r.male;gm[r.strand].f+=+r.female;}});
+  if(genderChart)genderChart.destroy();
+  genderChart=new Chart($('genderChart'),{type:'bar',
+    data:{labels:STRANDS,datasets:[
+      {label:'Male',data:STRANDS.map(s=>gm[s].m),backgroundColor:'rgba(128,0,0,0.8)',borderRadius:4,borderSkipped:false},
+      {label:'Female',data:STRANDS.map(s=>gm[s].f),backgroundColor:'rgba(109,40,217,0.7)',borderRadius:4,borderSkipped:false}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',
+      plugins:{legend:{position:'bottom',labels:{font:{size:10},boxWidth:10,padding:10}}},
+      scales:{x:{grid:{color:'#f5f5f5'},ticks:{font:{size:10}}},y:{grid:{display:false},ticks:{font:{size:10}}}}}
+  });
+}
+
+// ── YEAR-OVER-YEAR ────────────────────────────────────────────────────
+function renderYoY(yoy){
+  if(!yoy){$('yoyGrid').innerHTML='<p style="color:var(--g400);font-size:.8rem;padding:.5rem">No comparison data</p>';return;}
+  const maxCurr=Math.max(...STRANDS.map(s=>yoy[s]?.curr||0),1);
+  $('yoyGrid').innerHTML=STRANDS.map(s=>{
+    const d=yoy[s]||{curr:0,prev:0};
+    const diff=d.curr-d.prev,pct=d.prev>0?((diff/d.prev)*100).toFixed(1):0;
+    const cl=s.toLowerCase();
+    return `<div class="yoy-card">
+      <div class="yoy-strand" style="color:${SC[s]}">${s}</div>
+      <div class="yoy-nums">
+        <div class="yoy-curr">${N(d.curr)}</div>
+        <div class="yoy-prev">prev: ${N(d.prev)}</div>
+      </div>
+      <div class="yoy-chg ${diff>=0?'up':'dn'}">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:.75rem;height:.75rem"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${diff>=0?'M5 10l7-7m0 0l7 7m-7-7v18':'M19 14l-7 7m0 0l-7-7m7 7V3'}"/></svg>
+        ${diff>0?'+':''}${diff} (${pct}%)
+      </div>
+      <div class="yoy-bar"><div class="yoy-bar-fill" style="width:${Math.round(d.curr/maxCurr*100)}%;background:${SC[s]}"></div></div>
+    </div>`;
+  }).join('');
+}
+
+// ── SECTION TABLE ─────────────────────────────────────────────────────
+let tblData=[];
+function renderSectionTable(sections){
+  tblData=sections||[];
+  tblData.sort((a,b)=>{
+    let va=a[sortCol],vb=b[sortCol];
+    if(typeof va==='string')return sortDir==='asc'?va.localeCompare(vb):vb.localeCompare(va);
+    return sortDir==='asc'?va-vb:vb-va;
+  });
+  exportData=tblData;
+  $('tblSub').textContent=`${tblData.length} sections · sorted by ${sortCol}`;
+  const maxE=Math.max(...tblData.map(r=>+r.enrolled),1);
+  $('tblBody').innerHTML=tblData.map(r=>{
+    const fill=+(r.fill_pct)||0;
+    const sc2=fill>85?['high','Full']:fill>65?['mid','Good']:fill>40?['low','Low']:['crit','Empty'];
+    const dc=SC[r.strand_code]||'#800000';
+    return `<tr>
+      <td><span style="font-weight:700;color:var(--blue)">Gr.${r.grade}</span></td>
+      <td><span class="strand-chip" style="background:${dc}18;color:${dc}"><span class="s-dot" style="background:${dc}"></span>${r.strand_code}</span></td>
+      <td class="td-n">${r.section_name||'–'}</td>
+      <td style="font-size:.73rem;color:var(--g500)">${r.adviser||'–'}</td>
+      <td style="font-weight:700;color:var(--g900)">${N(r.enrolled)}</td>
+      <td style="color:var(--g500)">${N(r.capacity)}</td>
+      <td><div class="bar-w"><div class="bar-bg"><div class="bar-fill" style="width:${Math.min(100,fill)}%;background:${dc}"></div></div><span class="bar-pct">${fill}%</span></div></td>
+      <td><span class="badge ${sc2[0]}">${sc2[1]}</span></td>
+      <td style="font-size:.75rem">${N(r.male||0)}</td>
+      <td style="font-size:.75rem">${N(r.female||0)}</td>
+      <td style="font-size:.72rem;color:var(--g500)">${r.room||'–'}</td>
+    </tr>`;
+  }).join('');
+}
+function srt(col){
+  if(sortCol===col)sortDir=sortDir==='asc'?'desc':'asc';else{sortCol=col;sortDir='desc';}
+  ['grade','strand','section','enrolled','capacity','fill','male','female'].forEach(c=>{const e=$(`s-${c}`);if(e)e.textContent='';});
+  const e=$(`s-${col}`);if(e)e.textContent=sortDir==='asc'?' ↑':' ↓';
+  if(cache)renderSectionTable(cache.sections);
+}
+
+// ── RANKINGS + CAPACITY PROGRESS ─────────────────────────────────────
+function renderRankings(strands,sections){
+  const tot={};STRANDS.forEach(s=>tot[s]=0);
+  strands.forEach(r=>{if(STRANDS.includes(r.strand))tot[r.strand]+=+r.total;});
+  const entries=Object.entries(tot).sort((a,b)=>b[1]-a[1]);
+  const maxV=entries[0]?.[1]||1;
+  $('strandRank').innerHTML=entries.map(([s,v])=>`
+    <div>
+      <div class="prog-top"><span class="prog-name">${s}</span><span class="prog-val">${N(v)}</span></div>
+      <div class="prog-bar"><div class="prog-fill" style="width:${Math.round(v/maxV*100)}%;background:${SC[s]}"></div></div>
+      <div class="prog-sub">${Math.round(v/maxV*100)}% of top strand · ${SN[s]?.split(' ').slice(0,3).join(' ')||s}</div>
+    </div>`).join('');
+
+  if(sections){
+    const bySec=sections.slice().sort((a,b)=>b.fill_pct-a.fill_pct).slice(0,6);
+    $('capProg').innerHTML=bySec.map(r=>`
+      <div>
+        <div class="prog-top"><span class="prog-name" style="font-size:.7rem">${r.section_name} <span style="color:var(--g400);font-weight:400">Gr.${r.grade}</span></span><span class="prog-val">${r.fill_pct||0}%</span></div>
+        <div class="prog-bar"><div class="prog-fill" style="width:${Math.min(100,r.fill_pct||0)}%;background:${SC[r.strand_code]||'#800000'}"></div></div>
+        <div class="prog-sub">${N(r.enrolled)} / ${N(r.capacity)} seats</div>
+      </div>`).join('');
+  }
+}
+
+// ── RECENT ────────────────────────────────────────────────────────────
+function renderRecent(recent){
+  if(!recent?.length){$('recentList').innerHTML='<div style="padding:1.2rem;text-align:center;color:var(--g400);font-size:.78rem">No recent data</div>';return;}
+  $('recentList').innerHTML=recent.map(r=>{
+    const init=(r.name||'').split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
+    const col=SC[r.strand]||'#800000';
+    return `<div class="r-row">
+      <div class="r-av" style="background:${col}">${init}</div>
+      <div style="flex:1;min-width:0">
+        <div class="r-name">${r.name}</div>
+        <div class="r-info">Grade ${r.grade} · ${r.strand}</div>
+      </div>
+      <div class="r-time">${r.enrolled_at||'–'}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── EXPORT ────────────────────────────────────────────────────────────
+function doExport(){
+  const h=['Grade','Strand','Section','Adviser','Enrolled','Capacity','Fill%','Male','Female','Room'];
+  const rows=[h,...exportData.map(r=>[r.grade,r.strand_code,r.section_name,r.adviser,r.enrolled,r.capacity,r.fill_pct,r.male||0,r.female||0,r.room||''])];
+  const csv=rows.map(r=>r.map(v=>`"${v}"`).join(',')).join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download=`BNIS_SHS_Enrollment_${new Date().toISOString().slice(0,10)}.csv`;a.click();
+  toast('CSV exported');
+}
+
+// ── MOBILE ────────────────────────────────────────────────────────────
+$('sbBtn').addEventListener('click',()=>{$('sb').classList.toggle('open');$('ov').classList.toggle('open');});
+$('ov').addEventListener('click',()=>{$('sb').classList.remove('open');$('ov').classList.remove('open');});
+
+// ── BOOT ─────────────────────────────────────────────────────────────
+loadAll();
+setInterval(loadAll, 5*60*1000);
+</script>
+</body>
+</html>

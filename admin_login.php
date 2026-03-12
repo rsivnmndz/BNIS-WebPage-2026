@@ -4,6 +4,9 @@ declare(strict_types=1);
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/auth.php';
 
+// Override the JSON header from config.php so the browser renders the login form
+header('Content-Type: text/html; charset=UTF-8');
+
 auth_boot();
 
 if (is_admin_authed()) {
@@ -93,4 +96,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 </body>
 </html>
-

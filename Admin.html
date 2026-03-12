@@ -52,7 +52,6 @@
         .mobile-menu-close { position: absolute; top: 1.5rem; right: 1.5rem; background: none; border: none; cursor: pointer; color: var(--gray-800); }
         .mobile-menu a { font-size: 1.75rem; font-family: 'Playfair Display', serif; color: var(--maroon); font-weight: 700; }
         .mobile-menu a.secondary { font-size: 1.4rem; font-family: 'DM Sans', sans-serif; color: var(--gray-600); font-weight: 400; }
-        .mobile-menu a.login-btn { font-size: 1.2rem; background: var(--maroon); color: white; padding: 0.75rem 2rem; border-radius: 50px; margin-top: 1rem; }
 
         /* PAGE HERO */
         .page-hero { padding: 6rem 1.5rem; text-align: center; color: var(--white); position: relative; overflow: hidden; }
@@ -224,8 +223,8 @@
     <a href="Enrollment.html" class="secondary">Enrollment</a>
     <a href="SchoolNews.html" class="secondary">School News</a>
     <a href="CampusUpdates.html" class="secondary">Campus Updates</a>
-    <a href="Admin.html" class="secondary active">Our Admin</a>
-    <a href="admin_login.php" class="login-btn">Admin Login</a>
+    <a href="Admin.html" class="secondary">Our Admin</a>
+    <a href="admin_login.php" class="nav-btn" style="font-size: 1.2rem; margin-top: 1rem;">Admin Login</a>
 </div>
 
 <section class="page-hero">
@@ -235,6 +234,10 @@
         <span class="hero-badge">Excellence in Leadership</span>
         <h1>Meet Our Administration</h1>
         <p>The dedicated visionaries and educators guiding BNIS towards a brighter future.</p>
+        
+        <button onclick="window.location.href='admin_login.php'" style="background:var(--gold-bright); color:var(--maroon); padding:0.75rem 2rem; border-radius:999px; font-weight:700; font-size: 0.85rem; border:none; cursor:pointer; margin-top:1.5rem; text-transform:uppercase; letter-spacing:0.1em; transition:transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 20px rgba(0,0,0,0.2)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+            Admin Dashboard Login
+        </button>
     </div>
 </section>
 
@@ -340,7 +343,7 @@
             <div class="dept-card maroon-t">
                 <div class="dept-card-top">
                     <div class="dept-icon">
-                        <svg fill="none" stroke="currentColor" viewBox="0 24 24">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
                         </svg>
                     </div>
@@ -428,27 +431,12 @@
             </a>
             <a href="https://www.linkedin.com/in/roise-ivan-mendoza/" target="_blank" class="dev-social li" aria-label="LinkedIn">
                 <svg fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-1.066-4.396-2.92-4.396-1.5 0-2.316.804-2.7 1.487v-1.272h-3v11h3v-6.024c0-1.59.83-2.196 2.012-2.196 1.155 0 1.908.73 1.908 2.25v6.075h3v-11z"/>
+                    <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-2.268-1.187-3.324-2.824-3.324-1.303 0-1.889.718-2.213 1.221v-1.045h-2.583c.034.73 0 8.752 0 8.752h2.583v-4.887c0-.261.019-.523.096-.71.21-.523.687-1.065 1.488-1.065 1.05 0 1.47.8 1.47 1.972v4.69h2.583z"/>
                 </svg>
             </a>
         </div>
     </div>
 </section>
-
-<script>
-    // Simple script to handle the mobile menu toggle
-    const btn = document.getElementById('mobileMenuBtn');
-    const closeBtn = document.getElementById('closeMenuBtn');
-    const menu = document.getElementById('mobileMenu');
-
-    btn.addEventListener('click', () => {
-        menu.classList.add('open');
-    });
-
-    closeBtn.addEventListener('click', () => {
-        menu.classList.remove('open');
-    });
-</script>
 
 </body>
 </html>
