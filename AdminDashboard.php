@@ -36,7 +36,7 @@ require_admin_page();
         .topbar-left h1{font-size:1.15rem;font-weight:700;color:var(--gray-900);font-family:'Playfair Display',serif}
         .topbar-left p{font-size:.75rem;color:var(--gray-500);margin-top:.1rem}
         .topbar-right{display:flex;align-items:center;gap:.75rem}
-        .tb-btn{display:flex;align-items:center;gap:.5rem;padding:.5rem 1rem;border-radius:var(--r-md);border:1.5px solid var(--gray-200);background:#fff;color:var(--gray-600);font-size:.78rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
+        .tb-btn{display:flex;align-items:center;gap:.5rem;padding:.5rem 1rem;border-radius:var(--r-md);border:1.5px solid var(--gray-200);background:#fff;color:var(--gray-600);font-size:.78rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;text-decoration:none}
         .tb-btn:hover{border-color:var(--maroon);color:var(--maroon);background:#fff5f5}.tb-btn svg{width:.9rem;height:.9rem}
         .tb-btn.primary{background:var(--maroon);color:#fff;border-color:var(--maroon)}.tb-btn.primary:hover{background:var(--maroon-dark)}
         .sb-toggle{display:none;background:none;border:none;cursor:pointer;color:var(--gray-600)}.sb-toggle svg{width:1.4rem;height:1.4rem}
@@ -59,7 +59,6 @@ require_admin_page();
         .f-search:focus-within{border-color:var(--maroon)}.f-search svg{width:.9rem;height:.9rem;color:var(--gray-400);flex-shrink:0}
         .f-search input{border:none;background:transparent;font-size:.8rem;font-family:'DM Sans',sans-serif;color:var(--gray-800);outline:none;width:100%}
         .f-search input::placeholder{color:var(--gray-400)}
-        /* UPDATED: Changed grid to 2 columns since we removed Elem/JHS */
         .kpi-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.1rem;margin-bottom:1.5rem}
         .kpi{background:#fff;border-radius:var(--r-lg);padding:1.3rem 1.4rem;border:1.5px solid var(--gray-200);box-shadow:var(--shadow-sm);display:flex;flex-direction:column;gap:.7rem;transition:all .2s;position:relative;overflow:hidden;animation:fadeUp .4s ease both}
         .kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--r-lg) var(--r-lg) 0 0}
@@ -160,7 +159,16 @@ require_admin_page();
             <li><a href="index.html"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9"/></svg>Public Site</a></li>
         </ul>
     </div>
-    <div class="sb-user"><div class="user-avatar">AD</div><div><div class="user-name">Admin</div><div class="user-role">School Admin</div></div></div>
+    <div class="sb-user">
+        <div class="user-avatar">AD</div>
+        <div style="flex:1">
+            <div class="user-name">Admin</div>
+            <div class="user-role">School Admin</div>
+        </div>
+        <a href="admin_logout.php" style="color:var(--gray-500); transition:color .2s; display:flex;" title="Logout" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--gray-500)'">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:1.2rem;height:1.2rem"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        </a>
+    </div>
 </aside>
 
 <div class="main">
@@ -174,6 +182,11 @@ require_admin_page();
             <button class="tb-btn" onclick="loadAll()"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>Refresh</button>
             <button class="tb-btn" onclick="window.print()"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>Print</button>
             <button class="tb-btn primary" onclick="exportCSV()"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>Export CSV</button>
+            
+            <a href="admin_logout.php" class="tb-btn" style="color:var(--red); border-color:#fecaca; background:#fff5f5; text-decoration:none;" onmouseover="this.style.background='#fee2e2'" onmouseout="this.style.background='#fff5f5'">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                Logout
+            </a>
         </div>
     </div>
 
